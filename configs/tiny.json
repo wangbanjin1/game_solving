@@ -1,0 +1,8 @@
+{
+  "num_scenes": 2,
+  "population": {"users_per_cell": 3, "package_probs": {"normal": 1}, "business_probs": {"meeting": 1}},
+  "generation": {"quota_mode": "specified"},
+  "mos": {"compliance_probs": {"met": 0, "over": 1}},
+  "solver": {"margin_grid_mbps": [0.2, 0.8, 3]},
+  "reference": {"exact_enabled": true, "margin_grid_mbps": [0.15, 0.5, 2], "max_combinations": 200000}
+}

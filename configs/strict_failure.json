@@ -1,0 +1,6 @@
+{
+  "num_scenes": 1,
+  "population": {"users_per_cell": 3, "package_probs": {"normal": 1}, "business_probs": {"meeting": 1}},
+  "generation": {"quota_mode": "specified", "strict_quotas": true},
+  "mos": {"compliance_probs": {"severe": 1}}
+}

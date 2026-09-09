@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "seed": 20260909,
+  "num_scenes": 5,
+  "allow_partial": false,
+  "population": {
+    "users_per_cell": 30,
+    "package_probs": {"normal": 0.7, "vip": 0.3},
+    "business_probs": {"openlive": 0.15, "video": 0.2, "cloudgame": 0.1, "meeting": 0.15, "game": 0.15, "voip": 0.1, "browsing": 0.1, "download": 0.05},
+    "normal_tolerance_probs": {"high": 0.3, "medium": 0.4, "low": 0.3},
+    "position_probs": {"far": 0.2, "medium": 0.5, "near": 0.3}
+  },
+  "cell": {"direction": "abstract_direction", "capacity_mode": "derived", "capacity_mbps": 100, "allocation_ratio_range": [0.7, 0.95], "unmanaged_mbps": 0, "safety_mbps": 0},
+  "generation": {"quota_mode": "reachable", "strict_quotas": true, "scene_max_attempts": 10, "role_max_attempts": 2000, "pool_points": 100, "margin_range_mbps": [0.055, 4], "stream_phase": "steady", "jitter_fraction": 0.02},
+  "mos": {
+    "unit_profile": "demo_v1", "aggregation": "weighted_mean_demo_v1", "demo_mapping": true,
+    "weights": {"quality": 0.3333333333333333, "interaction": 0.3333333333333333, "view": 0.3333333333333333},
+    "formula_groups": {"P1": [0.25, 0.05, 0.25, 0.1], "P2": [0.25, 0.05, 0.05, 0.25], "P3": [0.04, 0.25, 0.04, 0.25], "P4": [0.25, 0.05, 0.05, 0.25], "P5": [0, 0, 0.25, 0.04]},
+    "mapping": {"voip": "P1", "cloudgame": "P1", "openlive": "P2", "video": "P3", "meeting": "P4", "game": "P5"},
+    "target_by_package": {"normal": 2.5, "vip": 4, "super_vip": 4.5},
+    "compliance_probs": {"over": 0.1, "met": 0.5, "unmet": 0.3, "severe": 0.1},
+    "delta_over": 0.3, "delta_severe": 0.7,
+    "baseline_by_package": {"normal": 2.5, "vip": 4, "super_vip": 4.5}
+  },
+  "bandwidth": {"model": "analytic_bandwidth_v1", "calibrated": false, "overhead_ratio": 0.08, "efficiency": 0.85, "margin_min_mbps": 0.05, "rtt_floor_ms": 30, "rtt_coeff_ms_mbps": 15, "loss_floor": 0.0001, "loss_amp": 0.01, "loss_scale_mbps": 0.25, "stall_floor": 0, "stall_amp": 0.1, "stall_scale_mbps": 0.3, "buffer_floor_ms": 100, "burst_mbit": 1, "audio_mbps": 0.128},
+  "profiles": {
+    "demo_non_gbr": {"resource_type": "Non-GBR", "five_qi": null, "executable": false, "neighbors": ["demo_gbr"], "environment": {}},
+    "demo_gbr": {"resource_type": "GBR", "five_qi": null, "executable": false, "neighbors": ["demo_non_gbr"], "environment": {}}
+  },
+  "policy": {"profile_probs": {"demo_non_gbr": 0.7, "demo_gbr": 0.3}, "allow_soft_degrade": false, "media_control": false, "bandwidth_max_mbps": 40, "contract_protected_mbps": 0,
+    "base_weights": {"normal": {"realtime": 4, "browsing": 3, "download": 1}, "vip": {"realtime": 6, "browsing": 5, "download": 2}, "super_vip": {"realtime": 8, "browsing": 7, "download": 3}},
+    "tolerance_factors": {"high": 1, "medium": 1, "low": 1, "intolerant": 1}, "position_factors": {"far": 1, "medium": 1, "near": 1},
+    "non_key_floor_mbps": {"browsing": 2.0329411764705885, "download": 0.1}},
+  "media_profiles": {
+    "openlive": [[480, 500], [540, 1000], [720, 1500], [1080, 4000]],
+    "video": [[360, 500], [480, 800], [540, 1200], [720, 2000], [1080, 4000], [2160, 12000]],
+    "cloudgame": [[480, 2000], [540, 4000], [720, 6000], [1080, 12000]],
+    "meeting": [[270, 500], [360, 1000], [720, 4000]],
+    "game": [[null, 100]],
+    "voip": [[270, 500], [360, 1000], [720, 4000]]
+  },
+  "utility": {"weight_reference": 6, "bandwidth_reference_mbps": 1, "eta": 0.5, "beta": 0.1, "switch_penalty": 0, "debt_cap": 1},
+  "solver": {"lambda_initial": 0.1, "gamma0": 0.05, "max_iterations": 50, "time_budget_ms": 2000, "raw_candidates_per_role": 2048, "kept_candidates_per_role": 128, "exchange_pairs_per_iteration": 64, "stable_rounds": 3, "epsilon_strategy": 0.01, "epsilon_resource_relative": 0.0001, "epsilon_utility_relative": 0.0001, "epsilon_gain": 0.000001, "numerical_tolerance_mbps": 0.000001,
+    "margin_grid_mbps": [0.055, 0.08, 0.12, 0.2, 0.3, 0.5, 0.8, 1.2, 2, 3, 4]},
+  "reference": {"exact_enabled": false, "max_combinations": 200000, "margin_grid_mbps": [0.06, 0.15, 0.4, 1, 3]},
+  "metrics": {"epsilon_mos": 0.01, "denominator_epsilon": 0.000001}
+}

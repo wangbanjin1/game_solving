@@ -1,0 +1,10 @@
+{
+  "feasible_scenes": 2,
+  "max_elapsed_ms": 8.942699991166592,
+  "max_iterations_used": 6,
+  "scenes": 2,
+  "statuses": {
+    "STOPPED_CYCLE": 2
+  },
+  "weighted_mos_gain": 9.747305885785273
+}

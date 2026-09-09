@@ -1,0 +1,5 @@
+{
+  "num_scenes": 1,
+  "population": {"users_per_cell": 1000},
+  "solver": {"time_budget_ms": 10000, "max_iterations": 10}
+}
