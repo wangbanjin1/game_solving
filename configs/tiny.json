@@ -1,8 +1,29 @@
 {
   "num_scenes": 2,
-  "population": {"users_per_cell": 3, "package_probs": {"normal": 1}, "business_probs": {"meeting": 1}},
-  "generation": {"quota_mode": "specified"},
-  "mos": {"compliance_probs": {"met": 0, "over": 1}},
-  "solver": {"margin_grid_mbps": [0.2, 0.8, 3]},
-  "reference": {"exact_enabled": true, "margin_grid_mbps": [0.15, 0.5, 2], "max_combinations": 200000}
+  "population": {
+    "users_per_cell": 3,
+    "package_probs": {
+      "normal": 1.0
+    },
+    "business_probs": {
+      "meeting": 1.0
+    }
+  },
+  "solver": {
+    "mos_grid": [
+      2.5,
+      3.5,
+      4.0
+    ],
+    "time_budget_ms": 5000.0
+  },
+  "reference": {
+    "enabled": true
+  },
+  "generation": {
+    "quota_mode": "specified",
+    "compliance_probs": {
+      "over": 1.0
+    }
+  }
 }

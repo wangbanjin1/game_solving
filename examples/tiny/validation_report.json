@@ -1,15 +1,6 @@
 {
-  "checks": [
-    "schema_units",
-    "capacity",
-    "source_ranges",
-    "forward_roundtrip",
-    "mos_recomputed",
-    "label_isolation",
-    "serialized_json_reloaded"
-  ],
-  "complete": true,
+  "complete_generation": true,
   "roles_validated": 6,
-  "scenes_validated": 2,
+  "serialized_reload": true,
   "valid": true
 }

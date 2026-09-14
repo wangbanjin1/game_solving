@@ -4,16 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "game-solving"
-version = "0.1.0"
-description = "Reproducible synthetic cell simulation and finite-candidate resource game solver"
+version = "2.0.0"
+description = "Individual dual-direction resource simulation and bounded game solving"
 requires-python = ">=3.10"
 dependencies = []
 
 [project.scripts]
-game-solving = "simulation_generator.cli:main"
+game-solving = "game_solving.application.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["experience_solver*", "simulation_generator*", "configs"]
+include = ["game_solving*", "configs"]
 
 [tool.setuptools.package-data]
 configs = ["*.json"]

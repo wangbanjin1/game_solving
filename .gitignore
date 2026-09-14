@@ -5,3 +5,5 @@ outputs/
 .remote_seed/
 .pytest_cache/
 *.egg-info/
+build/
+dist/
