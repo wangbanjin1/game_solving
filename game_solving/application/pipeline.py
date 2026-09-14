@@ -12,6 +12,7 @@ from game_solving.infrastructure.json_store import JsonStore, read_jsonl
 from game_solving.evaluation.validation import check_actions
 from game_solving.evaluation.reference import evaluate_reference
 from game_solving.evaluation.metrics import evaluate
+from game_solving.evaluation.history import validate_history
 from .services import Services
 from game_solving.evaluation.comparison import compare, render
 
@@ -58,6 +59,8 @@ class Pipeline:
                 True,
             )
             store.write("generation_report.json", report)
+            if c["generation"]["history"]["enabled"]:
+                store.write("history.jsonl", [a["history"] for a in audits], True)
             store.write(
                 "source_catalog.json",
                 {
@@ -73,6 +76,13 @@ class Pipeline:
             ]
             logger.info("生成数据已写出，开始重读校验")
             validated = 0
+            history_validated = 0
+            if c["generation"]["history"]["enabled"]:
+                histories = read_jsonl(store.path / "history.jsonl")
+                if len(histories) != len(scenes):
+                    raise AssertionError("HISTORY_SCENE_COUNT_MISMATCH")
+                for scene, history in zip(scenes, histories):
+                    history_validated += validate_history(scene, history, self.services.policy)
             for scene in scenes:
                 validate_scene(scene, c)
                 actions = [
@@ -94,6 +104,7 @@ class Pipeline:
                     "roles_validated": validated,
                     "serialized_reload": True,
                     "complete_generation": report["failed"] == 0,
+                    "history_observations_validated": history_validated,
                 },
             )
             logger.info("生成数据校验通过：%d 人", validated)

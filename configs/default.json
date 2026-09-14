@@ -48,6 +48,12 @@
     }
   },
   "generation": {
+    "history": {
+      "enabled": false,
+      "periods": 5,
+      "interval_seconds": 60.0,
+      "bandwidth_multiplier": [0.5, 1.5]
+    },
     "quota_mode": "reachable",
     "strict_quotas": true,
     "compliance_probs": {

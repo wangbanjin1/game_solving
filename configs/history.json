@@ -1,0 +1,15 @@
+{
+  "num_scenes": 2,
+  "population": {
+    "users_per_cell": 3,
+    "package_probs": {"normal": 1.0},
+    "business_probs": {"meeting": 1.0}
+  },
+  "generation": {
+    "history": {"enabled": true},
+    "quota_mode": "specified",
+    "compliance_probs": {"over": 1.0}
+  },
+  "solver": {"time_budget_ms": 5000.0},
+  "reference": {"enabled": true}
+}

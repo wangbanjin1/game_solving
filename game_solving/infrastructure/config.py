@@ -58,6 +58,24 @@ def validate(config):
             number(value, path, low=-float("inf"))
 
     walk(c)
+    history = c["generation"]["history"]
+    if type(history["enabled"]) is not bool:
+        raise ValueError("INVALID_HISTORY_ENABLED")
+    if type(history["periods"]) is not int or history["periods"] < 1:
+        raise ValueError("INVALID_HISTORY_PERIODS")
+    number(history["interval_seconds"], "history_interval_seconds")
+    if history["interval_seconds"] <= 0:
+        raise ValueError("POSITIVE_HISTORY_INTERVAL_REQUIRED")
+    number(history["periods"] * history["interval_seconds"], "history_duration")
+    multipliers = history["bandwidth_multiplier"]
+    if not isinstance(multipliers, list) or len(multipliers) != 2:
+        raise ValueError("INVALID_HISTORY_MULTIPLIER")
+    for value in multipliers:
+        number(value, "history_bandwidth_multiplier")
+    if multipliers[0] > multipliers[1] or multipliers[1] <= 0:
+        raise ValueError("INVALID_HISTORY_MULTIPLIER")
+    if history["enabled"] and c["utility"]["history_window_seconds"] <= 0:
+        raise ValueError("POSITIVE_HISTORY_WINDOW_REQUIRED")
     for section, keys in [
         (
             "population",

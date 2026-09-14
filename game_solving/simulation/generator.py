@@ -9,6 +9,7 @@ from .summary import log_scene_summary
 from .population import generate_people, rng_for, allocate
 from .sampler import ConditionalSampler, interval
 from .assembler import assemble, AssemblyFailure
+from .history import HistoryGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +18,7 @@ class DatasetGenerator:
     def __init__(self, config, model, policy):
         self.c = config
         self.sampler = ConditionalSampler(config, model, policy)
+        self.history = HistoryGenerator(config, policy)
 
     def generate(self):
         c = self.c
@@ -124,6 +126,7 @@ class DatasetGenerator:
                         unmanaged,
                         reserve,
                     )
+                    scene, history = self.history.generate(scene, index, scene_budget)
                     split = rng_for(c["seed"], index, "split").choices(
                         list(c["generation"]["split_probs"]),
                         weights=list(c["generation"]["split_probs"].values()),
@@ -137,6 +140,7 @@ class DatasetGenerator:
                             "assembly_nodes": nodes,
                             "generation_steps": scene_budget.used,
                             "generation_attempt": attempt + 1,
+                            **({"history": history} if history is not None else {}),
                         }
                     )
                     log_scene_summary(scene, audits[-1])

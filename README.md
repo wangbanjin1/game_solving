@@ -33,6 +33,7 @@ python -m game_solving run --max-iterations 10 --max-total-steps 100000 --time-b
 | --- | --- |
 | `default.json` | 5 个混合业务场景，每场景 30 人 |
 | `tiny.json` | 2 个三人会议场景，开启独立离散枚举参考 |
+| `history.json` | 2 个三人会议场景，模拟历史 MOS 并启用已有欠账补偿 |
 | `medium.json` | 100 人短视频，验证总工作量耗尽后的可行结果 |
 | `large.json` | 1000 人固定定额游戏，验证规模和计数；不是复杂优化性能基准 |
 | `strict_failure.json` | 故意要求游戏达到不可达 MOS 档位，预期生成失败、退出码 2 |
@@ -45,6 +46,16 @@ python -m unittest discover -s tests -v
 可选安装：`python -m pip install .`，之后可使用 `game-solving run --output outputs/installed`。统一使用 `python -m game_solving` 或安装后的 `game-solving` 命令；旧版兼容包已移除，旧版单带宽配置和数据需要重新生成。
 
 ## 结果阅读顺序
+
+如需验证长期公平补偿，运行：
+
+```sh
+python -m game_solving run --config configs/history.json --output outputs/history_demo
+```
+
+`generation.history.enabled` 默认为 `false`；开启后默认生成 5 段、每段 60 秒的历史，通过 `utility.history_window_seconds` 指定的窗口按覆盖时长加权，写入用户的 `history_mos`。求解器已有的欠账补偿会自动使用该值。完整配置和建模边界见[历史数据模拟说明](docs/历史数据模拟说明.md)。
+
+开启历史时额外输出 `history.jsonl`，记录每段上下行带宽、MOS 和模型版本；`scenes.jsonl` 的生成审计中也保留相同记录。生成流程会重新读取文件，校验历史分配约束、复算 MOS 与历史均值，验证数量写入 `validation_report.json` 的 `history_observations_validated`。
 
 先看 `summary.json`，再看 `solve_results.jsonl` 的分配与停止原因，最后看 `run_labels.jsonl`、`metrics.jsonl` 和 `reference_results.jsonl`。`solver_inputs.jsonl` 是可直接复用的求解输入；`scenes.jsonl` 额外保留生成审计信息。仓库的 `examples/tiny` 提供完整新版样例。
 
