@@ -17,3 +17,5 @@ include = ["game_solving*", "configs"]
 
 [tool.setuptools.package-data]
 configs = ["*.json"]
+
+"game_solving.visualization" = ["*.html"]

@@ -138,3 +138,19 @@ game-solving --help
 - [核心算法方案](docs/个人用户双向带宽_数据模拟与博弈求解方案.md)
 - [历史数据模拟说明](docs/历史数据模拟说明.md)
 - [重构验证记录](docs/重构验证记录_v2.md)
+
+## 从已有结果生成离线HTML可视化
+
+无需重新生成数据或求解：
+
+```powershell
+python -m game_solving.visualization --input datasets/complex_100 --output outputs/complex_100_dashboard.html
+```
+
+用浏览器打开HTML即可。支持成功/失败筛选、场景切换、前后指标表、每轮上下行需求/分配/容量曲线、收益与价格曲线。页面自包含，不访问CDN。
+
+`--input` 是结果目录，必须包含 solve_results.jsonl；comparison.jsonl 用于前后对比，solver_inputs.jsonl 或 resolved_config.json 用于容量线。可选文件缺失时明确显示缺失，不伪造数值。输出HTML必须为新文件。图中是当轮协调方案，并非历史最佳；失败时保留方案不算收敛成功。
+
+Python接口：`from game_solving.visualization import generate_report`，调用 `generate_report(input_dir, output_path)`。
+
+仓库提供已生成的 [100场景HTML示例](examples/complex_100_report.html)，下载后用浏览器打开即可；GitHub文件页面只显示源码。
