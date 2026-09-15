@@ -1,0 +1,1907 @@
+08:04:22 INFO game_solving.application.pipeline | 任务开始：run，输出目录=outputs\complex_100_verified
+08:04:22 INFO game_solving.simulation.generator | 开始生成：场景数=100，每场景人数=100
+08:04:22 INFO game_solving.simulation.generator | 生成场景 1/100
+08:04:22 INFO game_solving.simulation.generator | 生成场景 2/100
+08:04:23 INFO game_solving.simulation.generator | 生成场景 3/100
+08:04:23 INFO game_solving.simulation.generator | 生成场景 4/100
+08:04:24 INFO game_solving.simulation.generator | 生成场景 5/100
+08:04:24 INFO game_solving.simulation.generator | 生成场景 6/100
+08:04:24 INFO game_solving.simulation.generator | 生成场景 7/100
+08:04:25 INFO game_solving.simulation.generator | 生成场景 8/100
+08:04:25 INFO game_solving.simulation.generator | 生成场景 9/100
+08:04:26 INFO game_solving.simulation.generator | 生成场景 10/100
+08:04:26 INFO game_solving.simulation.generator | 生成场景 11/100
+08:04:27 INFO game_solving.simulation.generator | 生成场景 12/100
+08:04:27 INFO game_solving.simulation.generator | 生成场景 13/100
+08:04:28 INFO game_solving.simulation.generator | 生成场景 14/100
+08:04:29 INFO game_solving.simulation.generator | 生成场景 15/100
+08:04:29 INFO game_solving.simulation.generator | 生成场景 16/100
+08:04:30 INFO game_solving.simulation.generator | 生成场景 17/100
+08:04:30 INFO game_solving.simulation.generator | 生成场景 18/100
+08:04:31 INFO game_solving.simulation.generator | 生成场景 19/100
+08:04:31 INFO game_solving.simulation.generator | 生成场景 20/100
+08:04:32 INFO game_solving.simulation.generator | 生成场景 21/100
+08:04:32 INFO game_solving.simulation.generator | 生成场景 22/100
+08:04:33 INFO game_solving.simulation.generator | 生成场景 23/100
+08:04:33 INFO game_solving.simulation.generator | 生成场景 24/100
+08:04:34 INFO game_solving.simulation.generator | 生成场景 25/100
+08:04:34 INFO game_solving.simulation.generator | 生成场景 26/100
+08:04:35 INFO game_solving.simulation.generator | 生成场景 27/100
+08:04:36 INFO game_solving.simulation.generator | 生成场景 28/100
+08:04:36 INFO game_solving.simulation.generator | 生成场景 29/100
+08:04:37 INFO game_solving.simulation.generator | 生成场景 30/100
+08:04:37 INFO game_solving.simulation.generator | 生成场景 31/100
+08:04:38 INFO game_solving.simulation.generator | 生成场景 32/100
+08:04:38 INFO game_solving.simulation.generator | 生成场景 33/100
+08:04:39 INFO game_solving.simulation.generator | 生成场景 34/100
+08:04:39 INFO game_solving.simulation.generator | 生成场景 35/100
+08:04:40 INFO game_solving.simulation.generator | 生成场景 36/100
+08:04:40 INFO game_solving.simulation.generator | 生成场景 37/100
+08:04:41 INFO game_solving.simulation.generator | 生成场景 38/100
+08:04:42 INFO game_solving.simulation.generator | 生成场景 39/100
+08:04:42 INFO game_solving.simulation.generator | 生成场景 40/100
+08:04:43 INFO game_solving.simulation.generator | 生成场景 41/100
+08:04:43 INFO game_solving.simulation.generator | 生成场景 42/100
+08:04:44 INFO game_solving.simulation.generator | 生成场景 43/100
+08:04:44 INFO game_solving.simulation.generator | 生成场景 44/100
+08:04:45 INFO game_solving.simulation.generator | 生成场景 45/100
+08:04:45 INFO game_solving.simulation.generator | 生成场景 46/100
+08:04:46 INFO game_solving.simulation.generator | 生成场景 47/100
+08:04:47 INFO game_solving.simulation.generator | 生成场景 48/100
+08:04:47 INFO game_solving.simulation.generator | 生成场景 49/100
+08:04:48 INFO game_solving.simulation.generator | 生成场景 50/100
+08:04:48 INFO game_solving.simulation.generator | 生成场景 51/100
+08:04:49 INFO game_solving.simulation.generator | 生成场景 52/100
+08:04:49 INFO game_solving.simulation.generator | 生成场景 53/100
+08:04:50 INFO game_solving.simulation.generator | 生成场景 54/100
+08:04:50 INFO game_solving.simulation.generator | 生成场景 55/100
+08:04:51 INFO game_solving.simulation.generator | 生成场景 56/100
+08:04:51 INFO game_solving.simulation.generator | 生成场景 57/100
+08:04:52 INFO game_solving.simulation.generator | 生成场景 58/100
+08:04:53 INFO game_solving.simulation.generator | 生成场景 59/100
+08:04:53 INFO game_solving.simulation.generator | 生成场景 60/100
+08:04:54 INFO game_solving.simulation.generator | 生成场景 61/100
+08:04:54 INFO game_solving.simulation.generator | 生成场景 62/100
+08:04:55 INFO game_solving.simulation.generator | 生成场景 63/100
+08:04:55 INFO game_solving.simulation.generator | 生成场景 64/100
+08:04:56 INFO game_solving.simulation.generator | 生成场景 65/100
+08:04:56 INFO game_solving.simulation.generator | 生成场景 66/100
+08:04:57 INFO game_solving.simulation.generator | 生成场景 67/100
+08:04:58 INFO game_solving.simulation.generator | 生成场景 68/100
+08:04:58 INFO game_solving.simulation.generator | 生成场景 69/100
+08:04:59 INFO game_solving.simulation.generator | 生成场景 70/100
+08:04:59 INFO game_solving.simulation.generator | 生成场景 71/100
+08:05:00 INFO game_solving.simulation.generator | 生成场景 72/100
+08:05:00 INFO game_solving.simulation.generator | 生成场景 73/100
+08:05:01 INFO game_solving.simulation.generator | 生成场景 74/100
+08:05:01 INFO game_solving.simulation.generator | 生成场景 75/100
+08:05:02 INFO game_solving.simulation.generator | 生成场景 76/100
+08:05:02 INFO game_solving.simulation.generator | 生成场景 77/100
+08:05:03 INFO game_solving.simulation.generator | 生成场景 78/100
+08:05:04 INFO game_solving.simulation.generator | 生成场景 79/100
+08:05:04 INFO game_solving.simulation.generator | 生成场景 80/100
+08:05:05 INFO game_solving.simulation.generator | 生成场景 81/100
+08:05:05 INFO game_solving.simulation.generator | 生成场景 82/100
+08:05:06 INFO game_solving.simulation.generator | 生成场景 83/100
+08:05:06 INFO game_solving.simulation.generator | 生成场景 84/100
+08:05:07 INFO game_solving.simulation.generator | 生成场景 85/100
+08:05:07 INFO game_solving.simulation.generator | 生成场景 86/100
+08:05:08 INFO game_solving.simulation.generator | 生成场景 87/100
+08:05:09 INFO game_solving.simulation.generator | 生成场景 88/100
+08:05:09 INFO game_solving.simulation.generator | 生成场景 89/100
+08:05:10 INFO game_solving.simulation.generator | 生成场景 90/100
+08:05:10 INFO game_solving.simulation.generator | 生成场景 91/100
+08:05:11 INFO game_solving.simulation.generator | 生成场景 92/100
+08:05:11 INFO game_solving.simulation.generator | 生成场景 93/100
+08:05:12 INFO game_solving.simulation.generator | 生成场景 94/100
+08:05:13 INFO game_solving.simulation.generator | 生成场景 95/100
+08:05:13 INFO game_solving.simulation.generator | 生成场景 96/100
+08:05:14 INFO game_solving.simulation.generator | 生成场景 97/100
+08:05:14 INFO game_solving.simulation.generator | 生成场景 98/100
+08:05:15 INFO game_solving.simulation.generator | 生成场景 99/100
+08:05:15 INFO game_solving.simulation.generator | 生成场景 100/100
+08:05:16 INFO game_solving.simulation.generator | 生成完成：成功=100，失败=0
+08:05:19 INFO game_solving.application.pipeline | 生成数据已写出，开始重读校验
+08:05:27 INFO game_solving.application.pipeline | 生成数据校验通过：10000 人
+08:05:27 INFO game_solving.application.pipeline | 开始求解：共 100 个场景
+08:05:27 INFO game_solving.application.pipeline | 求解场景 1/100：scene_000000，人数=100
+08:05:28 INFO game_solving.application.pipeline | 求解完成 1/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=185329，耗时=962.0 ms
+08:05:28 INFO game_solving.application.pipeline | 
+### scene_000000：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 68 | 69 | 1 |
+| 目标达标人数 | 12 | 11 | -1 |
+| 会话MOS均值 | 2.292 | 2.376 | 0.084 |
+| 加权MOS总和 | 1093.508 | 1136.474 | 42.966 |
+| 上行占用Mbps | 33.719 | 55.144 | 21.425 |
+| 下行占用Mbps | 119.948 | 119.991 | 0.043 |
+
+MOS评价人数：80；改善：30；恶化：25；不变：25；最大MOS降幅：1.577。
+
+08:05:28 INFO game_solving.application.pipeline | 求解场景 2/100：scene_000001，人数=100
+08:05:29 INFO game_solving.application.pipeline | 求解完成 2/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=185172，耗时=979.2 ms
+08:05:29 INFO game_solving.application.pipeline | 
+### scene_000001：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 60 | 62 | 2 |
+| 目标达标人数 | 20 | 18 | -2 |
+| 会话MOS均值 | 2.600 | 2.626 | 0.026 |
+| 加权MOS总和 | 1243.225 | 1260.658 | 17.433 |
+| 上行占用Mbps | 47.832 | 67.730 | 19.898 |
+| 下行占用Mbps | 119.993 | 119.992 | -0.001 |
+
+MOS评价人数：80；改善：24；恶化：28；不变：28；最大MOS降幅：1.328。
+
+08:05:29 INFO game_solving.application.pipeline | 求解场景 3/100：scene_000002，人数=100
+08:05:30 INFO game_solving.application.pipeline | 求解完成 3/100：成功，停止=CONVERGED_LOCAL，轮数=7，工作量=211123，耗时=1093.4 ms
+08:05:30 INFO game_solving.application.pipeline | 
+### scene_000002：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 70 | 67 | -3 |
+| 目标达标人数 | 10 | 13 | 3 |
+| 会话MOS均值 | 2.384 | 2.520 | 0.135 |
+| 加权MOS总和 | 1181.957 | 1250.369 | 68.412 |
+| 上行占用Mbps | 37.718 | 77.359 | 39.641 |
+| 下行占用Mbps | 119.998 | 119.997 | -0.001 |
+
+MOS评价人数：80；改善：29；恶化：23；不变：28；最大MOS降幅：0.690。
+
+08:05:30 INFO game_solving.application.pipeline | 求解场景 4/100：scene_000003，人数=100
+08:05:32 INFO game_solving.application.pipeline | 求解完成 4/100：成功，停止=CONVERGED_LOCAL，轮数=7，工作量=222795，耗时=1202.7 ms
+08:05:32 INFO game_solving.application.pipeline | 
+### scene_000003：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 65 | 62 | -3 |
+| 目标达标人数 | 15 | 18 | 3 |
+| 会话MOS均值 | 2.298 | 2.463 | 0.165 |
+| 加权MOS总和 | 1077.564 | 1165.286 | 87.723 |
+| 上行占用Mbps | 43.586 | 81.633 | 38.047 |
+| 下行占用Mbps | 119.997 | 120.000 | 0.003 |
+
+MOS评价人数：80；改善：35；恶化：16；不变：29；最大MOS降幅：0.869。
+
+08:05:32 INFO game_solving.application.pipeline | 求解场景 5/100：scene_000004，人数=100
+08:05:33 INFO game_solving.application.pipeline | 求解完成 5/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=189485，耗时=945.5 ms
+08:05:33 INFO game_solving.application.pipeline | 
+### scene_000004：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 66 | 63 | -3 |
+| 目标达标人数 | 14 | 17 | 3 |
+| 会话MOS均值 | 2.436 | 2.537 | 0.101 |
+| 加权MOS总和 | 1162.248 | 1217.510 | 55.262 |
+| 上行占用Mbps | 40.820 | 72.919 | 32.099 |
+| 下行占用Mbps | 119.995 | 119.988 | -0.007 |
+
+MOS评价人数：80；改善：34；恶化：23；不变：23；最大MOS降幅：0.780。
+
+08:05:33 INFO game_solving.application.pipeline | 求解场景 6/100：scene_000005，人数=100
+08:05:33 INFO game_solving.application.pipeline | 求解完成 6/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=164491，耗时=861.2 ms
+08:05:33 INFO game_solving.application.pipeline | 
+### scene_000005：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 68 | 67 | -1 |
+| 目标达标人数 | 12 | 13 | 1 |
+| 会话MOS均值 | 2.304 | 2.387 | 0.083 |
+| 加权MOS总和 | 1113.314 | 1158.043 | 44.729 |
+| 上行占用Mbps | 44.804 | 88.240 | 43.436 |
+| 下行占用Mbps | 120.000 | 119.988 | -0.012 |
+
+MOS评价人数：80；改善：31；恶化：23；不变：26；最大MOS降幅：0.578。
+
+08:05:33 INFO game_solving.application.pipeline | 求解场景 7/100：scene_000006，人数=100
+08:05:34 INFO game_solving.application.pipeline | 求解完成 7/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=164068，耗时=929.1 ms
+08:05:34 INFO game_solving.application.pipeline | 
+### scene_000006：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 69 | 68 | -1 |
+| 目标达标人数 | 11 | 12 | 1 |
+| 会话MOS均值 | 2.386 | 2.460 | 0.073 |
+| 加权MOS总和 | 1196.767 | 1238.100 | 41.333 |
+| 上行占用Mbps | 42.074 | 75.709 | 33.635 |
+| 下行占用Mbps | 120.000 | 119.975 | -0.025 |
+
+MOS评价人数：80；改善：31；恶化：29；不变：20；最大MOS降幅：0.997。
+
+08:05:34 INFO game_solving.application.pipeline | 求解场景 8/100：scene_000007，人数=100
+08:05:35 INFO game_solving.application.pipeline | 求解完成 8/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=199339，耗时=1030.7 ms
+08:05:35 INFO game_solving.application.pipeline | 
+### scene_000007：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 66 | 64 | -2 |
+| 目标达标人数 | 14 | 16 | 2 |
+| 会话MOS均值 | 2.404 | 2.474 | 0.070 |
+| 加权MOS总和 | 1166.480 | 1211.054 | 44.574 |
+| 上行占用Mbps | 40.601 | 75.827 | 35.226 |
+| 下行占用Mbps | 119.962 | 119.998 | 0.036 |
+
+MOS评价人数：80；改善：32；恶化：25；不变：23；最大MOS降幅：1.212。
+
+08:05:35 INFO game_solving.application.pipeline | 求解场景 9/100：scene_000008，人数=100
+08:05:36 INFO game_solving.application.pipeline | 求解完成 9/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=193761，耗时=1030.1 ms
+08:05:36 INFO game_solving.application.pipeline | 
+### scene_000008：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 62 | 59 | -3 |
+| 目标达标人数 | 18 | 21 | 3 |
+| 会话MOS均值 | 2.487 | 2.571 | 0.083 |
+| 加权MOS总和 | 1174.551 | 1226.729 | 52.178 |
+| 上行占用Mbps | 41.098 | 76.927 | 35.829 |
+| 下行占用Mbps | 119.994 | 119.997 | 0.003 |
+
+MOS评价人数：80；改善：32；恶化：24；不变：24；最大MOS降幅：1.162。
+
+08:05:36 INFO game_solving.application.pipeline | 求解场景 10/100：scene_000009，人数=100
+08:05:37 INFO game_solving.application.pipeline | 求解完成 10/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=160332，耗时=820.9 ms
+08:05:37 INFO game_solving.application.pipeline | 
+### scene_000009：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 64 | 62 | -2 |
+| 目标达标人数 | 16 | 18 | 2 |
+| 会话MOS均值 | 2.392 | 2.488 | 0.097 |
+| 加权MOS总和 | 1133.126 | 1192.374 | 59.248 |
+| 上行占用Mbps | 47.736 | 78.012 | 30.276 |
+| 下行占用Mbps | 119.999 | 119.953 | -0.046 |
+
+MOS评价人数：80；改善：33；恶化：18；不变：29；最大MOS降幅：1.252。
+
+08:05:37 INFO game_solving.application.pipeline | 求解场景 11/100：scene_000010，人数=100
+08:05:39 INFO game_solving.application.pipeline | 求解完成 11/100：成功，停止=CONVERGED_LOCAL，轮数=7，工作量=245644，耗时=1259.7 ms
+08:05:39 INFO game_solving.application.pipeline | 
+### scene_000010：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 61 | 58 | -3 |
+| 目标达标人数 | 19 | 22 | 3 |
+| 会话MOS均值 | 2.546 | 2.652 | 0.106 |
+| 加权MOS总和 | 1206.118 | 1262.751 | 56.633 |
+| 上行占用Mbps | 44.874 | 62.795 | 17.921 |
+| 下行占用Mbps | 119.994 | 119.996 | 0.002 |
+
+MOS评价人数：80；改善：32；恶化：26；不变：22；最大MOS降幅：1.553。
+
+08:05:39 INFO game_solving.application.pipeline | 求解场景 12/100：scene_000011，人数=100
+08:05:40 INFO game_solving.application.pipeline | 求解完成 12/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=196790，耗时=948.9 ms
+08:05:40 INFO game_solving.application.pipeline | 
+### scene_000011：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 69 | 68 | -1 |
+| 目标达标人数 | 11 | 12 | 1 |
+| 会话MOS均值 | 2.363 | 2.467 | 0.104 |
+| 加权MOS总和 | 1138.936 | 1190.469 | 51.533 |
+| 上行占用Mbps | 46.133 | 65.887 | 19.754 |
+| 下行占用Mbps | 119.996 | 119.999 | 0.003 |
+
+MOS评价人数：80；改善：30；恶化：22；不变：28；最大MOS降幅：0.682。
+
+08:05:40 INFO game_solving.application.pipeline | 求解场景 13/100：scene_000012，人数=100
+08:05:40 INFO game_solving.application.pipeline | 求解完成 13/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=172951，耗时=884.9 ms
+08:05:40 INFO game_solving.application.pipeline | 
+### scene_000012：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 63 | 62 | -1 |
+| 目标达标人数 | 17 | 18 | 1 |
+| 会话MOS均值 | 2.467 | 2.525 | 0.058 |
+| 加权MOS总和 | 1176.882 | 1211.011 | 34.129 |
+| 上行占用Mbps | 42.912 | 74.425 | 31.513 |
+| 下行占用Mbps | 119.997 | 119.999 | 0.002 |
+
+MOS评价人数：80；改善：30；恶化：22；不变：28；最大MOS降幅：0.892。
+
+08:05:40 INFO game_solving.application.pipeline | 求解场景 14/100：scene_000013，人数=100
+08:05:41 INFO game_solving.application.pipeline | 求解完成 14/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=163052，耗时=809.0 ms
+08:05:41 INFO game_solving.application.pipeline | 
+### scene_000013：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 68 | 69 | 1 |
+| 目标达标人数 | 12 | 11 | -1 |
+| 会话MOS均值 | 2.309 | 2.383 | 0.075 |
+| 加权MOS总和 | 1121.401 | 1166.645 | 45.244 |
+| 上行占用Mbps | 48.136 | 65.110 | 16.974 |
+| 下行占用Mbps | 119.997 | 119.961 | -0.036 |
+
+MOS评价人数：80；改善：30；恶化：21；不变：29；最大MOS降幅：0.971。
+
+08:05:41 INFO game_solving.application.pipeline | 求解场景 15/100：scene_000014，人数=100
+08:05:42 INFO game_solving.application.pipeline | 求解完成 15/100：成功，停止=CONVERGED_LOCAL，轮数=7，工作量=207540，耗时=1097.7 ms
+08:05:42 INFO game_solving.application.pipeline | 
+### scene_000014：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 68 | 65 | -3 |
+| 目标达标人数 | 12 | 15 | 3 |
+| 会话MOS均值 | 2.396 | 2.508 | 0.112 |
+| 加权MOS总和 | 1143.680 | 1202.634 | 58.954 |
+| 上行占用Mbps | 41.273 | 79.474 | 38.201 |
+| 下行占用Mbps | 119.995 | 120.000 | 0.005 |
+
+MOS评价人数：80；改善：33；恶化：26；不变：21；最大MOS降幅：0.861。
+
+08:05:42 INFO game_solving.application.pipeline | 求解场景 16/100：scene_000015，人数=100
+08:05:44 INFO game_solving.application.pipeline | 求解完成 16/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=222730，耗时=1154.8 ms
+08:05:44 INFO game_solving.application.pipeline | 
+### scene_000015：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 65 | 63 | -2 |
+| 目标达标人数 | 15 | 17 | 2 |
+| 会话MOS均值 | 2.538 | 2.682 | 0.144 |
+| 加权MOS总和 | 1210.482 | 1290.400 | 79.918 |
+| 上行占用Mbps | 50.324 | 73.082 | 22.758 |
+| 下行占用Mbps | 119.976 | 119.995 | 0.019 |
+
+MOS评价人数：80；改善：35；恶化：24；不变：21；最大MOS降幅：0.726。
+
+08:05:44 INFO game_solving.application.pipeline | 求解场景 17/100：scene_000016，人数=100
+08:05:44 INFO game_solving.application.pipeline | 求解完成 17/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=163325，耗时=813.9 ms
+08:05:44 INFO game_solving.application.pipeline | 
+### scene_000016：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 61 | 63 | 2 |
+| 目标达标人数 | 19 | 17 | -2 |
+| 会话MOS均值 | 2.313 | 2.369 | 0.055 |
+| 加权MOS总和 | 1054.938 | 1089.954 | 35.016 |
+| 上行占用Mbps | 45.016 | 77.031 | 32.015 |
+| 下行占用Mbps | 119.999 | 119.997 | -0.002 |
+
+MOS评价人数：80；改善：24；恶化：30；不变：26；最大MOS降幅：0.756。
+
+08:05:44 INFO game_solving.application.pipeline | 求解场景 18/100：scene_000017，人数=100
+08:05:45 INFO game_solving.application.pipeline | 求解完成 18/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=201281，耗时=984.6 ms
+08:05:45 INFO game_solving.application.pipeline | 
+### scene_000017：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 64 | 61 | -3 |
+| 目标达标人数 | 16 | 19 | 3 |
+| 会话MOS均值 | 2.428 | 2.504 | 0.077 |
+| 加权MOS总和 | 1149.931 | 1188.470 | 38.539 |
+| 上行占用Mbps | 49.819 | 84.604 | 34.785 |
+| 下行占用Mbps | 119.989 | 119.997 | 0.008 |
+
+MOS评价人数：80；改善：30；恶化：25；不变：25；最大MOS降幅：1.010。
+
+08:05:45 INFO game_solving.application.pipeline | 求解场景 19/100：scene_000018，人数=100
+08:05:46 INFO game_solving.application.pipeline | 求解完成 19/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=186731，耗时=976.3 ms
+08:05:46 INFO game_solving.application.pipeline | 
+### scene_000018：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 74 | 68 | -6 |
+| 目标达标人数 | 6 | 12 | 6 |
+| 会话MOS均值 | 2.273 | 2.417 | 0.144 |
+| 加权MOS总和 | 1131.283 | 1209.394 | 78.111 |
+| 上行占用Mbps | 41.923 | 77.545 | 35.622 |
+| 下行占用Mbps | 119.989 | 119.983 | -0.006 |
+
+MOS评价人数：80；改善：34；恶化：18；不变：28；最大MOS降幅：0.719。
+
+08:05:46 INFO game_solving.application.pipeline | 求解场景 20/100：scene_000019，人数=100
+08:05:47 INFO game_solving.application.pipeline | 求解完成 20/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=168078，耗时=841.2 ms
+08:05:47 INFO game_solving.application.pipeline | 
+### scene_000019：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 70 | 69 | -1 |
+| 目标达标人数 | 10 | 11 | 1 |
+| 会话MOS均值 | 2.407 | 2.505 | 0.098 |
+| 加权MOS总和 | 1177.203 | 1234.638 | 57.435 |
+| 上行占用Mbps | 43.733 | 77.044 | 33.311 |
+| 下行占用Mbps | 120.000 | 119.983 | -0.017 |
+
+MOS评价人数：80；改善：29；恶化：24；不变：27；最大MOS降幅：0.983。
+
+08:05:47 INFO game_solving.application.pipeline | 求解场景 21/100：scene_000020，人数=100
+08:05:48 INFO game_solving.application.pipeline | 求解完成 21/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=149640，耗时=784.1 ms
+08:05:48 INFO game_solving.application.pipeline | 
+### scene_000020：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 68 | 66 | -2 |
+| 目标达标人数 | 12 | 14 | 2 |
+| 会话MOS均值 | 2.366 | 2.410 | 0.044 |
+| 加权MOS总和 | 1145.107 | 1177.061 | 31.954 |
+| 上行占用Mbps | 42.622 | 64.338 | 21.716 |
+| 下行占用Mbps | 120.000 | 119.999 | -0.001 |
+
+MOS评价人数：80；改善：25；恶化：26；不变：29；最大MOS降幅：0.911。
+
+08:05:48 INFO game_solving.application.pipeline | 求解场景 22/100：scene_000021，人数=100
+08:05:49 INFO game_solving.application.pipeline | 求解完成 22/100：成功，停止=CONVERGED_LOCAL，轮数=7，工作量=206399，耗时=1084.5 ms
+08:05:49 INFO game_solving.application.pipeline | 
+### scene_000021：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 64 | 63 | -1 |
+| 目标达标人数 | 16 | 17 | 1 |
+| 会话MOS均值 | 2.403 | 2.502 | 0.099 |
+| 加权MOS总和 | 1131.531 | 1198.996 | 67.466 |
+| 上行占用Mbps | 53.804 | 89.546 | 35.742 |
+| 下行占用Mbps | 119.999 | 120.000 | 0.001 |
+
+MOS评价人数：80；改善：30；恶化：23；不变：27；最大MOS降幅：0.817。
+
+08:05:49 INFO game_solving.application.pipeline | 求解场景 23/100：scene_000022，人数=100
+08:05:50 INFO game_solving.application.pipeline | 求解完成 23/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=179791，耗时=934.2 ms
+08:05:50 INFO game_solving.application.pipeline | 
+### scene_000022：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 66 | 62 | -4 |
+| 目标达标人数 | 14 | 18 | 4 |
+| 会话MOS均值 | 2.348 | 2.490 | 0.141 |
+| 加权MOS总和 | 1117.118 | 1197.426 | 80.308 |
+| 上行占用Mbps | 40.807 | 64.183 | 23.376 |
+| 下行占用Mbps | 119.993 | 120.000 | 0.007 |
+
+MOS评价人数：80；改善：33；恶化：25；不变：22；最大MOS降幅：0.635。
+
+08:05:50 INFO game_solving.application.pipeline | 求解场景 24/100：scene_000023，人数=100
+08:05:51 INFO game_solving.application.pipeline | 求解完成 24/100：失败，停止=STOPPED_CYCLE，轮数=9，工作量=298903，耗时=1448.6 ms
+08:05:51 INFO game_solving.application.pipeline | 
+### scene_000023：失败（STOPPED_CYCLE）
+
+失败时下表为保留的可行方案，不表示已收敛。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 65 | 63 | -2 |
+| 目标达标人数 | 15 | 17 | 2 |
+| 会话MOS均值 | 2.411 | 2.515 | 0.105 |
+| 加权MOS总和 | 1123.275 | 1176.803 | 53.528 |
+| 上行占用Mbps | 42.094 | 75.061 | 32.967 |
+| 下行占用Mbps | 120.000 | 119.988 | -0.012 |
+
+MOS评价人数：80；改善：35；恶化：23；不变：22；最大MOS降幅：1.338。
+
+08:05:51 INFO game_solving.application.pipeline | 求解场景 25/100：scene_000024，人数=100
+08:05:53 INFO game_solving.application.pipeline | 求解完成 25/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=194527，耗时=1073.5 ms
+08:05:53 INFO game_solving.application.pipeline | 
+### scene_000024：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 66 | 65 | -1 |
+| 目标达标人数 | 14 | 15 | 1 |
+| 会话MOS均值 | 2.382 | 2.488 | 0.105 |
+| 加权MOS总和 | 1129.357 | 1188.914 | 59.557 |
+| 上行占用Mbps | 43.830 | 77.726 | 33.896 |
+| 下行占用Mbps | 119.993 | 119.953 | -0.040 |
+
+MOS评价人数：80；改善：29；恶化：25；不变：26；最大MOS降幅：0.981。
+
+08:05:53 INFO game_solving.application.pipeline | 求解场景 26/100：scene_000025，人数=100
+08:05:54 INFO game_solving.application.pipeline | 求解完成 26/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=193671，耗时=1051.9 ms
+08:05:54 INFO game_solving.application.pipeline | 
+### scene_000025：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 63 | 61 | -2 |
+| 目标达标人数 | 17 | 19 | 2 |
+| 会话MOS均值 | 2.403 | 2.551 | 0.148 |
+| 加权MOS总和 | 1128.900 | 1215.669 | 86.769 |
+| 上行占用Mbps | 39.783 | 73.061 | 33.278 |
+| 下行占用Mbps | 119.999 | 119.992 | -0.007 |
+
+MOS评价人数：80；改善：34；恶化：17；不变：29；最大MOS降幅：0.899。
+
+08:05:54 INFO game_solving.application.pipeline | 求解场景 27/100：scene_000026，人数=100
+08:05:55 INFO game_solving.application.pipeline | 求解完成 27/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=201307，耗时=1025.1 ms
+08:05:55 INFO game_solving.application.pipeline | 
+### scene_000026：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 64 | 60 | -4 |
+| 目标达标人数 | 16 | 20 | 4 |
+| 会话MOS均值 | 2.399 | 2.515 | 0.116 |
+| 加权MOS总和 | 1143.660 | 1209.850 | 66.190 |
+| 上行占用Mbps | 49.430 | 76.748 | 27.318 |
+| 下行占用Mbps | 119.986 | 119.939 | -0.047 |
+
+MOS评价人数：80；改善：33；恶化：24；不变：23；最大MOS降幅：1.191。
+
+08:05:55 INFO game_solving.application.pipeline | 求解场景 28/100：scene_000027，人数=100
+08:05:56 INFO game_solving.application.pipeline | 求解完成 28/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=192781，耗时=989.2 ms
+08:05:56 INFO game_solving.application.pipeline | 
+### scene_000027：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 67 | 64 | -3 |
+| 目标达标人数 | 13 | 16 | 3 |
+| 会话MOS均值 | 2.385 | 2.465 | 0.080 |
+| 加权MOS总和 | 1160.147 | 1206.239 | 46.093 |
+| 上行占用Mbps | 44.639 | 65.668 | 21.029 |
+| 下行占用Mbps | 119.992 | 120.000 | 0.008 |
+
+MOS评价人数：80；改善：32；恶化：26；不变：22；最大MOS降幅：0.740。
+
+08:05:56 INFO game_solving.application.pipeline | 求解场景 29/100：scene_000028，人数=100
+08:05:57 INFO game_solving.application.pipeline | 求解完成 29/100：成功，停止=CONVERGED_LOCAL，轮数=7，工作量=193124，耗时=1036.4 ms
+08:05:57 INFO game_solving.application.pipeline | 
+### scene_000028：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 66 | 64 | -2 |
+| 目标达标人数 | 14 | 16 | 2 |
+| 会话MOS均值 | 2.403 | 2.488 | 0.085 |
+| 加权MOS总和 | 1158.489 | 1210.896 | 52.407 |
+| 上行占用Mbps | 48.402 | 74.756 | 26.354 |
+| 下行占用Mbps | 119.998 | 119.982 | -0.016 |
+
+MOS评价人数：80；改善：29；恶化：24；不变：27；最大MOS降幅：1.100。
+
+08:05:57 INFO game_solving.application.pipeline | 求解场景 30/100：scene_000029，人数=100
+08:05:58 INFO game_solving.application.pipeline | 求解完成 30/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=178533，耗时=929.1 ms
+08:05:58 INFO game_solving.application.pipeline | 
+### scene_000029：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 66 | 65 | -1 |
+| 目标达标人数 | 14 | 15 | 1 |
+| 会话MOS均值 | 2.381 | 2.467 | 0.086 |
+| 加权MOS总和 | 1162.380 | 1216.983 | 54.603 |
+| 上行占用Mbps | 41.933 | 63.079 | 21.146 |
+| 下行占用Mbps | 119.999 | 119.996 | -0.003 |
+
+MOS评价人数：80；改善：29；恶化：21；不变：30；最大MOS降幅：1.056。
+
+08:05:58 INFO game_solving.application.pipeline | 求解场景 31/100：scene_000030，人数=100
+08:05:59 INFO game_solving.application.pipeline | 求解完成 31/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=189255，耗时=955.7 ms
+08:05:59 INFO game_solving.application.pipeline | 
+### scene_000030：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 67 | 68 | 1 |
+| 目标达标人数 | 13 | 12 | -1 |
+| 会话MOS均值 | 2.431 | 2.581 | 0.151 |
+| 加权MOS总和 | 1202.795 | 1293.844 | 91.049 |
+| 上行占用Mbps | 45.911 | 74.094 | 28.183 |
+| 下行占用Mbps | 119.999 | 119.998 | -0.001 |
+
+MOS评价人数：80；改善：31；恶化：26；不变：23；最大MOS降幅：0.726。
+
+08:05:59 INFO game_solving.application.pipeline | 求解场景 32/100：scene_000031，人数=100
+08:06:00 INFO game_solving.application.pipeline | 求解完成 32/100：失败，停止=STOPPED_CYCLE，轮数=9，工作量=315863，耗时=1468.6 ms
+08:06:00 INFO game_solving.application.pipeline | 
+### scene_000031：失败（STOPPED_CYCLE）
+
+失败时下表为保留的可行方案，不表示已收敛。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 64 | 62 | -2 |
+| 目标达标人数 | 16 | 18 | 2 |
+| 会话MOS均值 | 2.426 | 2.475 | 0.049 |
+| 加权MOS总和 | 1149.228 | 1179.242 | 30.014 |
+| 上行占用Mbps | 54.696 | 69.445 | 14.749 |
+| 下行占用Mbps | 119.988 | 119.989 | 0.001 |
+
+MOS评价人数：80；改善：30；恶化：26；不变：24；最大MOS降幅：1.127。
+
+08:06:00 INFO game_solving.application.pipeline | 求解场景 33/100：scene_000032，人数=100
+08:06:01 INFO game_solving.application.pipeline | 求解完成 33/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=194467，耗时=1000.4 ms
+08:06:01 INFO game_solving.application.pipeline | 
+### scene_000032：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 65 | 62 | -3 |
+| 目标达标人数 | 15 | 18 | 3 |
+| 会话MOS均值 | 2.446 | 2.532 | 0.086 |
+| 加权MOS总和 | 1157.511 | 1203.828 | 46.318 |
+| 上行占用Mbps | 43.875 | 69.408 | 25.533 |
+| 下行占用Mbps | 119.999 | 119.971 | -0.028 |
+
+MOS评价人数：80；改善：32；恶化：21；不变：27；最大MOS降幅：0.979。
+
+08:06:01 INFO game_solving.application.pipeline | 求解场景 34/100：scene_000033，人数=100
+08:06:02 INFO game_solving.application.pipeline | 求解完成 34/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=167358，耗时=871.3 ms
+08:06:02 INFO game_solving.application.pipeline | 
+### scene_000033：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 70 | 66 | -4 |
+| 目标达标人数 | 10 | 14 | 4 |
+| 会话MOS均值 | 2.257 | 2.295 | 0.039 |
+| 加权MOS总和 | 1049.875 | 1078.212 | 28.338 |
+| 上行占用Mbps | 49.585 | 73.304 | 23.719 |
+| 下行占用Mbps | 120.000 | 119.995 | -0.005 |
+
+MOS评价人数：80；改善：30；恶化：24；不变：26；最大MOS降幅：1.353。
+
+08:06:02 INFO game_solving.application.pipeline | 求解场景 35/100：scene_000034，人数=100
+08:06:04 INFO game_solving.application.pipeline | 求解完成 35/100：失败，停止=STOPPED_CYCLE，轮数=10，工作量=344977，耗时=1816.8 ms
+08:06:04 INFO game_solving.application.pipeline | 
+### scene_000034：失败（STOPPED_CYCLE）
+
+失败时下表为保留的可行方案，不表示已收敛。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 63 | 62 | -1 |
+| 目标达标人数 | 17 | 18 | 1 |
+| 会话MOS均值 | 2.462 | 2.553 | 0.091 |
+| 加权MOS总和 | 1191.733 | 1239.207 | 47.474 |
+| 上行占用Mbps | 44.492 | 85.308 | 40.816 |
+| 下行占用Mbps | 120.000 | 119.988 | -0.012 |
+
+MOS评价人数：80；改善：33；恶化：26；不变：21；最大MOS降幅：1.216。
+
+08:06:04 INFO game_solving.application.pipeline | 求解场景 36/100：scene_000035，人数=100
+08:06:05 INFO game_solving.application.pipeline | 求解完成 36/100：成功，停止=CONVERGED_LOCAL，轮数=7，工作量=165403，耗时=916.4 ms
+08:06:05 INFO game_solving.application.pipeline | 
+### scene_000035：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 64 | 65 | 1 |
+| 目标达标人数 | 16 | 15 | -1 |
+| 会话MOS均值 | 2.348 | 2.428 | 0.080 |
+| 加权MOS总和 | 1130.258 | 1169.660 | 39.401 |
+| 上行占用Mbps | 39.802 | 75.848 | 36.046 |
+| 下行占用Mbps | 119.994 | 119.998 | 0.004 |
+
+MOS评价人数：80；改善：30；恶化：24；不变：26；最大MOS降幅：0.864。
+
+08:06:05 INFO game_solving.application.pipeline | 求解场景 37/100：scene_000036，人数=100
+08:06:06 INFO game_solving.application.pipeline | 求解完成 37/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=162553，耗时=871.1 ms
+08:06:06 INFO game_solving.application.pipeline | 
+### scene_000036：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 69 | 69 | 0 |
+| 目标达标人数 | 11 | 11 | 0 |
+| 会话MOS均值 | 2.312 | 2.395 | 0.083 |
+| 加权MOS总和 | 1124.992 | 1179.186 | 54.194 |
+| 上行占用Mbps | 40.204 | 70.961 | 30.757 |
+| 下行占用Mbps | 119.982 | 119.985 | 0.003 |
+
+MOS评价人数：80；改善：29；恶化：26；不变：25；最大MOS降幅：1.006。
+
+08:06:06 INFO game_solving.application.pipeline | 求解场景 38/100：scene_000037，人数=100
+08:06:07 INFO game_solving.application.pipeline | 求解完成 38/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=178388，耗时=919.9 ms
+08:06:07 INFO game_solving.application.pipeline | 
+### scene_000037：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 61 | 63 | 2 |
+| 目标达标人数 | 19 | 17 | -2 |
+| 会话MOS均值 | 2.555 | 2.620 | 0.065 |
+| 加权MOS总和 | 1181.229 | 1226.391 | 45.162 |
+| 上行占用Mbps | 43.631 | 84.744 | 41.113 |
+| 下行占用Mbps | 119.995 | 119.992 | -0.003 |
+
+MOS评价人数：80；改善：31；恶化：27；不变：22；最大MOS降幅：1.235。
+
+08:06:07 INFO game_solving.application.pipeline | 求解场景 39/100：scene_000038，人数=100
+08:06:08 INFO game_solving.application.pipeline | 求解完成 39/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=216406，耗时=1105.5 ms
+08:06:08 INFO game_solving.application.pipeline | 
+### scene_000038：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 70 | 65 | -5 |
+| 目标达标人数 | 10 | 15 | 5 |
+| 会话MOS均值 | 2.443 | 2.589 | 0.146 |
+| 加权MOS总和 | 1191.658 | 1272.275 | 80.617 |
+| 上行占用Mbps | 41.907 | 73.687 | 31.780 |
+| 下行占用Mbps | 119.999 | 119.998 | -0.001 |
+
+MOS评价人数：80；改善：34；恶化：19；不变：27；最大MOS降幅：1.137。
+
+08:06:08 INFO game_solving.application.pipeline | 求解场景 40/100：scene_000039，人数=100
+08:06:09 INFO game_solving.application.pipeline | 求解完成 40/100：失败，停止=STOPPED_CYCLE，轮数=9，工作量=343167，耗时=1512.6 ms
+08:06:09 INFO game_solving.application.pipeline | 
+### scene_000039：失败（STOPPED_CYCLE）
+
+失败时下表为保留的可行方案，不表示已收敛。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 66 | 66 | 0 |
+| 目标达标人数 | 14 | 14 | 0 |
+| 会话MOS均值 | 2.382 | 2.452 | 0.071 |
+| 加权MOS总和 | 1123.350 | 1166.990 | 43.641 |
+| 上行占用Mbps | 35.639 | 63.258 | 27.619 |
+| 下行占用Mbps | 119.991 | 119.985 | -0.006 |
+
+MOS评价人数：80；改善：30；恶化：29；不变：21；最大MOS降幅：1.041。
+
+08:06:09 INFO game_solving.application.pipeline | 求解场景 41/100：scene_000040，人数=100
+08:06:10 INFO game_solving.application.pipeline | 求解完成 41/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=205214，耗时=1101.2 ms
+08:06:10 INFO game_solving.application.pipeline | 
+### scene_000040：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 65 | 62 | -3 |
+| 目标达标人数 | 15 | 18 | 3 |
+| 会话MOS均值 | 2.329 | 2.422 | 0.093 |
+| 加权MOS总和 | 1075.339 | 1124.559 | 49.220 |
+| 上行占用Mbps | 43.526 | 81.139 | 37.613 |
+| 下行占用Mbps | 119.998 | 119.924 | -0.074 |
+
+MOS评价人数：80；改善：30；恶化：22；不变：28；最大MOS降幅：0.464。
+
+08:06:10 INFO game_solving.application.pipeline | 求解场景 42/100：scene_000041，人数=100
+08:06:11 INFO game_solving.application.pipeline | 求解完成 42/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=179136，耗时=915.8 ms
+08:06:11 INFO game_solving.application.pipeline | 
+### scene_000041：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 67 | 65 | -2 |
+| 目标达标人数 | 13 | 15 | 2 |
+| 会话MOS均值 | 2.405 | 2.493 | 0.088 |
+| 加权MOS总和 | 1160.502 | 1220.326 | 59.824 |
+| 上行占用Mbps | 46.114 | 83.333 | 37.219 |
+| 下行占用Mbps | 119.975 | 119.991 | 0.016 |
+
+MOS评价人数：80；改善：31；恶化：25；不变：24；最大MOS降幅：1.005。
+
+08:06:11 INFO game_solving.application.pipeline | 求解场景 43/100：scene_000042，人数=100
+08:06:12 INFO game_solving.application.pipeline | 求解完成 43/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=199240，耗时=1051.2 ms
+08:06:12 INFO game_solving.application.pipeline | 
+### scene_000042：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 71 | 67 | -4 |
+| 目标达标人数 | 9 | 13 | 4 |
+| 会话MOS均值 | 2.326 | 2.499 | 0.173 |
+| 加权MOS总和 | 1128.240 | 1219.789 | 91.549 |
+| 上行占用Mbps | 38.920 | 66.027 | 27.107 |
+| 下行占用Mbps | 119.992 | 119.975 | -0.017 |
+
+MOS评价人数：80；改善：35；恶化：20；不变：25；最大MOS降幅：1.215。
+
+08:06:12 INFO game_solving.application.pipeline | 求解场景 44/100：scene_000043，人数=100
+08:06:13 INFO game_solving.application.pipeline | 求解完成 44/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=199400，耗时=1069.4 ms
+08:06:13 INFO game_solving.application.pipeline | 
+### scene_000043：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 62 | 61 | -1 |
+| 目标达标人数 | 18 | 19 | 1 |
+| 会话MOS均值 | 2.493 | 2.572 | 0.078 |
+| 加权MOS总和 | 1222.088 | 1273.433 | 51.346 |
+| 上行占用Mbps | 51.052 | 83.336 | 32.284 |
+| 下行占用Mbps | 120.000 | 119.977 | -0.023 |
+
+MOS评价人数：80；改善：28；恶化：27；不变：25；最大MOS降幅：0.664。
+
+08:06:13 INFO game_solving.application.pipeline | 求解场景 45/100：scene_000044，人数=100
+08:06:14 INFO game_solving.application.pipeline | 求解完成 45/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=185040，耗时=977.4 ms
+08:06:14 INFO game_solving.application.pipeline | 
+### scene_000044：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 62 | 59 | -3 |
+| 目标达标人数 | 18 | 21 | 3 |
+| 会话MOS均值 | 2.484 | 2.566 | 0.082 |
+| 加权MOS总和 | 1211.277 | 1258.332 | 47.055 |
+| 上行占用Mbps | 42.485 | 73.648 | 31.163 |
+| 下行占用Mbps | 119.996 | 119.996 | 0.000 |
+
+MOS评价人数：80；改善：26；恶化：27；不变：27；最大MOS降幅：0.922。
+
+08:06:14 INFO game_solving.application.pipeline | 求解场景 46/100：scene_000045，人数=100
+08:06:15 INFO game_solving.application.pipeline | 求解完成 46/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=180016，耗时=926.0 ms
+08:06:15 INFO game_solving.application.pipeline | 
+### scene_000045：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 65 | 64 | -1 |
+| 目标达标人数 | 15 | 16 | 1 |
+| 会话MOS均值 | 2.414 | 2.493 | 0.080 |
+| 加权MOS总和 | 1132.680 | 1175.647 | 42.967 |
+| 上行占用Mbps | 43.100 | 59.578 | 16.478 |
+| 下行占用Mbps | 120.000 | 120.000 | 0.000 |
+
+MOS评价人数：80；改善：28；恶化：25；不变：27；最大MOS降幅：0.784。
+
+08:06:15 INFO game_solving.application.pipeline | 求解场景 47/100：scene_000046，人数=100
+08:06:16 INFO game_solving.application.pipeline | 求解完成 47/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=172557，耗时=1016.0 ms
+08:06:16 INFO game_solving.application.pipeline | 
+### scene_000046：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 65 | 61 | -4 |
+| 目标达标人数 | 15 | 19 | 4 |
+| 会话MOS均值 | 2.359 | 2.523 | 0.164 |
+| 加权MOS总和 | 1141.999 | 1225.862 | 83.862 |
+| 上行占用Mbps | 46.501 | 89.714 | 43.213 |
+| 下行占用Mbps | 119.968 | 120.000 | 0.032 |
+
+MOS评价人数：80；改善：36；恶化：19；不变：25；最大MOS降幅：1.119。
+
+08:06:16 INFO game_solving.application.pipeline | 求解场景 48/100：scene_000047，人数=100
+08:06:17 INFO game_solving.application.pipeline | 求解完成 48/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=180467，耗时=928.1 ms
+08:06:17 INFO game_solving.application.pipeline | 
+### scene_000047：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 62 | 61 | -1 |
+| 目标达标人数 | 18 | 19 | 1 |
+| 会话MOS均值 | 2.441 | 2.559 | 0.118 |
+| 加权MOS总和 | 1153.578 | 1226.795 | 73.218 |
+| 上行占用Mbps | 45.875 | 74.058 | 28.183 |
+| 下行占用Mbps | 120.000 | 119.967 | -0.033 |
+
+MOS评价人数：80；改善：30；恶化：25；不变：25；最大MOS降幅：0.804。
+
+08:06:17 INFO game_solving.application.pipeline | 求解场景 49/100：scene_000048，人数=100
+08:06:19 INFO game_solving.application.pipeline | 求解完成 49/100：失败，停止=STOPPED_CYCLE，轮数=9，工作量=293810，耗时=1398.5 ms
+08:06:19 INFO game_solving.application.pipeline | 
+### scene_000048：失败（STOPPED_CYCLE）
+
+失败时下表为保留的可行方案，不表示已收敛。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 69 | 65 | -4 |
+| 目标达标人数 | 11 | 15 | 4 |
+| 会话MOS均值 | 2.346 | 2.476 | 0.131 |
+| 加权MOS总和 | 1141.965 | 1209.406 | 67.441 |
+| 上行占用Mbps | 42.312 | 69.057 | 26.745 |
+| 下行占用Mbps | 119.985 | 119.980 | -0.005 |
+
+MOS评价人数：80；改善：39；恶化：20；不变：21；最大MOS降幅：0.731。
+
+08:06:19 INFO game_solving.application.pipeline | 求解场景 50/100：scene_000049，人数=100
+08:06:20 INFO game_solving.application.pipeline | 求解完成 50/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=199167，耗时=1083.0 ms
+08:06:20 INFO game_solving.application.pipeline | 
+### scene_000049：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 63 | 61 | -2 |
+| 目标达标人数 | 17 | 19 | 2 |
+| 会话MOS均值 | 2.383 | 2.550 | 0.167 |
+| 加权MOS总和 | 1145.490 | 1243.636 | 98.147 |
+| 上行占用Mbps | 40.498 | 79.165 | 38.667 |
+| 下行占用Mbps | 119.998 | 120.000 | 0.002 |
+
+MOS评价人数：80；改善：37；恶化：18；不变：25；最大MOS降幅：0.918。
+
+08:06:20 INFO game_solving.application.pipeline | 求解场景 51/100：scene_000050，人数=100
+08:06:21 INFO game_solving.application.pipeline | 求解完成 51/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=184001，耗时=946.7 ms
+08:06:21 INFO game_solving.application.pipeline | 
+### scene_000050：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 69 | 67 | -2 |
+| 目标达标人数 | 11 | 13 | 2 |
+| 会话MOS均值 | 2.262 | 2.359 | 0.097 |
+| 加权MOS总和 | 1070.722 | 1119.837 | 49.115 |
+| 上行占用Mbps | 52.472 | 85.771 | 33.299 |
+| 下行占用Mbps | 119.996 | 119.953 | -0.043 |
+
+MOS评价人数：80；改善：34；恶化：16；不变：30；最大MOS降幅：0.905。
+
+08:06:21 INFO game_solving.application.pipeline | 求解场景 52/100：scene_000051，人数=100
+08:06:22 INFO game_solving.application.pipeline | 求解完成 52/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=206607，耗时=1110.6 ms
+08:06:22 INFO game_solving.application.pipeline | 
+### scene_000051：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 66 | 62 | -4 |
+| 目标达标人数 | 14 | 18 | 4 |
+| 会话MOS均值 | 2.363 | 2.553 | 0.190 |
+| 加权MOS总和 | 1152.583 | 1248.031 | 95.448 |
+| 上行占用Mbps | 46.348 | 71.267 | 24.919 |
+| 下行占用Mbps | 119.996 | 119.983 | -0.013 |
+
+MOS评价人数：80；改善：35；恶化：17；不变：28；最大MOS降幅：1.035。
+
+08:06:22 INFO game_solving.application.pipeline | 求解场景 53/100：scene_000052，人数=100
+08:06:23 INFO game_solving.application.pipeline | 求解完成 53/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=137928，耗时=762.0 ms
+08:06:23 INFO game_solving.application.pipeline | 
+### scene_000052：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 69 | 67 | -2 |
+| 目标达标人数 | 11 | 13 | 2 |
+| 会话MOS均值 | 2.434 | 2.542 | 0.108 |
+| 加权MOS总和 | 1207.861 | 1262.767 | 54.906 |
+| 上行占用Mbps | 41.029 | 61.133 | 20.104 |
+| 下行占用Mbps | 119.996 | 119.997 | 0.001 |
+
+MOS评价人数：80；改善：30；恶化：17；不变：33；最大MOS降幅：0.854。
+
+08:06:23 INFO game_solving.application.pipeline | 求解场景 54/100：scene_000053，人数=100
+08:06:24 INFO game_solving.application.pipeline | 求解完成 54/100：失败，停止=STOPPED_CYCLE，轮数=7，工作量=182035，耗时=972.4 ms
+08:06:24 INFO game_solving.application.pipeline | 
+### scene_000053：失败（STOPPED_CYCLE）
+
+失败时下表为保留的可行方案，不表示已收敛。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 64 | 63 | -1 |
+| 目标达标人数 | 16 | 17 | 1 |
+| 会话MOS均值 | 2.372 | 2.428 | 0.056 |
+| 加权MOS总和 | 1129.169 | 1163.672 | 34.503 |
+| 上行占用Mbps | 50.465 | 65.365 | 14.900 |
+| 下行占用Mbps | 120.000 | 119.953 | -0.047 |
+
+MOS评价人数：80；改善：31；恶化：22；不变：27；最大MOS降幅：0.724。
+
+08:06:24 INFO game_solving.application.pipeline | 求解场景 55/100：scene_000054，人数=100
+08:06:25 INFO game_solving.application.pipeline | 求解完成 55/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=250717，耗时=1265.6 ms
+08:06:25 INFO game_solving.application.pipeline | 
+### scene_000054：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 65 | 59 | -6 |
+| 目标达标人数 | 15 | 21 | 6 |
+| 会话MOS均值 | 2.494 | 2.635 | 0.140 |
+| 加权MOS总和 | 1185.777 | 1266.081 | 80.304 |
+| 上行占用Mbps | 42.747 | 73.882 | 31.135 |
+| 下行占用Mbps | 119.992 | 119.982 | -0.010 |
+
+MOS评价人数：80；改善：37；恶化：21；不变：22；最大MOS降幅：0.883。
+
+08:06:25 INFO game_solving.application.pipeline | 求解场景 56/100：scene_000055，人数=100
+08:06:26 INFO game_solving.application.pipeline | 求解完成 56/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=170864，耗时=899.3 ms
+08:06:26 INFO game_solving.application.pipeline | 
+### scene_000055：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 69 | 63 | -6 |
+| 目标达标人数 | 11 | 17 | 6 |
+| 会话MOS均值 | 2.277 | 2.421 | 0.144 |
+| 加权MOS总和 | 1093.952 | 1167.514 | 73.562 |
+| 上行占用Mbps | 44.980 | 65.880 | 20.900 |
+| 下行占用Mbps | 119.994 | 119.990 | -0.004 |
+
+MOS评价人数：80；改善：30；恶化：17；不变：33；最大MOS降幅：0.564。
+
+08:06:26 INFO game_solving.application.pipeline | 求解场景 57/100：scene_000056，人数=100
+08:06:27 INFO game_solving.application.pipeline | 求解完成 57/100：成功，停止=CONVERGED_LOCAL，轮数=7，工作量=216511，耗时=1120.9 ms
+08:06:27 INFO game_solving.application.pipeline | 
+### scene_000056：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 71 | 66 | -5 |
+| 目标达标人数 | 9 | 14 | 5 |
+| 会话MOS均值 | 2.473 | 2.554 | 0.080 |
+| 加权MOS总和 | 1220.912 | 1272.145 | 51.233 |
+| 上行占用Mbps | 42.814 | 67.689 | 24.875 |
+| 下行占用Mbps | 120.000 | 119.998 | -0.002 |
+
+MOS评价人数：80；改善：31；恶化：20；不变：29；最大MOS降幅：0.931。
+
+08:06:27 INFO game_solving.application.pipeline | 求解场景 58/100：scene_000057，人数=100
+08:06:28 INFO game_solving.application.pipeline | 求解完成 58/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=191695，耗时=984.9 ms
+08:06:28 INFO game_solving.application.pipeline | 
+### scene_000057：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 64 | 62 | -2 |
+| 目标达标人数 | 16 | 18 | 2 |
+| 会话MOS均值 | 2.535 | 2.573 | 0.038 |
+| 加权MOS总和 | 1206.296 | 1231.792 | 25.496 |
+| 上行占用Mbps | 46.856 | 79.254 | 32.398 |
+| 下行占用Mbps | 120.000 | 119.987 | -0.013 |
+
+MOS评价人数：80；改善：30；恶化：31；不变：19；最大MOS降幅：1.085。
+
+08:06:28 INFO game_solving.application.pipeline | 求解场景 59/100：scene_000058，人数=100
+08:06:29 INFO game_solving.application.pipeline | 求解完成 59/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=185028，耗时=984.0 ms
+08:06:29 INFO game_solving.application.pipeline | 
+### scene_000058：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 64 | 62 | -2 |
+| 目标达标人数 | 16 | 18 | 2 |
+| 会话MOS均值 | 2.352 | 2.465 | 0.114 |
+| 加权MOS总和 | 1144.397 | 1214.475 | 70.078 |
+| 上行占用Mbps | 42.583 | 65.114 | 22.531 |
+| 下行占用Mbps | 120.000 | 119.998 | -0.002 |
+
+MOS评价人数：80；改善：30；恶化：23；不变：27；最大MOS降幅：0.785。
+
+08:06:29 INFO game_solving.application.pipeline | 求解场景 60/100：scene_000059，人数=100
+08:06:30 INFO game_solving.application.pipeline | 求解完成 60/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=180073，耗时=915.0 ms
+08:06:30 INFO game_solving.application.pipeline | 
+### scene_000059：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 61 | 59 | -2 |
+| 目标达标人数 | 19 | 21 | 2 |
+| 会话MOS均值 | 2.528 | 2.606 | 0.078 |
+| 加权MOS总和 | 1164.768 | 1207.768 | 43.000 |
+| 上行占用Mbps | 44.792 | 86.342 | 41.550 |
+| 下行占用Mbps | 119.997 | 119.975 | -0.022 |
+
+MOS评价人数：80；改善：37；恶化：23；不变：20；最大MOS降幅：1.223。
+
+08:06:30 INFO game_solving.application.pipeline | 求解场景 61/100：scene_000060，人数=100
+08:06:31 INFO game_solving.application.pipeline | 求解完成 61/100：成功，停止=CONVERGED_LOCAL，轮数=7，工作量=210848，耗时=1088.2 ms
+08:06:31 INFO game_solving.application.pipeline | 
+### scene_000060：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 68 | 63 | -5 |
+| 目标达标人数 | 12 | 17 | 5 |
+| 会话MOS均值 | 2.373 | 2.488 | 0.115 |
+| 加权MOS总和 | 1142.690 | 1204.094 | 61.405 |
+| 上行占用Mbps | 41.814 | 63.186 | 21.372 |
+| 下行占用Mbps | 119.994 | 119.995 | 0.001 |
+
+MOS评价人数：80；改善：32；恶化：20；不变：28；最大MOS降幅：0.551。
+
+08:06:31 INFO game_solving.application.pipeline | 求解场景 62/100：scene_000061，人数=100
+08:06:32 INFO game_solving.application.pipeline | 求解完成 62/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=215518，耗时=1154.5 ms
+08:06:32 INFO game_solving.application.pipeline | 
+### scene_000061：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 62 | 57 | -5 |
+| 目标达标人数 | 18 | 23 | 5 |
+| 会话MOS均值 | 2.557 | 2.671 | 0.115 |
+| 加权MOS总和 | 1188.817 | 1251.626 | 62.808 |
+| 上行占用Mbps | 43.902 | 80.631 | 36.729 |
+| 下行占用Mbps | 120.000 | 119.993 | -0.007 |
+
+MOS评价人数：80；改善：39；恶化：23；不变：18；最大MOS降幅：1.186。
+
+08:06:32 INFO game_solving.application.pipeline | 求解场景 63/100：scene_000062，人数=100
+08:06:33 INFO game_solving.application.pipeline | 求解完成 63/100：成功，停止=CONVERGED_LOCAL，轮数=7，工作量=224436，耗时=1147.1 ms
+08:06:33 INFO game_solving.application.pipeline | 
+### scene_000062：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 63 | 62 | -1 |
+| 目标达标人数 | 17 | 18 | 1 |
+| 会话MOS均值 | 2.497 | 2.529 | 0.032 |
+| 加权MOS总和 | 1194.093 | 1221.819 | 27.727 |
+| 上行占用Mbps | 54.648 | 84.994 | 30.346 |
+| 下行占用Mbps | 119.996 | 119.981 | -0.015 |
+
+MOS评价人数：80；改善：31；恶化：27；不变：22；最大MOS降幅：1.567。
+
+08:06:33 INFO game_solving.application.pipeline | 求解场景 64/100：scene_000063，人数=100
+08:06:34 INFO game_solving.application.pipeline | 求解完成 64/100：成功，停止=CONVERGED_LOCAL，轮数=7，工作量=192063，耗时=996.8 ms
+08:06:34 INFO game_solving.application.pipeline | 
+### scene_000063：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 62 | 61 | -1 |
+| 目标达标人数 | 18 | 19 | 1 |
+| 会话MOS均值 | 2.425 | 2.561 | 0.136 |
+| 加权MOS总和 | 1120.574 | 1197.548 | 76.974 |
+| 上行占用Mbps | 51.142 | 85.530 | 34.388 |
+| 下行占用Mbps | 120.000 | 119.996 | -0.004 |
+
+MOS评价人数：80；改善：28；恶化：20；不变：32；最大MOS降幅：0.924。
+
+08:06:34 INFO game_solving.application.pipeline | 求解场景 65/100：scene_000064，人数=100
+08:06:35 INFO game_solving.application.pipeline | 求解完成 65/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=182244，耗时=975.2 ms
+08:06:35 INFO game_solving.application.pipeline | 
+### scene_000064：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 65 | 64 | -1 |
+| 目标达标人数 | 15 | 16 | 1 |
+| 会话MOS均值 | 2.307 | 2.414 | 0.107 |
+| 加权MOS总和 | 1110.162 | 1179.550 | 69.388 |
+| 上行占用Mbps | 41.033 | 74.848 | 33.815 |
+| 下行占用Mbps | 119.987 | 119.945 | -0.042 |
+
+MOS评价人数：80；改善：34；恶化：16；不变：30；最大MOS降幅：1.000。
+
+08:06:35 INFO game_solving.application.pipeline | 求解场景 66/100：scene_000065，人数=100
+08:06:36 INFO game_solving.application.pipeline | 求解完成 66/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=176377，耗时=909.6 ms
+08:06:36 INFO game_solving.application.pipeline | 
+### scene_000065：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 69 | 67 | -2 |
+| 目标达标人数 | 11 | 13 | 2 |
+| 会话MOS均值 | 2.388 | 2.477 | 0.089 |
+| 加权MOS总和 | 1134.464 | 1191.532 | 57.068 |
+| 上行占用Mbps | 55.195 | 95.131 | 39.936 |
+| 下行占用Mbps | 119.996 | 119.997 | 0.001 |
+
+MOS评价人数：80；改善：30；恶化：22；不变：28；最大MOS降幅：0.714。
+
+08:06:36 INFO game_solving.application.pipeline | 求解场景 67/100：scene_000066，人数=100
+08:06:38 INFO game_solving.application.pipeline | 求解完成 67/100：失败，停止=STOPPED_CYCLE，轮数=8，工作量=282504，耗时=1401.2 ms
+08:06:38 INFO game_solving.application.pipeline | 
+### scene_000066：失败（STOPPED_CYCLE）
+
+失败时下表为保留的可行方案，不表示已收敛。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 63 | 64 | 1 |
+| 目标达标人数 | 17 | 16 | -1 |
+| 会话MOS均值 | 2.444 | 2.591 | 0.147 |
+| 加权MOS总和 | 1140.673 | 1233.487 | 92.814 |
+| 上行占用Mbps | 39.429 | 84.228 | 44.799 |
+| 下行占用Mbps | 119.996 | 120.000 | 0.004 |
+
+MOS评价人数：80；改善：35；恶化：26；不变：19；最大MOS降幅：1.237。
+
+08:06:38 INFO game_solving.application.pipeline | 求解场景 68/100：scene_000067，人数=100
+08:06:39 INFO game_solving.application.pipeline | 求解完成 68/100：成功，停止=CONVERGED_LOCAL，轮数=7，工作量=222845，耗时=1166.1 ms
+08:06:39 INFO game_solving.application.pipeline | 
+### scene_000067：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 63 | 61 | -2 |
+| 目标达标人数 | 17 | 19 | 2 |
+| 会话MOS均值 | 2.477 | 2.599 | 0.122 |
+| 加权MOS总和 | 1173.635 | 1241.563 | 67.928 |
+| 上行占用Mbps | 50.678 | 89.062 | 38.384 |
+| 下行占用Mbps | 119.990 | 119.999 | 0.009 |
+
+MOS评价人数：80；改善：29；恶化：24；不变：27；最大MOS降幅：0.865。
+
+08:06:39 INFO game_solving.application.pipeline | 求解场景 69/100：scene_000068，人数=100
+08:06:40 INFO game_solving.application.pipeline | 求解完成 69/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=172578，耗时=888.3 ms
+08:06:40 INFO game_solving.application.pipeline | 
+### scene_000068：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 66 | 65 | -1 |
+| 目标达标人数 | 14 | 15 | 1 |
+| 会话MOS均值 | 2.429 | 2.542 | 0.113 |
+| 加权MOS总和 | 1174.300 | 1242.094 | 67.794 |
+| 上行占用Mbps | 52.984 | 89.221 | 36.237 |
+| 下行占用Mbps | 120.000 | 119.987 | -0.013 |
+
+MOS评价人数：80；改善：29；恶化：23；不变：28；最大MOS降幅：0.882。
+
+08:06:40 INFO game_solving.application.pipeline | 求解场景 70/100：scene_000069，人数=100
+08:06:41 INFO game_solving.application.pipeline | 求解完成 70/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=194410，耗时=1020.6 ms
+08:06:41 INFO game_solving.application.pipeline | 
+### scene_000069：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 64 | 60 | -4 |
+| 目标达标人数 | 16 | 20 | 4 |
+| 会话MOS均值 | 2.425 | 2.575 | 0.149 |
+| 加权MOS总和 | 1130.413 | 1208.621 | 78.208 |
+| 上行占用Mbps | 40.472 | 80.233 | 39.761 |
+| 下行占用Mbps | 119.987 | 119.991 | 0.004 |
+
+MOS评价人数：80；改善：35；恶化：19；不变：26；最大MOS降幅：0.748。
+
+08:06:41 INFO game_solving.application.pipeline | 求解场景 71/100：scene_000070，人数=100
+08:06:42 INFO game_solving.application.pipeline | 求解完成 71/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=148088，耗时=791.6 ms
+08:06:42 INFO game_solving.application.pipeline | 
+### scene_000070：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 64 | 66 | 2 |
+| 目标达标人数 | 16 | 14 | -2 |
+| 会话MOS均值 | 2.403 | 2.486 | 0.083 |
+| 加权MOS总和 | 1141.363 | 1192.701 | 51.338 |
+| 上行占用Mbps | 51.123 | 83.691 | 32.568 |
+| 下行占用Mbps | 119.990 | 119.991 | 0.001 |
+
+MOS评价人数：80；改善：29；恶化：24；不变：27；最大MOS降幅：0.659。
+
+08:06:42 INFO game_solving.application.pipeline | 求解场景 72/100：scene_000071，人数=100
+08:06:42 INFO game_solving.application.pipeline | 求解完成 72/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=134772，耗时=667.7 ms
+08:06:42 INFO game_solving.application.pipeline | 
+### scene_000071：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 70 | 71 | 1 |
+| 目标达标人数 | 10 | 9 | -1 |
+| 会话MOS均值 | 2.365 | 2.402 | 0.037 |
+| 加权MOS总和 | 1154.998 | 1173.347 | 18.349 |
+| 上行占用Mbps | 43.529 | 64.841 | 21.312 |
+| 下行占用Mbps | 119.986 | 119.989 | 0.003 |
+
+MOS评价人数：80；改善：23；恶化：27；不变：30；最大MOS降幅：1.262。
+
+08:06:42 INFO game_solving.application.pipeline | 求解场景 73/100：scene_000072，人数=100
+08:06:43 INFO game_solving.application.pipeline | 求解完成 73/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=191081，耗时=1053.7 ms
+08:06:43 INFO game_solving.application.pipeline | 
+### scene_000072：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 73 | 71 | -2 |
+| 目标达标人数 | 7 | 9 | 2 |
+| 会话MOS均值 | 2.308 | 2.402 | 0.094 |
+| 加权MOS总和 | 1126.246 | 1184.070 | 57.824 |
+| 上行占用Mbps | 39.468 | 79.854 | 40.386 |
+| 下行占用Mbps | 119.982 | 119.985 | 0.003 |
+
+MOS评价人数：80；改善：30；恶化：24；不变：26；最大MOS降幅：1.064。
+
+08:06:43 INFO game_solving.application.pipeline | 求解场景 74/100：scene_000073，人数=100
+08:06:44 INFO game_solving.application.pipeline | 求解完成 74/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=169249，耗时=967.8 ms
+08:06:44 INFO game_solving.application.pipeline | 
+### scene_000073：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 65 | 57 | -8 |
+| 目标达标人数 | 15 | 23 | 8 |
+| 会话MOS均值 | 2.409 | 2.505 | 0.096 |
+| 加权MOS总和 | 1132.827 | 1186.158 | 53.331 |
+| 上行占用Mbps | 46.387 | 68.243 | 21.856 |
+| 下行占用Mbps | 119.997 | 119.998 | 0.001 |
+
+MOS评价人数：80；改善：36；恶化：18；不变：26；最大MOS降幅：1.176。
+
+08:06:44 INFO game_solving.application.pipeline | 求解场景 75/100：scene_000074，人数=100
+08:06:45 INFO game_solving.application.pipeline | 求解完成 75/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=177006，耗时=890.6 ms
+08:06:45 INFO game_solving.application.pipeline | 
+### scene_000074：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 68 | 66 | -2 |
+| 目标达标人数 | 12 | 14 | 2 |
+| 会话MOS均值 | 2.317 | 2.471 | 0.154 |
+| 加权MOS总和 | 1097.951 | 1178.830 | 80.879 |
+| 上行占用Mbps | 35.305 | 69.620 | 34.315 |
+| 下行占用Mbps | 119.999 | 119.993 | -0.006 |
+
+MOS评价人数：80；改善：33；恶化：23；不变：24；最大MOS降幅：0.824。
+
+08:06:45 INFO game_solving.application.pipeline | 求解场景 76/100：scene_000075，人数=100
+08:06:46 INFO game_solving.application.pipeline | 求解完成 76/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=186569，耗时=946.4 ms
+08:06:46 INFO game_solving.application.pipeline | 
+### scene_000075：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 62 | 59 | -3 |
+| 目标达标人数 | 18 | 21 | 3 |
+| 会话MOS均值 | 2.518 | 2.584 | 0.066 |
+| 加权MOS总和 | 1146.049 | 1195.403 | 49.353 |
+| 上行占用Mbps | 39.468 | 71.181 | 31.713 |
+| 下行占用Mbps | 119.996 | 119.947 | -0.049 |
+
+MOS评价人数：80；改善：31；恶化：27；不变：22；最大MOS降幅：1.025。
+
+08:06:46 INFO game_solving.application.pipeline | 求解场景 77/100：scene_000076，人数=100
+08:06:47 INFO game_solving.application.pipeline | 求解完成 77/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=207000，耗时=1029.7 ms
+08:06:47 INFO game_solving.application.pipeline | 
+### scene_000076：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 65 | 62 | -3 |
+| 目标达标人数 | 15 | 18 | 3 |
+| 会话MOS均值 | 2.393 | 2.473 | 0.080 |
+| 加权MOS总和 | 1155.258 | 1196.003 | 40.745 |
+| 上行占用Mbps | 44.298 | 64.847 | 20.549 |
+| 下行占用Mbps | 120.000 | 119.973 | -0.027 |
+
+MOS评价人数：80；改善：33；恶化：28；不变：19；最大MOS降幅：1.338。
+
+08:06:47 INFO game_solving.application.pipeline | 求解场景 78/100：scene_000077，人数=100
+08:06:48 INFO game_solving.application.pipeline | 求解完成 78/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=206464，耗时=1088.5 ms
+08:06:48 INFO game_solving.application.pipeline | 
+### scene_000077：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 64 | 61 | -3 |
+| 目标达标人数 | 16 | 19 | 3 |
+| 会话MOS均值 | 2.557 | 2.619 | 0.062 |
+| 加权MOS总和 | 1235.943 | 1274.247 | 38.304 |
+| 上行占用Mbps | 45.678 | 79.332 | 33.654 |
+| 下行占用Mbps | 119.998 | 119.985 | -0.013 |
+
+MOS评价人数：80；改善：32；恶化：25；不变：23；最大MOS降幅：0.765。
+
+08:06:48 INFO game_solving.application.pipeline | 求解场景 79/100：scene_000078，人数=100
+08:06:49 INFO game_solving.application.pipeline | 求解完成 79/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=171488，耗时=897.3 ms
+08:06:49 INFO game_solving.application.pipeline | 
+### scene_000078：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 64 | 63 | -1 |
+| 目标达标人数 | 16 | 17 | 1 |
+| 会话MOS均值 | 2.428 | 2.564 | 0.136 |
+| 加权MOS总和 | 1173.806 | 1250.378 | 76.572 |
+| 上行占用Mbps | 42.679 | 72.946 | 30.267 |
+| 下行占用Mbps | 119.988 | 119.999 | 0.011 |
+
+MOS评价人数：80；改善：28；恶化：19；不变：33；最大MOS降幅：0.745。
+
+08:06:49 INFO game_solving.application.pipeline | 求解场景 80/100：scene_000079，人数=100
+08:06:50 INFO game_solving.application.pipeline | 求解完成 80/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=190898，耗时=951.2 ms
+08:06:50 INFO game_solving.application.pipeline | 
+### scene_000079：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 65 | 63 | -2 |
+| 目标达标人数 | 15 | 17 | 2 |
+| 会话MOS均值 | 2.586 | 2.686 | 0.100 |
+| 加权MOS总和 | 1220.506 | 1278.101 | 57.595 |
+| 上行占用Mbps | 40.163 | 69.727 | 29.564 |
+| 下行占用Mbps | 119.994 | 119.993 | -0.001 |
+
+MOS评价人数：80；改善：33；恶化：28；不变：19；最大MOS降幅：1.268。
+
+08:06:50 INFO game_solving.application.pipeline | 求解场景 81/100：scene_000080，人数=100
+08:06:51 INFO game_solving.application.pipeline | 求解完成 81/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=192110，耗时=979.2 ms
+08:06:51 INFO game_solving.application.pipeline | 
+### scene_000080：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 63 | 61 | -2 |
+| 目标达标人数 | 17 | 19 | 2 |
+| 会话MOS均值 | 2.361 | 2.518 | 0.157 |
+| 加权MOS总和 | 1131.243 | 1214.745 | 83.502 |
+| 上行占用Mbps | 38.058 | 67.156 | 29.098 |
+| 下行占用Mbps | 119.999 | 119.961 | -0.038 |
+
+MOS评价人数：80；改善：34；恶化：25；不变：21；最大MOS降幅：0.803。
+
+08:06:51 INFO game_solving.application.pipeline | 求解场景 82/100：scene_000081，人数=100
+08:06:52 INFO game_solving.application.pipeline | 求解完成 82/100：成功，停止=CONVERGED_LOCAL，轮数=7，工作量=212706，耗时=1151.9 ms
+08:06:52 INFO game_solving.application.pipeline | 
+### scene_000081：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 70 | 69 | -1 |
+| 目标达标人数 | 10 | 11 | 1 |
+| 会话MOS均值 | 2.327 | 2.471 | 0.144 |
+| 加权MOS总和 | 1119.427 | 1198.689 | 79.262 |
+| 上行占用Mbps | 44.978 | 76.594 | 31.616 |
+| 下行占用Mbps | 119.996 | 120.000 | 0.004 |
+
+MOS评价人数：80；改善：33；恶化：24；不变：23；最大MOS降幅：0.449。
+
+08:06:52 INFO game_solving.application.pipeline | 求解场景 83/100：scene_000082，人数=100
+08:06:54 INFO game_solving.application.pipeline | 求解完成 83/100：失败，停止=STOPPED_CYCLE，轮数=9，工作量=328357，耗时=1522.0 ms
+08:06:54 INFO game_solving.application.pipeline | 
+### scene_000082：失败（STOPPED_CYCLE）
+
+失败时下表为保留的可行方案，不表示已收敛。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 66 | 64 | -2 |
+| 目标达标人数 | 14 | 16 | 2 |
+| 会话MOS均值 | 2.548 | 2.642 | 0.094 |
+| 加权MOS总和 | 1227.631 | 1281.054 | 53.423 |
+| 上行占用Mbps | 48.810 | 78.540 | 29.730 |
+| 下行占用Mbps | 119.896 | 119.993 | 0.097 |
+
+MOS评价人数：80；改善：34；恶化：29；不变：17；最大MOS降幅：1.727。
+
+08:06:54 INFO game_solving.application.pipeline | 求解场景 84/100：scene_000083，人数=100
+08:06:55 INFO game_solving.application.pipeline | 求解完成 84/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=199895，耗时=1077.9 ms
+08:06:55 INFO game_solving.application.pipeline | 
+### scene_000083：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 63 | 63 | 0 |
+| 目标达标人数 | 17 | 17 | 0 |
+| 会话MOS均值 | 2.485 | 2.490 | 0.005 |
+| 加权MOS总和 | 1191.864 | 1209.026 | 17.162 |
+| 上行占用Mbps | 43.032 | 74.310 | 31.278 |
+| 下行占用Mbps | 119.991 | 119.994 | 0.003 |
+
+MOS评价人数：80；改善：30；恶化：25；不变：25；最大MOS降幅：1.129。
+
+08:06:55 INFO game_solving.application.pipeline | 求解场景 85/100：scene_000084，人数=100
+08:06:56 INFO game_solving.application.pipeline | 求解完成 85/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=166271，耗时=803.1 ms
+08:06:56 INFO game_solving.application.pipeline | 
+### scene_000084：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 64 | 63 | -1 |
+| 目标达标人数 | 16 | 17 | 1 |
+| 会话MOS均值 | 2.317 | 2.434 | 0.117 |
+| 加权MOS总和 | 1098.759 | 1160.702 | 61.943 |
+| 上行占用Mbps | 36.288 | 59.187 | 22.899 |
+| 下行占用Mbps | 120.000 | 119.994 | -0.006 |
+
+MOS评价人数：80；改善：26；恶化：20；不变：34；最大MOS降幅：0.368。
+
+08:06:56 INFO game_solving.application.pipeline | 求解场景 86/100：scene_000085，人数=100
+08:06:57 INFO game_solving.application.pipeline | 求解完成 86/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=183345，耗时=949.3 ms
+08:06:57 INFO game_solving.application.pipeline | 
+### scene_000085：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 64 | 64 | 0 |
+| 目标达标人数 | 16 | 16 | 0 |
+| 会话MOS均值 | 2.505 | 2.624 | 0.119 |
+| 加权MOS总和 | 1183.452 | 1260.633 | 77.181 |
+| 上行占用Mbps | 47.158 | 84.822 | 37.664 |
+| 下行占用Mbps | 119.990 | 119.990 | 0.000 |
+
+MOS评价人数：80；改善：30；恶化：25；不变：25；最大MOS降幅：1.089。
+
+08:06:57 INFO game_solving.application.pipeline | 求解场景 87/100：scene_000086，人数=100
+08:06:58 INFO game_solving.application.pipeline | 求解完成 87/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=164938，耗时=906.5 ms
+08:06:58 INFO game_solving.application.pipeline | 
+### scene_000086：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 68 | 68 | 0 |
+| 目标达标人数 | 12 | 12 | 0 |
+| 会话MOS均值 | 2.319 | 2.424 | 0.105 |
+| 加权MOS总和 | 1133.622 | 1191.494 | 57.872 |
+| 上行占用Mbps | 39.765 | 72.911 | 33.146 |
+| 下行占用Mbps | 119.966 | 119.991 | 0.025 |
+
+MOS评价人数：80；改善：30；恶化：27；不变：23；最大MOS降幅：0.692。
+
+08:06:58 INFO game_solving.application.pipeline | 求解场景 88/100：scene_000087，人数=100
+08:06:59 INFO game_solving.application.pipeline | 求解完成 88/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=171195，耗时=884.7 ms
+08:06:59 INFO game_solving.application.pipeline | 
+### scene_000087：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 68 | 67 | -1 |
+| 目标达标人数 | 12 | 13 | 1 |
+| 会话MOS均值 | 2.491 | 2.549 | 0.058 |
+| 加权MOS总和 | 1189.479 | 1230.725 | 41.246 |
+| 上行占用Mbps | 58.834 | 101.770 | 42.936 |
+| 下行占用Mbps | 119.986 | 119.995 | 0.009 |
+
+MOS评价人数：80；改善：26；恶化：25；不变：29；最大MOS降幅：1.617。
+
+08:06:59 INFO game_solving.application.pipeline | 求解场景 89/100：scene_000088，人数=100
+08:07:00 INFO game_solving.application.pipeline | 求解完成 89/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=210970，耗时=1102.2 ms
+08:07:00 INFO game_solving.application.pipeline | 
+### scene_000088：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 68 | 68 | 0 |
+| 目标达标人数 | 12 | 12 | 0 |
+| 会话MOS均值 | 2.395 | 2.505 | 0.111 |
+| 加权MOS总和 | 1157.481 | 1213.062 | 55.581 |
+| 上行占用Mbps | 49.484 | 79.862 | 30.378 |
+| 下行占用Mbps | 119.997 | 120.000 | 0.003 |
+
+MOS评价人数：80；改善：36；恶化：25；不变：19；最大MOS降幅：0.491。
+
+08:07:00 INFO game_solving.application.pipeline | 求解场景 90/100：scene_000089，人数=100
+08:07:01 INFO game_solving.application.pipeline | 求解完成 90/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=192896，耗时=979.4 ms
+08:07:01 INFO game_solving.application.pipeline | 
+### scene_000089：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 65 | 66 | 1 |
+| 目标达标人数 | 15 | 14 | -1 |
+| 会话MOS均值 | 2.330 | 2.398 | 0.068 |
+| 加权MOS总和 | 1101.295 | 1141.918 | 40.623 |
+| 上行占用Mbps | 43.268 | 63.776 | 20.508 |
+| 下行占用Mbps | 119.996 | 120.000 | 0.004 |
+
+MOS评价人数：80；改善：32；恶化：25；不变：23；最大MOS降幅：1.191。
+
+08:07:01 INFO game_solving.application.pipeline | 求解场景 91/100：scene_000090，人数=100
+08:07:02 INFO game_solving.application.pipeline | 求解完成 91/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=154941，耗时=810.5 ms
+08:07:02 INFO game_solving.application.pipeline | 
+### scene_000090：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 65 | 65 | 0 |
+| 目标达标人数 | 15 | 15 | 0 |
+| 会话MOS均值 | 2.324 | 2.388 | 0.064 |
+| 加权MOS总和 | 1064.159 | 1104.151 | 39.992 |
+| 上行占用Mbps | 43.805 | 72.468 | 28.663 |
+| 下行占用Mbps | 119.997 | 119.987 | -0.010 |
+
+MOS评价人数：80；改善：27；恶化：23；不变：30；最大MOS降幅：0.708。
+
+08:07:02 INFO game_solving.application.pipeline | 求解场景 92/100：scene_000091，人数=100
+08:07:03 INFO game_solving.application.pipeline | 求解完成 92/100：成功，停止=CONVERGED_LOCAL，轮数=7，工作量=191799，耗时=1022.7 ms
+08:07:03 INFO game_solving.application.pipeline | 
+### scene_000091：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 63 | 63 | 0 |
+| 目标达标人数 | 17 | 17 | 0 |
+| 会话MOS均值 | 2.335 | 2.425 | 0.089 |
+| 加权MOS总和 | 1132.257 | 1181.388 | 49.131 |
+| 上行占用Mbps | 49.005 | 86.053 | 37.048 |
+| 下行占用Mbps | 120.000 | 119.998 | -0.002 |
+
+MOS评价人数：80；改善：27；恶化：29；不变：24；最大MOS降幅：1.170。
+
+08:07:03 INFO game_solving.application.pipeline | 求解场景 93/100：scene_000092，人数=100
+08:07:04 INFO game_solving.application.pipeline | 求解完成 93/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=181952，耗时=1000.9 ms
+08:07:04 INFO game_solving.application.pipeline | 
+### scene_000092：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 66 | 64 | -2 |
+| 目标达标人数 | 14 | 16 | 2 |
+| 会话MOS均值 | 2.422 | 2.469 | 0.047 |
+| 加权MOS总和 | 1176.610 | 1209.682 | 33.072 |
+| 上行占用Mbps | 45.750 | 76.081 | 30.331 |
+| 下行占用Mbps | 119.989 | 119.997 | 0.008 |
+
+MOS评价人数：80；改善：30；恶化：25；不变：25；最大MOS降幅：0.985。
+
+08:07:04 INFO game_solving.application.pipeline | 求解场景 94/100：scene_000093，人数=100
+08:07:05 INFO game_solving.application.pipeline | 求解完成 94/100：失败，停止=STOPPED_CYCLE，轮数=9，工作量=290962，耗时=1469.6 ms
+08:07:05 INFO game_solving.application.pipeline | 
+### scene_000093：失败（STOPPED_CYCLE）
+
+失败时下表为保留的可行方案，不表示已收敛。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 66 | 63 | -3 |
+| 目标达标人数 | 14 | 17 | 3 |
+| 会话MOS均值 | 2.397 | 2.543 | 0.146 |
+| 加权MOS总和 | 1143.993 | 1216.875 | 72.883 |
+| 上行占用Mbps | 40.282 | 71.284 | 31.002 |
+| 下行占用Mbps | 119.996 | 119.987 | -0.009 |
+
+MOS评价人数：80；改善：34；恶化：17；不变：29；最大MOS降幅：1.231。
+
+08:07:05 INFO game_solving.application.pipeline | 求解场景 95/100：scene_000094，人数=100
+08:07:06 INFO game_solving.application.pipeline | 求解完成 95/100：成功，停止=CONVERGED_LOCAL，轮数=7，工作量=180034，耗时=1056.7 ms
+08:07:06 INFO game_solving.application.pipeline | 
+### scene_000094：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 61 | 64 | 3 |
+| 目标达标人数 | 19 | 16 | -3 |
+| 会话MOS均值 | 2.313 | 2.393 | 0.080 |
+| 加权MOS总和 | 1089.867 | 1139.731 | 49.863 |
+| 上行占用Mbps | 46.113 | 76.325 | 30.212 |
+| 下行占用Mbps | 119.997 | 120.000 | 0.003 |
+
+MOS评价人数：80；改善：26；恶化：29；不变：25；最大MOS降幅：0.909。
+
+08:07:06 INFO game_solving.application.pipeline | 求解场景 96/100：scene_000095，人数=100
+08:07:07 INFO game_solving.application.pipeline | 求解完成 96/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=162394，耗时=1155.4 ms
+08:07:07 INFO game_solving.application.pipeline | 
+### scene_000095：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 62 | 59 | -3 |
+| 目标达标人数 | 18 | 21 | 3 |
+| 会话MOS均值 | 2.533 | 2.615 | 0.083 |
+| 加权MOS总和 | 1187.757 | 1233.843 | 46.085 |
+| 上行占用Mbps | 48.085 | 81.531 | 33.446 |
+| 下行占用Mbps | 120.000 | 119.994 | -0.006 |
+
+MOS评价人数：80；改善：30；恶化：23；不变：27；最大MOS降幅：1.377。
+
+08:07:07 INFO game_solving.application.pipeline | 求解场景 97/100：scene_000096，人数=100
+08:07:09 INFO game_solving.application.pipeline | 求解完成 97/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=170337，耗时=1472.3 ms
+08:07:09 INFO game_solving.application.pipeline | 
+### scene_000096：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 66 | 67 | 1 |
+| 目标达标人数 | 14 | 13 | -1 |
+| 会话MOS均值 | 2.221 | 2.332 | 0.111 |
+| 加权MOS总和 | 1066.442 | 1123.594 | 57.153 |
+| 上行占用Mbps | 45.784 | 68.704 | 22.920 |
+| 下行占用Mbps | 120.000 | 119.999 | -0.001 |
+
+MOS评价人数：80；改善：32；恶化：18；不变：30；最大MOS降幅：0.967。
+
+08:07:09 INFO game_solving.application.pipeline | 求解场景 98/100：scene_000097，人数=100
+08:07:10 INFO game_solving.application.pipeline | 求解完成 98/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=158365，耗时=1564.9 ms
+08:07:10 INFO game_solving.application.pipeline | 
+### scene_000097：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 62 | 60 | -2 |
+| 目标达标人数 | 18 | 20 | 2 |
+| 会话MOS均值 | 2.326 | 2.412 | 0.086 |
+| 加权MOS总和 | 1071.841 | 1122.917 | 51.076 |
+| 上行占用Mbps | 46.432 | 76.569 | 30.137 |
+| 下行占用Mbps | 119.975 | 119.993 | 0.018 |
+
+MOS评价人数：80；改善：30；恶化：22；不变：28；最大MOS降幅：0.847。
+
+08:07:10 INFO game_solving.application.pipeline | 求解场景 99/100：scene_000098，人数=100
+08:07:12 INFO game_solving.application.pipeline | 求解完成 99/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=223902，耗时=1825.0 ms
+08:07:12 INFO game_solving.application.pipeline | 
+### scene_000098：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 62 | 61 | -1 |
+| 目标达标人数 | 18 | 19 | 1 |
+| 会话MOS均值 | 2.402 | 2.535 | 0.133 |
+| 加权MOS总和 | 1148.376 | 1223.473 | 75.097 |
+| 上行占用Mbps | 42.400 | 78.541 | 36.141 |
+| 下行占用Mbps | 120.000 | 119.998 | -0.002 |
+
+MOS评价人数：80；改善：30；恶化：27；不变：23；最大MOS降幅：0.947。
+
+08:07:12 INFO game_solving.application.pipeline | 求解场景 100/100：scene_000099，人数=100
+08:07:14 INFO game_solving.application.pipeline | 求解完成 100/100：成功，停止=CONVERGED_LOCAL，轮数=6，工作量=190804，耗时=1667.3 ms
+08:07:14 INFO game_solving.application.pipeline | 
+### scene_000099：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 65 | 64 | -1 |
+| 目标达标人数 | 15 | 16 | 1 |
+| 会话MOS均值 | 2.400 | 2.484 | 0.084 |
+| 加权MOS总和 | 1136.792 | 1189.963 | 53.171 |
+| 上行占用Mbps | 46.653 | 71.756 | 25.103 |
+| 下行占用Mbps | 120.000 | 119.999 | -0.001 |
+
+MOS评价人数：80；改善：30；恶化：23；不变：27；最大MOS降幅：0.954。
+
+08:07:17 INFO game_solving.application.pipeline | 任务完成：run，场景数=100，退出码=3，结果目录=outputs\complex_100_verified

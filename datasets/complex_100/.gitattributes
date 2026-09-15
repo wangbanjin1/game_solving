@@ -1,0 +1,3 @@
+# Preserve archived bytes and SHA-256 checksums across platforms.
+* -text
+run.log -whitespace

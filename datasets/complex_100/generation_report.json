@@ -1,0 +1,17 @@
+{
+  "failed": 0,
+  "failures": [],
+  "quota_gaps": 0,
+  "quota_mode": "reachable",
+  "realized_bands": {
+    "met": 407,
+    "over": 1043,
+    "severe": 5365,
+    "unmet": 1185
+  },
+  "rejection_counts": {
+    "MOS_BAND_UNREACHABLE_OR_LOW_ACCEPTANCE": 17230
+  },
+  "requested": 100,
+  "successful": 100
+}

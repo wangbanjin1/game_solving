@@ -1,0 +1,543 @@
+{
+  "businesses": {
+    "browsing": {
+      "coefficients": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_enabled": false,
+      "media": [],
+      "media_directions": [],
+      "mos_type": null,
+      "priority": 3,
+      "quality_model": "general",
+      "quota_dl_kbps": 1600.0,
+      "quota_ul_kbps": 50.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "cloudgame": {
+      "coefficients": [
+        0.25,
+        0.05,
+        0.05,
+        0.25
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 480,
+          "max_kbps": 6000,
+          "min_kbps": 1000,
+          "resolution": 480,
+          "width": 854
+        },
+        {
+          "height": 540,
+          "max_kbps": 10000,
+          "min_kbps": 1500,
+          "resolution": 540,
+          "width": 960
+        },
+        {
+          "height": 720,
+          "max_kbps": 15000,
+          "min_kbps": 3000,
+          "resolution": 720,
+          "width": 1280
+        },
+        {
+          "height": 1080,
+          "max_kbps": 20000,
+          "min_kbps": 6000,
+          "resolution": 1080,
+          "width": 1920
+        }
+      ],
+      "media_directions": [
+        "dl"
+      ],
+      "mos_type": "B",
+      "priority": 1,
+      "quality_model": "general",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 100.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "download": {
+      "coefficients": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_enabled": false,
+      "media": [],
+      "media_directions": [],
+      "mos_type": null,
+      "priority": 4,
+      "quality_model": "general",
+      "quota_dl_kbps": 100.0,
+      "quota_ul_kbps": 50.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "game": {
+      "coefficients": [
+        0,
+        0,
+        0.25,
+        0.04
+      ],
+      "initial_enabled": false,
+      "media": [],
+      "media_directions": [],
+      "mos_type": "B",
+      "priority": 1,
+      "quality_model": "game",
+      "quota_dl_kbps": 100.0,
+      "quota_ul_kbps": 100.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_game",
+      "weight_factor": 1.0
+    },
+    "meeting": {
+      "coefficients": [
+        0.25,
+        0.05,
+        0.05,
+        0.25
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 270,
+          "max_kbps": 1500,
+          "min_kbps": 200,
+          "resolution": 270,
+          "width": 480
+        },
+        {
+          "height": 360,
+          "max_kbps": 2500,
+          "min_kbps": 300,
+          "resolution": 360,
+          "width": 640
+        },
+        {
+          "height": 720,
+          "max_kbps": 6000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        }
+      ],
+      "media_directions": [
+        "ul",
+        "dl"
+      ],
+      "mos_type": "A",
+      "priority": 0,
+      "quality_model": "general",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 0.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "openlive": {
+      "coefficients": [
+        0.25,
+        0.05,
+        0.25,
+        0.1
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 480,
+          "max_kbps": 1500,
+          "min_kbps": 300,
+          "resolution": 480,
+          "width": 854
+        },
+        {
+          "height": 540,
+          "max_kbps": 2500,
+          "min_kbps": 500,
+          "resolution": 540,
+          "width": 960
+        },
+        {
+          "height": 720,
+          "max_kbps": 4000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        },
+        {
+          "height": 1080,
+          "max_kbps": 6000,
+          "min_kbps": 1500,
+          "resolution": 1080,
+          "width": 1920
+        }
+      ],
+      "media_directions": [
+        "ul"
+      ],
+      "mos_type": "A",
+      "priority": 1,
+      "quality_model": "general",
+      "quota_dl_kbps": 100.0,
+      "quota_ul_kbps": 0.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "shortvideo": {
+      "coefficients": [
+        0,
+        0,
+        0.04,
+        0.25
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 360,
+          "max_kbps": 1500,
+          "min_kbps": 200,
+          "resolution": 360,
+          "width": 640
+        },
+        {
+          "height": 480,
+          "max_kbps": 2500,
+          "min_kbps": 300,
+          "resolution": 480,
+          "width": 854
+        },
+        {
+          "height": 540,
+          "max_kbps": 3500,
+          "min_kbps": 500,
+          "resolution": 540,
+          "width": 960
+        },
+        {
+          "height": 720,
+          "max_kbps": 6000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        },
+        {
+          "height": 1080,
+          "max_kbps": 10000,
+          "min_kbps": 1500,
+          "resolution": 1080,
+          "width": 1920
+        },
+        {
+          "height": 2160,
+          "max_kbps": 20000,
+          "min_kbps": 6000,
+          "resolution": 2160,
+          "width": 3840
+        }
+      ],
+      "media_directions": [
+        "dl"
+      ],
+      "mos_type": "A",
+      "priority": 2,
+      "quality_model": "bitrate",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 100.0,
+      "range_source": "inherited_video",
+      "rtt_range": "rtt_video",
+      "weight_factor": 1.0
+    },
+    "video": {
+      "coefficients": [
+        0.04,
+        0.25,
+        0.04,
+        0.25
+      ],
+      "initial_enabled": true,
+      "media": [
+        {
+          "height": 360,
+          "max_kbps": 1500,
+          "min_kbps": 200,
+          "resolution": 360,
+          "width": 640
+        },
+        {
+          "height": 480,
+          "max_kbps": 2500,
+          "min_kbps": 300,
+          "resolution": 480,
+          "width": 854
+        },
+        {
+          "height": 540,
+          "max_kbps": 3500,
+          "min_kbps": 500,
+          "resolution": 540,
+          "width": 960
+        },
+        {
+          "height": 720,
+          "max_kbps": 6000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        },
+        {
+          "height": 1080,
+          "max_kbps": 10000,
+          "min_kbps": 1500,
+          "resolution": 1080,
+          "width": 1920
+        },
+        {
+          "height": 2160,
+          "max_kbps": 20000,
+          "min_kbps": 6000,
+          "resolution": 2160,
+          "width": 3840
+        }
+      ],
+      "media_directions": [
+        "dl"
+      ],
+      "mos_type": "A",
+      "priority": 2,
+      "quality_model": "general",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 100.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_video",
+      "weight_factor": 1.0
+    },
+    "voip": {
+      "coefficients": [
+        0,
+        0,
+        0.15,
+        0.15
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 270,
+          "max_kbps": 1500,
+          "min_kbps": 200,
+          "resolution": 270,
+          "width": 480
+        },
+        {
+          "height": 360,
+          "max_kbps": 2500,
+          "min_kbps": 300,
+          "resolution": 360,
+          "width": 640
+        },
+        {
+          "height": 720,
+          "max_kbps": 6000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        }
+      ],
+      "media_directions": [
+        "ul",
+        "dl"
+      ],
+      "mos_type": "B",
+      "priority": 0,
+      "quality_model": "call",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 0.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "watchlive": {
+      "coefficients": [
+        0.25,
+        0.05,
+        0.25,
+        0.1
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 360,
+          "max_kbps": 1500,
+          "min_kbps": 200,
+          "resolution": 360,
+          "width": 640
+        },
+        {
+          "height": 480,
+          "max_kbps": 2500,
+          "min_kbps": 300,
+          "resolution": 480,
+          "width": 854
+        },
+        {
+          "height": 540,
+          "max_kbps": 3500,
+          "min_kbps": 500,
+          "resolution": 540,
+          "width": 960
+        },
+        {
+          "height": 720,
+          "max_kbps": 6000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        },
+        {
+          "height": 1080,
+          "max_kbps": 10000,
+          "min_kbps": 1500,
+          "resolution": 1080,
+          "width": 1920
+        },
+        {
+          "height": 2160,
+          "max_kbps": 20000,
+          "min_kbps": 6000,
+          "resolution": 2160,
+          "width": 3840
+        }
+      ],
+      "media_directions": [
+        "dl"
+      ],
+      "mos_type": "A",
+      "priority": 1,
+      "quality_model": "general",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 100.0,
+      "range_source": "inherited_video",
+      "rtt_range": "rtt_video",
+      "weight_factor": 1.0
+    }
+  },
+  "calibrated": false,
+  "proxy": "identity_demo",
+  "ranges": {
+    "buffer": {
+      "average": [
+        1000,
+        2000
+      ],
+      "good": [
+        0,
+        1000
+      ],
+      "poor": [
+        2000,
+        10000
+      ]
+    },
+    "jitter": {
+      "average": [
+        10,
+        20
+      ],
+      "good": [
+        0,
+        10
+      ],
+      "poor": [
+        20,
+        50
+      ]
+    },
+    "loss": {
+      "average": [
+        0.0015,
+        0.005
+      ],
+      "good": [
+        0,
+        0.0015
+      ],
+      "poor": [
+        0.005,
+        0.05
+      ]
+    },
+    "rtt_game": {
+      "average": [
+        50,
+        100
+      ],
+      "good": [
+        0,
+        50
+      ],
+      "poor": [
+        100,
+        460
+      ]
+    },
+    "rtt_interactive": {
+      "average": [
+        80,
+        150
+      ],
+      "good": [
+        0,
+        80
+      ],
+      "poor": [
+        150,
+        300
+      ]
+    },
+    "rtt_video": {
+      "average": [
+        100,
+        200
+      ],
+      "good": [
+        0,
+        100
+      ],
+      "poor": [
+        200,
+        500
+      ]
+    },
+    "stall": {
+      "average": [
+        0.1,
+        0.3
+      ],
+      "good": [
+        0,
+        0.1
+      ],
+      "poor": [
+        0.3,
+        1.0
+      ]
+    }
+  }
+}
