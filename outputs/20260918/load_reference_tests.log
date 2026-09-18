@@ -1,0 +1,146 @@
+场景 1 生成失败：MAX_TOTAL_STEPS
+17:22:15 INFO game_solving.application.pipeline | 任务开始：run，输出目录=C:\Users\ADMINI~1\AppData\Local\Temp\tmp5nvcj7j5\run
+17:22:15 INFO game_solving.simulation.generator | 开始生成：场景数=2，每场景人数=3
+17:22:15 INFO game_solving.simulation.generator | 生成场景 1/2
+17:22:15 INFO game_solving.simulation.generator | 生成场景 2/2
+17:22:15 INFO game_solving.simulation.generator | 生成完成：成功=2，失败=0
+17:22:15 INFO game_solving.application.pipeline | 生成数据已写出，开始重读校验
+17:22:15 INFO game_solving.application.pipeline | 生成数据校验通过：6 人
+17:22:15 INFO game_solving.application.pipeline | 开始求解：共 2 个场景
+17:22:15 INFO game_solving.application.pipeline | 求解场景 1/2：scene_000000，人数=3
+17:22:15 INFO game_solving.application.pipeline | 求解完成 1/2：失败，停止=MAX_ITERATIONS，轮数=1，工作量=1269，耗时=3.7 ms
+17:22:15 INFO game_solving.application.pipeline | 
+### scene_000000：失败（MAX_ITERATIONS）
+
+失败时下表为保留的可行方案，不表示已收敛。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 0 | 0 | 0 |
+| 目标达标人数 | 3 | 3 | 0 |
+| 会话MOS均值 | 2.865 | 2.997 | 0.132 |
+| 加权MOS总和 | 34.382 | 35.966 | 1.585 |
+| 上行占用Mbps | 5.596 | 9.000 | 3.404 |
+| 下行占用Mbps | 4.557 | 5.517 | 0.960 |
+
+MOS评价人数：3；改善：2；恶化：0；不变：1；最大MOS降幅：0。
+
+17:22:15 INFO game_solving.application.pipeline | 求解场景 2/2：scene_000001，人数=3
+17:22:15 INFO game_solving.application.pipeline | 求解完成 2/2：失败，停止=MAX_ITERATIONS，轮数=1，工作量=1109，耗时=3.5 ms
+17:22:15 INFO game_solving.application.pipeline | 
+### scene_000001：失败（MAX_ITERATIONS）
+
+失败时下表为保留的可行方案，不表示已收敛。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 0 | 0 | 0 |
+| 目标达标人数 | 3 | 3 | 0 |
+| 会话MOS均值 | 2.855 | 2.974 | 0.119 |
+| 加权MOS总和 | 34.257 | 35.683 | 1.426 |
+| 上行占用Mbps | 5.402 | 6.120 | 0.718 |
+| 下行占用Mbps | 5.265 | 6.299 | 1.034 |
+
+MOS评价人数：3；改善：3；恶化：0；不变：0；最大MOS降幅：0。
+
+17:22:15 INFO game_solving.application.pipeline | 任务完成：run，场景数=2，退出码=3，结果目录=C:\Users\ADMINI~1\AppData\Local\Temp\tmp5nvcj7j5\run
+17:22:15 INFO game_solving.application.pipeline | 任务开始：solve，输出目录=C:\Users\ADMINI~1\AppData\Local\Temp\tmp5nvcj7j5\solve
+17:22:15 INFO game_solving.application.pipeline | 开始求解：共 2 个场景
+17:22:15 INFO game_solving.application.pipeline | 求解场景 1/2：scene_000000，人数=3
+17:22:15 INFO game_solving.application.pipeline | 求解完成 1/2：成功，停止=CONVERGED_LOCAL，轮数=4，工作量=1647，耗时=4.7 ms
+17:22:15 INFO game_solving.application.pipeline | 
+### scene_000000：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 0 | 0 | 0 |
+| 目标达标人数 | 3 | 3 | 0 |
+| 会话MOS均值 | 2.865 | 2.997 | 0.132 |
+| 加权MOS总和 | 34.382 | 35.966 | 1.585 |
+| 上行占用Mbps | 5.596 | 9.000 | 3.404 |
+| 下行占用Mbps | 4.557 | 5.517 | 0.960 |
+
+MOS评价人数：3；改善：2；恶化：0；不变：1；最大MOS降幅：0。
+
+17:22:15 INFO game_solving.application.pipeline | 求解场景 2/2：scene_000001，人数=3
+17:22:15 INFO game_solving.application.pipeline | 求解完成 2/2：成功，停止=CONVERGED_LOCAL，轮数=4，工作量=1421，耗时=4.0 ms
+17:22:15 INFO game_solving.application.pipeline | 
+### scene_000001：成功（CONVERGED_LOCAL）
+
+MOS及保障人数仅统计MOS评价用户；无可行方案时求解后列为空。
+
+| 指标 | 求解前 | 求解后 | 变化（后−前） |
+| --- | ---: | ---: | ---: |
+| 基本保障不足人数 | 0 | 0 | 0 |
+| 目标达标人数 | 3 | 3 | 0 |
+| 会话MOS均值 | 2.855 | 2.974 | 0.119 |
+| 加权MOS总和 | 34.257 | 35.683 | 1.426 |
+| 上行占用Mbps | 5.402 | 6.120 | 0.718 |
+| 下行占用Mbps | 5.265 | 6.299 | 1.034 |
+
+MOS评价人数：3；改善：3；恶化：0；不变：0；最大MOS降幅：0。
+
+17:22:15 INFO game_solving.application.pipeline | 任务完成：solve，场景数=2，退出码=0，结果目录=C:\Users\ADMINI~1\AppData\Local\Temp\tmp5nvcj7j5\solve
+17:22:15 INFO game_solving.application.pipeline | 任务开始：generate，输出目录=C:\Users\ADMINI~1\AppData\Local\Temp\tmp5nvcj7j5\run
+ERROR: OUTPUT_NOT_EMPTY: choose a new directory
+17:22:15 INFO game_solving.simulation.generator | 开始生成：场景数=1，每场景人数=30
+17:22:15 INFO game_solving.simulation.generator | 生成场景 1/1
+17:22:15 INFO game_solving.simulation.generator | 生成完成：成功=1，失败=0
+17:22:16 INFO game_solving.simulation.generator | 开始生成：场景数=1，每场景人数=3
+17:22:16 INFO game_solving.simulation.generator | 生成场景 1/1
+17:22:16 WARNING game_solving.simulation.generator | 场景 1 生成失败：EMPTY_REQUESTED_MOS_BAND
+17:22:16 INFO game_solving.simulation.generator | 生成完成：成功=0，失败=1
+17:22:16 INFO game_solving.simulation.generator | 开始生成：场景数=2，每场景人数=3
+17:22:16 INFO game_solving.simulation.generator | 生成场景 1/2
+17:22:16 WARNING game_solving.simulation.generator | 场景 1 生成失败：FINITE_CURRENT_STATE_POOLS_INFEASIBLE
+17:22:16 INFO game_solving.simulation.generator | 生成场景 2/2
+17:22:16 WARNING game_solving.simulation.generator | 场景 2 生成失败：FINITE_CURRENT_STATE_POOLS_INFEASIBLE
+17:22:16 INFO game_solving.simulation.generator | 生成完成：成功=0，失败=2
+17:22:16 INFO game_solving.simulation.generator | 开始生成：场景数=1，每场景人数=3
+17:22:16 INFO game_solving.simulation.generator | 生成场景 1/1
+17:22:16 INFO game_solving.simulation.generator | 生成完成：成功=1，失败=0
+17:22:16 INFO game_solving.simulation.generator | 开始生成：场景数=2，每场景人数=3
+17:22:16 INFO game_solving.simulation.generator | 生成场景 1/2
+17:22:16 INFO game_solving.simulation.generator | 生成场景 2/2
+17:22:16 INFO game_solving.simulation.generator | 生成完成：成功=2，失败=0
+17:22:16 INFO game_solving.simulation.generator | 开始生成：场景数=1，每场景人数=3
+17:22:16 INFO game_solving.simulation.generator | 生成场景 1/1
+17:22:16 INFO game_solving.simulation.generator | 生成完成：成功=1，失败=0
+----------------------------------------------------------------------
+Ran 51 tests in 1.254s
+
+OK
+{
+  "scenes": 2,
+  "successful_scenes": 0,
+  "failed_scenes": 2,
+  "feasible_scenes": 2,
+  "statuses": {
+    "FEASIBLE_NORMAL": 2
+  },
+  "stops": {
+    "MAX_ITERATIONS": 2
+  },
+  "max_iterations": 1,
+  "max_steps": 1269,
+  "max_solver_ms": 3.73359999503009,
+  "weighted_mos_gain": 3.0104373241208506
+}
+{
+  "scenes": 2,
+  "successful_scenes": 2,
+  "failed_scenes": 0,
+  "feasible_scenes": 2,
+  "statuses": {
+    "FEASIBLE_NORMAL": 2
+  },
+  "stops": {
+    "CONVERGED_LOCAL": 2
+  },
+  "max_iterations": 4,
+  "max_steps": 1647,
+  "max_solver_ms": 4.712699999799952,
+  "weighted_mos_gain": 3.0104373241208506
+}

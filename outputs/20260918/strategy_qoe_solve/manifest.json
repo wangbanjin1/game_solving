@@ -1,0 +1,12 @@
+{
+  "complete": true,
+  "config_hash": "102bdbb987db3789c856f379eb990eea9e0c5079db75c180908f34b3512756dd",
+  "input_hash": "7484fcb2cbd6dcc87e2b611da7c7e8df4080395347d1c32e3db27b3c1f7d0b0f",
+  "model_hash": "5fa113829cf6d5dc56e33fa92c67fad5670210ee6f08ca6db84fe855a534ad7e",
+  "outcome": "COMPLETE",
+  "python": "3.12.14",
+  "schema_version": "2.0",
+  "seed": 20260918,
+  "source": "synthetic",
+  "source_hash": "7aadcda6747e885f52c34b1397423db50c0eed714db97c80d34c21583ec9744c"
+}

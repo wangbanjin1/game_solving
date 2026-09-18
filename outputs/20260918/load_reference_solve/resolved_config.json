@@ -1,0 +1,907 @@
+{
+  "allow_partial": false,
+  "businesses": {
+    "browsing": {
+      "coefficients": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_enabled": false,
+      "media": [],
+      "media_directions": [],
+      "mos_type": null,
+      "priority": 3,
+      "quality_model": "general",
+      "quota_dl_kbps": 1600.0,
+      "quota_ul_kbps": 50.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "cloudgame": {
+      "coefficients": [
+        0.25,
+        0.05,
+        0.05,
+        0.25
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 480,
+          "max_kbps": 6000,
+          "min_kbps": 1000,
+          "resolution": 480,
+          "width": 854
+        },
+        {
+          "height": 540,
+          "max_kbps": 10000,
+          "min_kbps": 1500,
+          "resolution": 540,
+          "width": 960
+        },
+        {
+          "height": 720,
+          "max_kbps": 15000,
+          "min_kbps": 3000,
+          "resolution": 720,
+          "width": 1280
+        },
+        {
+          "height": 1080,
+          "max_kbps": 20000,
+          "min_kbps": 6000,
+          "resolution": 1080,
+          "width": 1920
+        }
+      ],
+      "media_directions": [
+        "dl"
+      ],
+      "mos_type": "B",
+      "priority": 1,
+      "quality_model": "general",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 100.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "download": {
+      "coefficients": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_enabled": false,
+      "media": [],
+      "media_directions": [],
+      "mos_type": null,
+      "priority": 4,
+      "quality_model": "general",
+      "quota_dl_kbps": 100.0,
+      "quota_ul_kbps": 50.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "game": {
+      "coefficients": [
+        0,
+        0,
+        0.25,
+        0.04
+      ],
+      "initial_enabled": false,
+      "media": [],
+      "media_directions": [],
+      "mos_type": "B",
+      "priority": 1,
+      "quality_model": "game",
+      "quota_dl_kbps": 100.0,
+      "quota_ul_kbps": 100.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_game",
+      "weight_factor": 1.0
+    },
+    "meeting": {
+      "coefficients": [
+        0.25,
+        0.05,
+        0.05,
+        0.25
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 270,
+          "max_kbps": 1500,
+          "min_kbps": 200,
+          "resolution": 270,
+          "width": 480
+        },
+        {
+          "height": 360,
+          "max_kbps": 2500,
+          "min_kbps": 300,
+          "resolution": 360,
+          "width": 640
+        },
+        {
+          "height": 720,
+          "max_kbps": 6000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        }
+      ],
+      "media_directions": [
+        "ul",
+        "dl"
+      ],
+      "mos_type": "A",
+      "priority": 0,
+      "quality_model": "general",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 0.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "openlive": {
+      "coefficients": [
+        0.25,
+        0.05,
+        0.25,
+        0.1
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 480,
+          "max_kbps": 1500,
+          "min_kbps": 300,
+          "resolution": 480,
+          "width": 854
+        },
+        {
+          "height": 540,
+          "max_kbps": 2500,
+          "min_kbps": 500,
+          "resolution": 540,
+          "width": 960
+        },
+        {
+          "height": 720,
+          "max_kbps": 4000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        },
+        {
+          "height": 1080,
+          "max_kbps": 6000,
+          "min_kbps": 1500,
+          "resolution": 1080,
+          "width": 1920
+        }
+      ],
+      "media_directions": [
+        "ul"
+      ],
+      "mos_type": "A",
+      "priority": 1,
+      "quality_model": "general",
+      "quota_dl_kbps": 100.0,
+      "quota_ul_kbps": 0.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "shortvideo": {
+      "coefficients": [
+        0,
+        0,
+        0.04,
+        0.25
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 360,
+          "max_kbps": 1500,
+          "min_kbps": 200,
+          "resolution": 360,
+          "width": 640
+        },
+        {
+          "height": 480,
+          "max_kbps": 2500,
+          "min_kbps": 300,
+          "resolution": 480,
+          "width": 854
+        },
+        {
+          "height": 540,
+          "max_kbps": 3500,
+          "min_kbps": 500,
+          "resolution": 540,
+          "width": 960
+        },
+        {
+          "height": 720,
+          "max_kbps": 6000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        },
+        {
+          "height": 1080,
+          "max_kbps": 10000,
+          "min_kbps": 1500,
+          "resolution": 1080,
+          "width": 1920
+        },
+        {
+          "height": 2160,
+          "max_kbps": 20000,
+          "min_kbps": 6000,
+          "resolution": 2160,
+          "width": 3840
+        }
+      ],
+      "media_directions": [
+        "dl"
+      ],
+      "mos_type": "A",
+      "priority": 2,
+      "quality_model": "bitrate",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 100.0,
+      "range_source": "inherited_video",
+      "rtt_range": "rtt_video",
+      "weight_factor": 1.0
+    },
+    "video": {
+      "coefficients": [
+        0.04,
+        0.25,
+        0.04,
+        0.25
+      ],
+      "initial_enabled": true,
+      "media": [
+        {
+          "height": 360,
+          "max_kbps": 1500,
+          "min_kbps": 200,
+          "resolution": 360,
+          "width": 640
+        },
+        {
+          "height": 480,
+          "max_kbps": 2500,
+          "min_kbps": 300,
+          "resolution": 480,
+          "width": 854
+        },
+        {
+          "height": 540,
+          "max_kbps": 3500,
+          "min_kbps": 500,
+          "resolution": 540,
+          "width": 960
+        },
+        {
+          "height": 720,
+          "max_kbps": 6000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        },
+        {
+          "height": 1080,
+          "max_kbps": 10000,
+          "min_kbps": 1500,
+          "resolution": 1080,
+          "width": 1920
+        },
+        {
+          "height": 2160,
+          "max_kbps": 20000,
+          "min_kbps": 6000,
+          "resolution": 2160,
+          "width": 3840
+        }
+      ],
+      "media_directions": [
+        "dl"
+      ],
+      "mos_type": "A",
+      "priority": 2,
+      "quality_model": "general",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 100.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_video",
+      "weight_factor": 1.0
+    },
+    "voip": {
+      "coefficients": [
+        0,
+        0,
+        0.15,
+        0.15
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 270,
+          "max_kbps": 1500,
+          "min_kbps": 200,
+          "resolution": 270,
+          "width": 480
+        },
+        {
+          "height": 360,
+          "max_kbps": 2500,
+          "min_kbps": 300,
+          "resolution": 360,
+          "width": 640
+        },
+        {
+          "height": 720,
+          "max_kbps": 6000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        }
+      ],
+      "media_directions": [
+        "ul",
+        "dl"
+      ],
+      "mos_type": "B",
+      "priority": 0,
+      "quality_model": "call",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 0.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "watchlive": {
+      "coefficients": [
+        0.25,
+        0.05,
+        0.25,
+        0.1
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 360,
+          "max_kbps": 1500,
+          "min_kbps": 200,
+          "resolution": 360,
+          "width": 640
+        },
+        {
+          "height": 480,
+          "max_kbps": 2500,
+          "min_kbps": 300,
+          "resolution": 480,
+          "width": 854
+        },
+        {
+          "height": 540,
+          "max_kbps": 3500,
+          "min_kbps": 500,
+          "resolution": 540,
+          "width": 960
+        },
+        {
+          "height": 720,
+          "max_kbps": 6000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        },
+        {
+          "height": 1080,
+          "max_kbps": 10000,
+          "min_kbps": 1500,
+          "resolution": 1080,
+          "width": 1920
+        },
+        {
+          "height": 2160,
+          "max_kbps": 20000,
+          "min_kbps": 6000,
+          "resolution": 2160,
+          "width": 3840
+        }
+      ],
+      "media_directions": [
+        "dl"
+      ],
+      "mos_type": "A",
+      "priority": 1,
+      "quality_model": "general",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 100.0,
+      "range_source": "inherited_video",
+      "rtt_range": "rtt_video",
+      "weight_factor": 1.0
+    }
+  },
+  "cell": {
+    "capacity_dl_kbps": 120000,
+    "capacity_ul_kbps": 120000,
+    "reserve_dl_kbps": 0,
+    "reserve_ul_kbps": 0,
+    "unmanaged_dl_kbps": 0,
+    "unmanaged_ul_kbps": 0
+  },
+  "extensions": {
+    "experiment_assumptions": {
+      "calibrated": false,
+      "qoe_live": "QoE live maps to watchlive; openlive is a separate category",
+      "weights": "Unconfirmed order: business > package > position > tolerance"
+    }
+  },
+  "generation": {
+    "assembly_max_nodes": 20000,
+    "capacity_mode": "current_headroom",
+    "compliance_probs": {
+      "met": 0.5,
+      "over": 0.1,
+      "severe": 0.1,
+      "unmet": 0.3
+    },
+    "compliance_probs_by_package": {
+      "normal": {
+        "met": 0.2,
+        "severe": 0.3,
+        "unmet": 0.5
+      },
+      "super_vip": {
+        "met": 0.4,
+        "severe": 0.2,
+        "unmet": 0.4
+      },
+      "vip": {
+        "met": 0.3,
+        "severe": 0.2,
+        "unmet": 0.5
+      }
+    },
+    "delta_over": 0.3,
+    "delta_severe": 0.7,
+    "headroom_ratios": [
+      0.0,
+      0.05,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "high_load_sampling": {
+      "business_min_fraction": {
+        "cloudgame": 0.25,
+        "meeting": 0.125,
+        "openlive": 0.125,
+        "shortvideo": 0.125,
+        "video": 0.25,
+        "watchlive": 0.25
+      },
+      "probability": 0.2
+    },
+    "history": {
+      "bandwidth_multiplier": [
+        0.5,
+        1.5
+      ],
+      "enabled": true,
+      "interval_seconds": 30,
+      "periods": 10
+    },
+    "max_model_evaluations": 1000000,
+    "mixed_probability": 0.2,
+    "non_key_current_multiplier": [
+      1.0,
+      3.0
+    ],
+    "quality_probs": {
+      "average": 0.4,
+      "good": 0.4,
+      "poor": 0.2
+    },
+    "quota_mode": "specified",
+    "require_target_reachable": false,
+    "role_max_attempts": 500,
+    "scene_max_attempts": 10,
+    "split_probs": {
+      "test": 0.1,
+      "train": 0.8,
+      "validation": 0.1
+    },
+    "state_pool_size": 2,
+    "stream_phase": "steady",
+    "strict_quotas": false,
+    "throughput_reference": {
+      "aggregate_dl_kbps": 120000,
+      "aggregate_ul_kbps": 120000,
+      "devices": 5,
+      "simultaneous_directions_confirmed": false,
+      "source": "user_reported_iperf"
+    }
+  },
+  "logging": {
+    "level": "WARNING"
+  },
+  "metrics": {
+    "denominator_epsilon": 1e-06,
+    "epsilon_mos_change": 0.01
+  },
+  "models": {
+    "bitrate_scale": 928.984,
+    "buffer_decay": 0.0003,
+    "call": {
+      "bitrate_amplitude": 4.1192,
+      "bitrate_power": 2.1276,
+      "d_coefficient": 0.0975,
+      "fps": 30.0,
+      "fps_power": 1.2667,
+      "interaction_amplitude": 3.615,
+      "interaction_offset": 0.256,
+      "interaction_power": -2.016,
+      "interaction_scale": 396.6,
+      "loss_percent_scale": 100.0,
+      "loss_scale": 1.383,
+      "pixels_power": 0.3177,
+      "resolution_amplitude": 0.6571,
+      "resolution_power": -1.295,
+      "resolution_reference": 232000.0
+    },
+    "dynamic_base": 0.1,
+    "dynamic_decay_divisor": 2.0,
+    "dynamic_multiplier": 2.0,
+    "game_quality": 4.5,
+    "loss_decay": 180.94,
+    "maximum_mos": 5.0,
+    "minimum_mos": 1.0,
+    "name": "user_formula_v2",
+    "resolution_scale": 410.0,
+    "rtt_decay": 0.0035,
+    "score_span": 4.0
+  },
+  "num_scenes": 1,
+  "policy": {
+    "allow_soft_degrade": true,
+    "baselines": {
+      "normal": 2.5,
+      "super_vip": 4.5,
+      "vip": 4.0
+    },
+    "bitrate_adaptation": true,
+    "contract_dl_kbps": 0.0,
+    "contract_ul_kbps": 0.0,
+    "hard_mos": false,
+    "objective": "total_utility",
+    "package_order": [
+      "super_vip",
+      "vip",
+      "normal"
+    ],
+    "position_factors": {
+      "far": 1.0,
+      "middle": 1.0,
+      "near": 1.0
+    },
+    "position_order": [
+      "far",
+      "middle",
+      "near"
+    ],
+    "priority_order": [
+      "business",
+      "package"
+    ],
+    "profiles": {
+      "demo_gbr": "GBR",
+      "demo_non_gbr": "Non-GBR"
+    },
+    "session_aggregation": "min",
+    "targets": {
+      "normal": 2.5,
+      "super_vip": 4.5,
+      "vip": 4.0
+    },
+    "tolerance_factors": {
+      "high": 1.0,
+      "low": 1.0,
+      "medium": 1.0
+    },
+    "tolerance_order": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "weight_dimensions": [
+      "business",
+      "package",
+      "position",
+      "tolerance"
+    ],
+    "weight_mode": "ordered",
+    "weight_reference": 64,
+    "weights": {
+      "normal": {
+        "browsing": 3.0,
+        "download": 1.0,
+        "realtime": 4.0
+      },
+      "super_vip": {
+        "browsing": 7.0,
+        "download": 3.0,
+        "realtime": 8.0
+      },
+      "vip": {
+        "browsing": 5.0,
+        "download": 2.0,
+        "realtime": 6.0
+      }
+    }
+  },
+  "population": {
+    "business_probs": {
+      "cloudgame": 0.07035516597405657,
+      "game": 0.07035516597405657,
+      "meeting": 0.07035516597405657,
+      "openlive": 3.36490738092434e-05,
+      "shortvideo": 0.3667681747059912,
+      "video": 0.2814223463499167,
+      "voip": 0.07035516597405657,
+      "watchlive": 0.07035516597405657
+    },
+    "business_probs_by_package": {},
+    "distribution_mode": "independent",
+    "joint_rows": [],
+    "max_users": 1000,
+    "package_probs": {
+      "normal": 0.6,
+      "super_vip": 0.15,
+      "vip": 0.25
+    },
+    "position_probs": {
+      "far": 0.2,
+      "middle": 0.5,
+      "near": 0.3
+    },
+    "profile_probs": {
+      "demo_gbr": 0.3,
+      "demo_non_gbr": 0.7
+    },
+    "qoe_business_mapping": {
+      "qoe_cloudgame": {
+        "cloudgame": 1.0
+      },
+      "qoe_game": {
+        "game": 1.0
+      },
+      "qoe_live": {
+        "watchlive": 1.0
+      },
+      "qoe_meeting": {
+        "meeting": 1.0
+      },
+      "qoe_openlive": {
+        "openlive": 1.0
+      },
+      "qoe_shortvideo": {
+        "shortvideo": 1.0
+      },
+      "qoe_video": {
+        "video": 1.0
+      },
+      "qoe_voip": {
+        "voip": 1.0
+      }
+    },
+    "qoe_counts": {
+      "qoe_cloudgame": 41817,
+      "qoe_game": 41817,
+      "qoe_live": 41817,
+      "qoe_meeting": 41817,
+      "qoe_openlive": 20,
+      "qoe_shortvideo": 217996,
+      "qoe_video": 167269,
+      "qoe_voip": 41817
+    },
+    "tolerance_probs": {
+      "high": 0.3,
+      "low": 0.3,
+      "medium": 0.4
+    },
+    "users_per_cell": 100
+  },
+  "ranges": {
+    "buffer": {
+      "average": [
+        1000,
+        2000
+      ],
+      "good": [
+        0,
+        1000
+      ],
+      "poor": [
+        2000,
+        10000
+      ]
+    },
+    "jitter": {
+      "average": [
+        10,
+        20
+      ],
+      "good": [
+        0,
+        10
+      ],
+      "poor": [
+        20,
+        50
+      ]
+    },
+    "loss": {
+      "average": [
+        0.0015,
+        0.005
+      ],
+      "good": [
+        0,
+        0.0015
+      ],
+      "poor": [
+        0.005,
+        0.05
+      ]
+    },
+    "rtt_game": {
+      "average": [
+        50,
+        100
+      ],
+      "good": [
+        0,
+        50
+      ],
+      "poor": [
+        100,
+        460
+      ]
+    },
+    "rtt_interactive": {
+      "average": [
+        80,
+        150
+      ],
+      "good": [
+        0,
+        80
+      ],
+      "poor": [
+        150,
+        300
+      ]
+    },
+    "rtt_video": {
+      "average": [
+        100,
+        200
+      ],
+      "good": [
+        0,
+        100
+      ],
+      "poor": [
+        200,
+        500
+      ]
+    },
+    "stall": {
+      "average": [
+        0.1,
+        0.3
+      ],
+      "good": [
+        0,
+        0.1
+      ],
+      "poor": [
+        0.3,
+        1.0
+      ]
+    }
+  },
+  "reference": {
+    "enabled": true,
+    "max_nodes": 30000,
+    "mos_grid": [
+      1.0,
+      2.25,
+      3.25,
+      3.75,
+      4.25,
+      4.75,
+      5.0
+    ],
+    "time_budget_ms": 1000
+  },
+  "schema_version": "2.0",
+  "seed": 20260918,
+  "solver": {
+    "bandwidth_quantum_kbps": 1.0,
+    "candidate_mos_offsets": [
+      0.1
+    ],
+    "epsilon_bandwidth_kbps": 0.001,
+    "epsilon_gain": 1e-06,
+    "epsilon_mos": 1e-06,
+    "epsilon_price": 0.001,
+    "epsilon_resource": 0.0001,
+    "epsilon_strategy": 0.01,
+    "epsilon_utility": 0.0001,
+    "exchange_max_donors": 2,
+    "exchange_pairs_per_iteration": 512,
+    "exchange_shortlist": 16,
+    "gamma0": 0.05,
+    "kept_candidates_per_user": 128,
+    "lambda_initial": [
+      0.02,
+      0.02
+    ],
+    "level_edges": [
+      1.0,
+      2.5,
+      3.5,
+      4.0,
+      4.5,
+      5.0
+    ],
+    "max_iterations": 500,
+    "max_total_steps": 5000000,
+    "mos_grid": [
+      1.0,
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0,
+      4.5,
+      5.0
+    ],
+    "price_deadband": 0.01,
+    "price_floor": 0.01,
+    "price_max_step": 0.02,
+    "price_smoothing": 0.25,
+    "price_update": "smoothed",
+    "raw_candidates_per_user": 2048,
+    "stable_rounds": 3,
+    "time_budget_ms": 30000,
+    "trace_users": true
+  },
+  "utility": {
+    "bandwidth_reference_kbps": 1000.0,
+    "beta_change": 0.1,
+    "debt_cap": 1.0,
+    "eta_fair": 0.5,
+    "history_window_seconds": 300.0,
+    "switch_cost": 0.0
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "failed": 0,
+  "failures": [],
+  "quota_gaps": 0,
+  "quota_mode": "specified",
+  "realized_bands": {
+    "unmet": 20
+  },
+  "rejection_counts": {
+    "INDIVIDUAL_TARGET_UNREACHABLE": 4,
+    "MOS_BAND_UNREACHABLE_OR_LOW_ACCEPTANCE": 6
+  },
+  "requested": 5,
+  "successful": 5
+}

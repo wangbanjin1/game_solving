@@ -1,0 +1,16 @@
+{
+  "failed_scenes": 0,
+  "feasible_scenes": 5,
+  "max_iterations": 33,
+  "max_solver_ms": 902.5407000008272,
+  "max_steps": 517523,
+  "scenes": 5,
+  "statuses": {
+    "FEASIBLE_DEGRADED": 5
+  },
+  "stops": {
+    "CONVERGED_LOCAL": 5
+  },
+  "successful_scenes": 5,
+  "weighted_mos_gain": 7375.9736964635085
+}
