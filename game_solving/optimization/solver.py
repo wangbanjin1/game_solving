@@ -1,7 +1,6 @@
 """Price iteration with certified initialization, shared budgets and feasible incumbents."""
 
 from dataclasses import asdict
-import math
 import logging
 from game_solving.domain.entities import SolveResult
 from game_solving.domain.validation import validate_scene
@@ -11,6 +10,7 @@ from .budget import Budget, BudgetExceeded
 from .feasibility import certificate
 from .candidates import CandidateBuilder
 from .coordinator import ResourceCoordinator
+from .prices import update_prices
 
 
 logger = logging.getLogger(__name__)
@@ -41,6 +41,8 @@ class Solver:
         stable = 0
         pool_signature = None
         prices = list(p["lambda_initial"])
+        price_signal = [0.0, 0.0]
+        self.terminal = []
         try:
             budget.consume(n, kind="input_validation")
             validate_scene(scene, c)
@@ -86,6 +88,13 @@ class Solver:
                     best = basic
             else:
                 mode = "DEGRADED"
+            if c["policy"]["objective"] == "total_utility":
+                mode = "UTILITY"
+                # Basic initialization may be worse than the valid current state.
+                for candidate in (anchors, hard):
+                    if all(a is not None for a in candidate) and not check_actions(scene, candidate, self.policy, budget):
+                        if self.policy.rank(scene.users, candidate, mode) < self.policy.rank(scene.users, best, mode):
+                            best = list(candidate)
             certs["target"], target = certificate(scene, "target", self.policy, budget)
             logger.debug("预检查 target：%s", certs["target"])
             required = [
@@ -105,6 +114,12 @@ class Solver:
                     self.builder.scope(u, pool, k)
                     for u, pool in zip(scene.users, pools)
                 ]
+                if mode == "UTILITY":
+                    # Repair must always be able to reach hard floors, even while
+                    # ordinary exploration is restricted to the current MOS levels.
+                    for i, scope in enumerate(scopes):
+                        if all(a.action_id != hard[i].action_id for a in scope):
+                            scope.append(hard[i])
                 signature = tuple(tuple(a.action_id for a in pool) for pool in scopes)
                 changed = signature != pool_signature
                 if changed:
@@ -146,19 +161,11 @@ class Solver:
                     best = repaired[:]
                     best_iteration = k + 1
                 used = total(repaired)
+                self.terminal = repaired[:]
                 h = sum(a.h for a in repaired)
                 vector = tuple(a.action_id for a in repaired)
-                next_prices = [
-                    max(
-                        0,
-                        prices[j]
-                        + p["gamma0"]
-                        / math.sqrt(k + 1)
-                        * (getattr(raw_total, d) - getattr(scene.available, d))
-                        / c["utility"]["bandwidth_reference_kbps"],
-                    )
-                    for j, d in enumerate(("ul", "dl"))
-                ]
+                next_prices, price_signal = update_prices(prices, raw_total, scene.available, k, price_signal, c)
+                price_change = max(abs(a - b) for a, b in zip(prices, next_prices))
                 metrics = {}
                 if previous:
                     old, old_used, old_h, old_v = previous
@@ -177,6 +184,7 @@ class Solver:
                         and metrics["utility_change"] <= p["epsilon_utility"]
                         and old_v == self.policy.violation_vector(scene.users, repaired)
                         and local
+                        and (p["price_update"] == "legacy" or price_change <= p["epsilon_price"])
                         else 0
                     )
                 trace.append(
@@ -190,6 +198,31 @@ class Solver:
                         "next_prices": next_prices,
                         "steps": budget.used,
                         "scope_changed": changed,
+                        "stable_count": stable,
+                        "stable_required": p["stable_rounds"],
+                        "local_optimal": local,
+                        "full_scope": all(len(s) == len(pool) for s, pool in zip(scopes, pools)),
+                        "best_iteration": best_iteration,
+                        "best_H": sum(a.h for a in best),
+                        "price_change": price_change,
+                        "price_signal": price_signal[:],
+                        "exchange_checks": getattr(self.coordinator, "exchange_checks", 0),
+                        "exchange_truncated": getattr(self.coordinator, "exchange_truncated", False),
+                        "coordination_events": getattr(self.coordinator, "events", []),
+                        **({"users": [
+                            {"user_id": u.user_id, "package": u.package, "business": u.business,
+                             "requested": {"action_id": request.action_id, "bandwidth": asdict(request.bandwidth), "mos": request.mos, "H": request.h},
+                             "allocated": {"action_id": action.action_id, "bandwidth": asdict(action.bandwidth), "mos": action.mos, "direction_mos": action.direction_mos, "H": action.h, "basic_met": action.basic_met, "target_met": action.target_met},
+                             "utility": self.policy.components(u, action),
+                             "shadow_cost": (prices[0] * action.bandwidth.ul + prices[1] * action.bandwidth.dl) / c["utility"]["bandwidth_reference_kbps"],
+                             "delta_H_from_initial": action.h - anchors[i].h if anchors[i] else None,
+                             "candidate_count": len(scopes[i]),
+                             "candidates": [dict(asdict(a),
+                                 shadow_cost=(prices[0] * a.bandwidth.ul + prices[1] * a.bandwidth.dl) / c["utility"]["bandwidth_reference_kbps"],
+                                 selection_score=a.h - (prices[0] * a.bandwidth.ul + prices[1] * a.bandwidth.dl) / c["utility"]["bandwidth_reference_kbps"])
+                                 for a in scopes[i]]}
+                            for i, (u, request, action) in enumerate(zip(scene.users, raw, repaired))
+                        ]} if p["trace_users"] else {}),
                         **metrics,
                     }
                 )
@@ -208,10 +241,11 @@ class Solver:
                     elif local_best:
                         stop = "CONVERGED_LOCAL"
                         break
-                if vector in seen and previous and vector != previous[0]:
+                cycle_state = (vector, tuple(prices), tuple(price_signal)) if p["price_update"] != "legacy" else vector
+                if cycle_state in seen and previous and vector != previous[0]:
                     stop = "STOPPED_CYCLE"
                     break
-                seen.add(vector)
+                seen.add(cycle_state)
                 previous = (
                     vector,
                     used,
@@ -262,6 +296,10 @@ class Solver:
             errors,
         )
         result.run_status = "SUCCESS" if best and stop == "CONVERGED_LOCAL" else "FAILED"
+        result.terminal_decisions = self.terminal
+        result.returned_matches_terminal = bool(best) and [a.action_id for a in best] == [a.action_id for a in self.terminal]
+        result.output_selection = "maximum_H_found" if self.c["policy"]["objective"] == "total_utility" else "best_feasible_by_policy"
+        result.work_counts = budget.counts.copy()
         logger.debug("最终结果 %s：状态=%s，停止=%s，最佳方案记录轮次=%d，终检违规=%s", scene.scene_id, status, stop, best_iteration, errors)
         if logger.isEnabledFor(logging.DEBUG):
             for u, a in zip(scene.users, best):

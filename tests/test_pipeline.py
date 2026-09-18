@@ -22,7 +22,7 @@ from game_solving.simulation.population import counts
 class PipelineTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.c = load_config("configs/tiny.json")
+        cls.c = load_config("tests/fixtures/meeting.json")
         cls.services = Services(cls.c)
         cls.scenes, cls.audits, cls.report = cls.services.generator().generate()
 
@@ -95,7 +95,7 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(m["N_improved"] + m["N_worsened"] + m["N_unchanged"], 3)
 
     def test_iteration_limit_and_input_immutability(self):
-        c = load_config("configs/tiny.json", {"solver": {"max_iterations": 1}})
+        c = load_config("tests/fixtures/meeting.json", {"solver": {"max_iterations": 1}})
         scene = copy.deepcopy(self.scenes[0])
         before = copy.deepcopy(scene)
         a = Services(c).solver().solve(scene)
@@ -106,7 +106,7 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(scene, before)
 
     def test_work_budget_returns_valid_incumbent(self):
-        c = load_config("configs/tiny.json", {"solver": {"max_total_steps": 100}})
+        c = load_config("tests/fixtures/meeting.json", {"solver": {"max_total_steps": 100}})
         result = Services(c).solver().solve(self.scenes[0])
         self.assertEqual(result.stop_reason, "MAX_TOTAL_STEPS")
         self.assertLessEqual(result.total_steps, 100)
@@ -119,10 +119,10 @@ class PipelineTests(unittest.TestCase):
         )
 
     def test_too_small_budget_and_zero_time(self):
-        c = load_config("configs/tiny.json", {"solver": {"max_total_steps": 1}})
+        c = load_config("tests/fixtures/meeting.json", {"solver": {"max_total_steps": 1}})
         with self.assertRaisesRegex(ValueError, "INVALID_WORK_BUDGET"):
             Services(c).solver().solve(self.scenes[0])
-        c = load_config("configs/tiny.json", {"solver": {"time_budget_ms": 0}})
+        c = load_config("tests/fixtures/meeting.json", {"solver": {"time_budget_ms": 0}})
         r = Services(c).solver().solve(self.scenes[0])
         self.assertEqual(r.stop_reason, "TIME_BUDGET")
         self.assertEqual(r.solution_status, "NO_FEASIBLE_FOUND")
@@ -139,13 +139,13 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(result.certificates["hard"]["status"], "feasible")
 
     def test_fixed_capacity_and_quota_failure_reports(self):
-        c = load_config("configs/strict_failure.json")
+        c = load_config("tests/fixtures/unreachable_game.json")
         scenes, _, report = Services(c).generator().generate()
         self.assertEqual(scenes, [])
         self.assertEqual(report["failed"], 1)
         self.assertIn("EMPTY_REQUESTED", report["failures"][0]["reason"])
         c = load_config(
-            "configs/tiny.json",
+            "tests/fixtures/meeting.json",
             {"cell": {"capacity_ul_kbps": 1, "capacity_dl_kbps": 1}},
         )
         scenes, _, report = Services(c).generator().generate()
@@ -154,7 +154,7 @@ class PipelineTests(unittest.TestCase):
 
     def test_relaxed_empty_quota_reports_gap(self):
         c = load_config(
-            "configs/strict_failure.json", {"generation": {"strict_quotas": False}}
+            "tests/fixtures/unreachable_game.json", {"generation": {"strict_quotas": False}}
         )
         scenes, audits, report = Services(c).generator().generate()
         self.assertEqual(report["failed"], 0)
@@ -188,7 +188,7 @@ class PipelineTests(unittest.TestCase):
                     [
                         "run",
                         "--config",
-                        "configs/tiny.json",
+                        "tests/fixtures/meeting.json",
                         "--output",
                         str(out),
                         "--max-iterations",
@@ -204,7 +204,7 @@ class PipelineTests(unittest.TestCase):
                     [
                         "solve",
                         "--config",
-                        "configs/tiny.json",
+                        "tests/fixtures/meeting.json",
                         "--input",
                         str(out / "solver_inputs.jsonl"),
                         "--output",
@@ -227,7 +227,7 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(main(["generate", "--output", str(out)]), 2)
 
     def test_model_fingerprint_rejects_mixed_formulas(self):
-        c = load_config("configs/tiny.json")
+        c = load_config("tests/fixtures/meeting.json")
         c["models"]["rtt_decay"] *= 2
         with self.assertRaisesRegex(ValueError, "MODEL_CONFIG_MISMATCH"):
             Services(c).solver().solve(self.scenes[0])

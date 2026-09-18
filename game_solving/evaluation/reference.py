@@ -2,6 +2,7 @@
 
 import itertools
 import math
+from dataclasses import asdict
 from game_solving.domain.entities import Bandwidth
 from game_solving.optimization.budget import Budget, BudgetExceeded
 from game_solving.optimization.feasibility import minimum_action
@@ -18,7 +19,14 @@ def evaluate_reference(scene, result, config, policy):
     best_h = None
     best_rank = None
     witness = None
+    policy_witness = None
     complete = False
+    if result.decisions and result.mode == "UTILITY":
+        best_score = sum(policy.weight(u) * config["policy"]["weight_reference"] * a.mos for u, a in zip(scene.users, result.decisions) if a.mos is not None)
+        best_h = sum(a.h for a in result.decisions)
+        best_rank = policy.rank(scene.users, result.decisions, result.mode)
+        witness = [a.action_id for a in result.decisions]
+        policy_witness = list(result.decisions)
     try:
         for i, u in enumerate(scene.users):
             q = policy.quota(u)
@@ -51,10 +59,16 @@ def evaluate_reference(scene, result, config, policy):
                 )
                 upper = math.floor(s.max_kbps / quantum) * quantum
                 values = {lower, upper, getattr(u.current, d)}
+                extra_targets = []
+                for center in (u.observed_mos, u.direction_targets.get(d, u.target), u.direction_baselines.get(d, u.baseline)):
+                    if center is not None:
+                        for offset in config["solver"]["candidate_mos_offsets"]:
+                            extra_targets.extend(x for x in (center - offset, center + offset) if 1 <= x <= 5)
                 for target in sorted(
                     set(
                         config["solver"]["mos_grid"]
                         + cfg["mos_grid"]
+                        + extra_targets
                         + [
                             u.target,
                             u.baseline,
@@ -108,6 +122,7 @@ def evaluate_reference(scene, result, config, policy):
                 if best_rank is None or rank < best_rank:
                     best_rank = rank
                     best_h = h
+                    policy_witness = list(chosen)
                 continue
             for a in reversed(pools[depth]):
                 budget.consume(kind="reference_branch")
@@ -134,6 +149,10 @@ def evaluate_reference(scene, result, config, policy):
         "H_reference": best_h,
         "rank_reference": best_rank,
         "action_ids": witness,
+        "policy_action_ids": [a.action_id for a in policy_witness] if policy_witness else None,
+        "policy_decisions": [asdict(a) for a in policy_witness] if policy_witness else None,
+        "H_algorithm": sum(a.h for a in result.decisions) if result.decisions else None,
+        "H_gap": best_h - sum(a.h for a in result.decisions) if best_h is not None and result.decisions and result.mode in ("UTILITY", "NORMAL") else None,
         "steps": budget.used,
         "elapsed_ms": budget.elapsed_ms,
         "candidate_universe_hash": digest(
@@ -141,8 +160,11 @@ def evaluate_reference(scene, result, config, policy):
         ),
         "objective": "weighted_session_mos",
         "policy_objective": (
-            "basic_lexicographic_then_H" if result.mode != "NORMAL" else "H"
+            "H" if result.mode in ("UTILITY", "NORMAL") else "basic_lexicographic_then_H"
         ),
+        "candidate_counts": [len(pool) for pool in pools],
+        "universe_complete": len(pools) == len(scene.users),
+        "warm_started_from_algorithm": bool(result.decisions) and result.mode == "UTILITY",
         "constraints_mode": result.mode,
         "complete": complete,
     }

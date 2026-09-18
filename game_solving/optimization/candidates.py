@@ -45,6 +45,10 @@ class CandidateBuilder:
                     user.direction_baselines.get(d, user.baseline),
                 ]
             )
+            for center in (user.observed_mos, user.direction_targets.get(d, user.target), user.direction_baselines.get(d, user.baseline)):
+                if center is not None:
+                    for offset in c["solver"]["candidate_mos_offsets"]:
+                        targets.update(x for x in (center - offset, center + offset) if 1 <= x <= 5)
             for target in sorted(targets):
                 inverse = model.inverse(user.business, target, s, budget)
                 if inverse.feasible:

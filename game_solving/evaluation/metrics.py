@@ -66,6 +66,11 @@ def evaluate(scene, result, reference, config, policy):
     metric["allocated_ul_kbps"] = total(result.decisions).ul
     metric["allocated_dl_kbps"] = total(result.decisions).dl
     metric["H_algorithm"] = sum(a.h for a in result.decisions)
+    metric["H_reference"] = reference.get("H_reference")
+    metric["H_gap"] = reference.get("H_gap")
+    metric["H_gap_exact"] = reference.get("H_gap") if reference.get("complete") and result.mode in ("UTILITY", "NORMAL") else None
+    if metric["H_gap_exact"] is not None and metric["H_gap_exact"] < -config["solver"]["epsilon_gain"]:
+        raise AssertionError("UTILITY_REFERENCE_COMPARABILITY_FAILURE")
     metric["guarantee_vector"] = policy.violation_vector(scene.users, result.decisions)
     if reference.get("status") == "exact_discrete":
         denominator = reference["U_reference"] - metric["weighted_mos_current"]

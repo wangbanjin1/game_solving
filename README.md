@@ -1,156 +1,74 @@
-# 个人用户双向带宽模拟与博弈求解
+# QoE 用户双向带宽模拟与博弈求解
 
-Python 3.10+，运行时仅依赖标准库。以基站覆盖区域为小区，一人一个当前业务，上下行分别拥有120 Mbps容量。支持独立生成、读取固定数据求解、生成后立即求解，并输出日志、前后对比表和成功/失败标签。
+Python 3.10+，运行时仅依赖标准库。生成、求解分开运行；求解返回已找到的最高效用合法方案，并单独记录停止时方案及参考答案。
 
-## 直接使用仓库中的100场景数据，只跑求解
+## 当前业务范围
 
-仓库已包含 [100场景数据集及基准结果](datasets/complex_100/README.md)，不需要先生成。所有命令在仓库根目录执行：
+只使用短视频、长视频、会议、云游戏、语音、观看直播、游戏、开直播。原始样本表中的 **sa、sta 均排除**，其余 594,370 条 QoE 样本重新归一化。
 
-```powershell
-python -m game_solving solve --config configs/complex_100.json --input datasets/complex_100/solver_inputs.jsonl --output outputs/complex_100_recheck
-```
+100 人配额：短视频 37、长视频 28、会议/云游戏/语音/观看直播/游戏各 7、开直播 0（极低频，保留计数后整数化为零）。
 
-求解后的表格在 `outputs/complex_100_recheck/comparison.md`，汇总在 `summary.json`。输出目录必须为空或不存在；重复运行请换目录名。
+## 生成一批数据
 
-这批数据包含100个场景、每场景100人、十类业务、三档套餐和两种QoS类别；每人10段30秒历史。已有基准为91个成功、9个循环停止失败，全部保留合法分配。基准文件保存在 `datasets/complex_100`，新实验写入 `outputs`。
-
-## 三种命令
-
-| 命令 | 用途 | 是否需要已有输入 |
-| --- | --- | --- |
-| `generate` | 只生成模拟数据，校验后保存 | 不需要 |
-| `solve` | 读取固定数据求解，不重新生成 | 必须提供 `--input` |
-| `run` | 生成数据后立即求解 | 不需要 |
-
-### 只生成一批新数据
+在仓库根目录执行：
 
 ```powershell
-python -m game_solving generate --config configs/complex_100.json --output outputs/complex_100_new_data
+python -m game_solving generate --config configs/congestion_qoe.json --output outputs/my_qoe_data
 ```
 
-生成阶段 `feasible_scenes=0` 表示尚未求解；生成是否成功看 `generation_report.json` 和 `validation_report.json`。
+一个基础样本包含 100 人，生成相同用户状态的 0%、5%、10%、15%、20% 带宽余量版本，共 5 个场景。上下行容量分别按当前占用计算并写入样本。
 
-### 对刚生成的数据单独求解
+## 单独求解
 
 ```powershell
-python -m game_solving solve --config configs/complex_100.json --input outputs/complex_100_new_data/solver_inputs.jsonl --output outputs/complex_100_new_solve
+python -m game_solving solve --config configs/congestion_qoe.json --input outputs/my_qoe_data/solver_inputs.jsonl --output outputs/my_qoe_solve
 ```
 
-### 一次完成生成和求解
+输出目录必须为空或不存在。`generate` 的 `feasible_scenes=0` 表示尚未求解；生成是否完成看 `generation_report.json` 与 `validation_report.json`。
+
+## 查看结果
 
 ```powershell
-python -m game_solving run --config configs/complex_100.json --output outputs/complex_100_new_run
+python -m game_solving.visualization --input outputs/my_qoe_solve --output outputs/my_qoe_report.html
 ```
 
-### 小规模快速检查
+HTML 离线展示分配前后指标、价格、当轮/历史最好/参考效用，以及初始套餐统计。
 
-```powershell
-python -m game_solving run --config configs/tiny.json --output outputs/tiny_check
-python -m game_solving run --config configs/history.json --output outputs/history_check
-```
+报告还提供完整策略对照（初始、算法返回、停止时、暴搜参考）、逐轮用户请求和实际分配、候选动作的 H−影子成本评分、资源协调步骤与收敛状态。选择场景后，可用“上一轮/下一轮”回放，并下载本场景证据 JSON。`trace_users=true` 时求解会保存这些详细记录；旧输出需重新求解才能补齐候选评分。
 
-## CLI 参数
+- `initial_distribution.jsonl`：套餐和业务、MOS/KQI、达标分布。
+- `iteration_trace.jsonl`：逐轮请求、分配、效用分项和交换原因。
+- `solve_results.jsonl`：最终返回方案、停止时方案、停止原因。
+- `reference_results.jsonl`：参考分配、H 差距和搜索证明状态。
+- `comparison.md`、`summary.json`：前后效果与运行摘要。
 
-```powershell
-python -m game_solving --help
-```
+## 仅保留的实验配置
 
-| 参数 | 说明 |
+| 文件 | 用途 |
 | --- | --- |
-| `--config PATH` | JSON覆盖配置；省略则加载默认配置 |
-| `--input PATH` | JSONL场景文件，每行一个场景；solve必填。没有单场景筛选参数，需要时提供只含一行的文件 |
-| `--output PATH` | 结果目录，默认 outputs/demo；需为空或不存在 |
-| `--max-iterations N` | 每场景最大外层迭代轮数 |
-| `--max-steps N` | max-iterations的兼容别名，不是总工作量 |
-| `--max-total-steps N` | 每场景共享工作量上限，包含校验、候选、模型和协调等 |
-| `--time-budget-ms N` | 每场景搜索时间预算，单位ms |
-| `--log-level LEVEL` | DEBUG、INFO、WARNING、ERROR、CRITICAL；覆盖配置日志级别 |
+| `configs/default.json` | 完整参数源，默认业务比例也仅含 QoE |
+| `configs/congestion_exact.json` | 4 人短视频精确参考实验，五档余量；不代表总体业务分布 |
+| `configs/congestion_qoe.json` | 100 人仅 QoE 业务实验，五档余量 |
 
-对同一批数据调整求解预算：
+小样本可将生成、求解命令的配置换为 `congestion_exact.json` 并使用新目录。旧实验数据集、示例报告和配置已清理；`tests/fixtures` 仅为自动测试的最小输入条件。
 
-```powershell
-python -m game_solving solve --config configs/complex_100.json --input datasets/complex_100/solver_inputs.jsonl --output outputs/complex_100_budget_test --max-iterations 20 --max-total-steps 300000 --time-budget-ms 3000
-```
+## 结果语义和边界
 
-预算先到先停。搜索预留最终校验工作量；时间期限是协作式的，整个命令还包含读取、评估和输出，不能将其视为硬实时总耗时上限。
+初始负载支持参考“5 台手机 iperf 合计上下行各约 120 Mbps”的压测量级。百人 QoE 配置增加按业务区分的高负载初始提案；这不是固定小区上限，也不按人数乘以 24 Mbps。具体参数、假设及人数与容量的关系见 [实测吞吐参考与初始负载](docs/实测吞吐参考与初始负载.md)。
 
-## 日志与前后对比表
+新实验按总 H 优化；影子价格引导请求，不作为跨轮比较的固定收益。算法保留历史最好合法方案，它可能不同于停止时方案。局部收敛不等于全局最优；参考状态仅在 `exact_discrete` 时证明声明的有限候选空间搜索完成。百人参考预算有限，`best_known` 不能作为最优证明。
 
-默认INFO：场景进度、完成摘要及对比表。DEBUG：额外显示生成特点、逐用户输入、可行性证据、候选数量、每轮需求/分配/价格和最终用户对照。详细日志可能影响时间预算触发点。
+当前仍固定媒体、G 和网络环境，调节有模型依据的媒体码率。套餐 60/25/15 与业务→套餐→位置→容忍度权重顺序为实验设置，尚非现网标定。历史是模拟序列，不是实际执行反馈。
 
-```powershell
-python -m game_solving solve --config configs/complex_100.json --input datasets/complex_100/solver_inputs.jsonl --output outputs/complex_100_debug --log-level DEBUG
-```
+退出码：0 为完成，2 为输入或生成错误，3 为求解至少一个场景未收敛或失败；失败仍可能保留合法方案。
 
-日志写入stderr，最后的JSON摘要写入stdout。PowerShell可分别保存：
-
-```powershell
-python -m game_solving solve --config configs/complex_100.json --input datasets/complex_100/solver_inputs.jsonl --output outputs/complex_100_logged 2> complex_100.log 1> complex_100_summary.json
-```
-
-`comparison.md` 提供基本保障不足人数、目标达标人数、会话MOS均值、加权MOS总和及双向占用的前后对照，并列出改善/恶化/不变人数和最大MOS降幅；机器读取使用 `comparison.jsonl`。MOS只统计有MOS模型的用户，双向会话只计一次；浏览和下载按带宽保障处理。
-
-## 成功、失败与退出码
-
-- `run_status=SUCCESS`：返回合法分配且局部收敛。
-- `run_status=FAILED`：预算耗尽、循环停止或未找到可行方案。失败时仍保留已有合法分配，对比表注明它未收敛。
-- `solution_status`：单独表示分配是否可行、是否满足全员基本保障。FEASIBLE_DEGRADED表示合法但部分基本保障不足，可与SUCCESS同时出现。
-- `successful_scenes` / `failed_scenes`：运行成功失败数；`feasible_scenes`：有合法分配的场景数。
-
-| 退出码 | 含义 |
-| --- | --- |
-| 0 | generate按配置完成，或solve/run全部场景成功 |
-| 2 | 参数、输入、文件错误，或不允许部分成功时生成失败 |
-| 3 | solve/run至少一个场景失败，完整结果仍保存 |
-
-`allow_partial=true` 允许继续处理成功生成的部分，缺失场景仍记录在生成报告。未收敛不等于数学无解；局部稳定不等于全局最优或纳什均衡。
-
-## 配置和数据一致性
-
-`configs/default.json` 是完整参数表，其他文件只覆盖差异；命令行覆盖优先级最高。套餐、业务、MOS档位概率表整体替换，其他普通对象递归合并，数组整体替换；未知键报错。运行时保存完整 `resolved_config.json`。
-
-| 配置 | 用途 |
-| --- | --- |
-| `default.json` | 5个混合场景，每场景30人 |
-| `tiny.json` | 2个三人会议场景，启用离散参考 |
-| `history.json` | 2个三人会议场景，开启历史MOS |
-| `balanced.json` | 100个百人均衡人口场景，不开启历史 |
-| `complex_100.json` | 100个百人混合场景，10段历史；50轮、500000工作量、5000ms预算 |
-| `medium.json` | 百人短视频工作量限制验证 |
-| `large.json` | 千人固定定额游戏，验证规模与计数 |
-| `strict_failure.json` | 故意不可达的严格配额，预期生成失败 |
-
-修改预算或价格参数可以复用输入。修改公式、业务定义、码率量化等导致模型指纹变化，需重新生成匹配数据。历史开启后，`history.jsonl` 保存逐时段审计，求解输入只携带 `history_mos`；更改历史窗口需重新生成或外部重新聚合，solve不会重算历史均值。历史只模拟带宽变化，非码率KQI固定，不能视为真实网络轨迹。
-
-## 结果文件和安装测试
-
-优先阅读 `summary.json`、`comparison.md`，再看 `solve_results.jsonl` 的分配、证据和轨迹。生成质量看 `generation_report.json`、`validation_report.json`；标签与指标见 `run_labels.jsonl`、`static_labels.jsonl`、`metrics.jsonl`。完整产物说明见[数据集说明](datasets/complex_100/README.md)。
+## 测试与说明
 
 ```powershell
 python -m unittest discover -s tests -v
-python -m pip install .
-game-solving --help
 ```
 
-核心代码在 `game_solving`；旧兼容包已移除。普通实验输出被Git忽略，本次用户指定发布的数据集单独保存在 `datasets/complex_100`。所有分配均为离线建议，不直接执行基站控制。
-
-- [代码架构与完整配置说明](docs/代码架构与配置说明.md)
-- [核心算法方案](docs/个人用户双向带宽_数据模拟与博弈求解方案.md)
-- [历史数据模拟说明](docs/历史数据模拟说明.md)
-- [重构验证记录](docs/重构验证记录_v2.md)
-
-## 从已有结果生成离线HTML可视化
-
-无需重新生成数据或求解：
-
-```powershell
-python -m game_solving.visualization --input datasets/complex_100 --output outputs/complex_100_dashboard.html
-```
-
-用浏览器打开HTML即可。支持成功/失败筛选、场景切换、前后指标表、每轮上下行需求/分配/容量曲线、收益与价格曲线。页面自包含，不访问CDN。
-
-`--input` 是结果目录，必须包含 solve_results.jsonl；comparison.jsonl 用于前后对比，solver_inputs.jsonl 或 resolved_config.json 用于容量线。可选文件缺失时明确显示缺失，不伪造数值。输出HTML必须为新文件。图中是当轮协调方案，并非历史最佳；失败时保留方案不算收敛成功。
-
-Python接口：`from game_solving.visualization import generate_report`，调用 `generate_report(input_dir, output_path)`。
-
-仓库提供已生成的 [100场景HTML示例](examples/complex_100_report.html)，下载后用浏览器打开即可；GitHub文件页面只显示源码。
+- [拥塞实验设计与验证](docs/拥塞实验设计与验证.md)
+- [核心算法与已确认业务分布](docs/个人用户双向带宽_数据模拟与博弈求解方案.md)
+- [代码架构与配置说明](docs/代码架构与配置说明.md)
+- [历史模拟说明](docs/历史数据模拟说明.md)

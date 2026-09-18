@@ -1,3 +1,0 @@
-# Preserve archive bytes; accept original Windows line endings.
-* -text whitespace=cr-at-eol
-run.log -whitespace

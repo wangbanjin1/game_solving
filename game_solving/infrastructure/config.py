@@ -8,6 +8,11 @@ from pathlib import Path
 from game_solving.domain.validation import number
 
 REPLACE_MAPS = {
+    "business_min_fraction",
+    "qoe_counts",
+    "qoe_business_mapping",
+    "business_probs_by_package",
+    "compliance_probs_by_package",
     "extensions",
     "package_probs",
     "business_probs",
@@ -58,6 +63,95 @@ def validate(config):
             number(value, path, low=-float("inf"))
 
     walk(c)
+    ref = c["generation"]["throughput_reference"]
+    if type(ref["devices"]) is not int or ref["devices"] < 1:
+        raise ValueError("INVALID_REFERENCE_DEVICE_COUNT")
+    for direction in ("ul", "dl"):
+        number(ref["aggregate_" + direction + "_kbps"], "reference_throughput")
+        if ref["aggregate_" + direction + "_kbps"] <= 0:
+            raise ValueError("POSITIVE_REFERENCE_THROUGHPUT_REQUIRED")
+    if type(ref["simultaneous_directions_confirmed"]) is not bool:
+        raise ValueError("INVALID_REFERENCE_SIMULTANEITY")
+    high_load = c["generation"]["high_load_sampling"]
+    number(high_load["probability"], "high_load_probability", high=1)
+    for business, fraction in high_load["business_min_fraction"].items():
+        if business not in c["businesses"] or not c["businesses"][business]["media_directions"]:
+            raise ValueError("HIGH_LOAD_REQUIRES_MEDIA_BUSINESS")
+        number(fraction, "high_load_min_fraction", high=1)
+        if fraction <= 0:
+            raise ValueError("POSITIVE_HIGH_LOAD_FRACTION_REQUIRED")
+        for direction in c["businesses"][business]["media_directions"]:
+            floor = ref["aggregate_" + direction + "_kbps"] / ref["devices"] * fraction
+            if not any(m["max_kbps"] >= floor for m in c["businesses"][business]["media"]):
+                raise ValueError("HIGH_LOAD_OUTSIDE_MEDIA_MODEL_RANGE")
+    qoe = c["population"]["qoe_counts"]
+    mapping = c["population"]["qoe_business_mapping"]
+    if qoe:
+        allowed_qoe = {"qoe_shortvideo", "qoe_video", "qoe_meeting", "qoe_cloudgame", "qoe_voip", "qoe_live", "qoe_game", "qoe_openlive"}
+        if set(qoe) - allowed_qoe:
+            raise ValueError("NON_QOE_CATEGORY_NOT_ALLOWED")
+        if set(qoe) != set(mapping) or c["population"]["distribution_mode"] != "independent" or c["population"]["business_probs_by_package"]:
+            raise ValueError("INVALID_QOE_MAPPING_OR_DISTRIBUTION_CONFLICT")
+        if any(type(v) is not int or v < 0 for v in qoe.values()) or sum(qoe.values()) <= 0:
+            raise ValueError("INVALID_QOE_COUNTS")
+        for category, table in mapping.items():
+            if not table or set(table) - set(c["businesses"]):
+                raise ValueError("INVALID_QOE_BUSINESS")
+            if any(not c["businesses"][business]["mos_type"] for business in table):
+                raise ValueError("NON_QOE_BUSINESS_MAPPING_NOT_ALLOWED")
+            for probability in table.values():
+                number(probability, category, high=1)
+            if abs(sum(table.values()) - 1) > 1e-9:
+                raise ValueError("INVALID_QOE_PROBABILITIES")
+    if c["generation"]["capacity_mode"] not in ("fixed", "current_headroom"):
+        raise ValueError("INVALID_CAPACITY_MODE")
+    ratios = c["generation"]["headroom_ratios"]
+    if not ratios or len(set(ratios)) != len(ratios):
+        raise ValueError("INVALID_HEADROOM_RATIOS")
+    for ratio in ratios:
+        number(ratio, "headroom_ratio", high=1)
+    for section, field, categories in (
+        ("population", "business_probs_by_package", c["businesses"]),
+        ("generation", "compliance_probs_by_package", ("over", "met", "unmet", "severe")),
+    ):
+        for package, table in c[section][field].items():
+            if package not in c["policy"]["weights"] or not table or set(table) - set(categories):
+                raise ValueError("INVALID_CONDITIONAL_DISTRIBUTION")
+            for probability in table.values():
+                number(probability, field, high=1)
+            if abs(sum(table.values()) - 1) > 1e-9:
+                raise ValueError("INVALID_CONDITIONAL_PROBABILITIES")
+    if c["population"]["distribution_mode"] == "joint" and c["population"]["business_probs_by_package"]:
+        raise ValueError("JOINT_AND_CONDITIONAL_DISTRIBUTIONS_CONFLICT")
+    if sorted(c["policy"]["priority_order"]) != ["business", "package"]:
+        raise ValueError("INVALID_PRIORITY_ORDER")
+    if c["policy"]["objective"] not in ("legacy_guarantee", "total_utility"):
+        raise ValueError("INVALID_OBJECTIVE")
+    if c["policy"]["weight_mode"] not in ("legacy", "ordered"):
+        raise ValueError("INVALID_WEIGHT_MODE")
+    if sorted(c["policy"]["weight_dimensions"]) != ["business", "package", "position", "tolerance"]:
+        raise ValueError("INVALID_WEIGHT_DIMENSIONS")
+    for dimension, table in (("package", c["policy"]["weights"]), ("position", c["policy"]["position_factors"]), ("tolerance", c["policy"]["tolerance_factors"])):
+        order = c["policy"][dimension + "_order"]
+        if len(order) != len(set(order)) or set(order) != set(table):
+            raise ValueError("INVALID_WEIGHT_ORDER")
+    if type(c["solver"]["exchange_max_donors"]) is not int or c["solver"]["exchange_max_donors"] not in (1, 2):
+        raise ValueError("INVALID_DONOR_LIMIT")
+    if type(c["solver"]["exchange_shortlist"]) is not int or c["solver"]["exchange_shortlist"] < 1:
+        raise ValueError("INVALID_EXCHANGE_SHORTLIST")
+    number(c["solver"]["epsilon_price"], "epsilon_price")
+    for section, field in (("generation", "require_target_reachable"), ("solver", "trace_users")):
+        if type(c[section][field]) is not bool:
+            raise ValueError("BOOLEAN_REQUIRED: " + field)
+    if c["solver"]["price_update"] not in ("legacy", "smoothed", "monotone"):
+        raise ValueError("INVALID_PRICE_UPDATE")
+    number(c["solver"]["price_smoothing"], "price_smoothing", high=1)
+    if c["solver"]["price_smoothing"] <= 0:
+        raise ValueError("POSITIVE_PRICE_SMOOTHING_REQUIRED")
+    for field in ("price_deadband", "price_max_step"):
+        number(c["solver"][field], field)
+    for offset in c["solver"]["candidate_mos_offsets"]:
+        number(offset, "candidate_mos_offset", high=4)
     history = c["generation"]["history"]
     if type(history["enabled"]) is not bool:
         raise ValueError("INVALID_HISTORY_ENABLED")

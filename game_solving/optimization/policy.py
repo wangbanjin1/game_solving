@@ -13,6 +13,17 @@ class Policy:
     def weight(self, u):
         p = self.c["policy"]
         b = self.c["businesses"][u.business]
+        if p["weight_mode"] == "ordered":
+            # Mixed-radix order: a primary dimension outweighs every lower
+            # dimension's combined contribution to this user's weight.
+            priorities = sorted({v["priority"] for v in self.c["businesses"].values()})
+            categories = {"business": priorities, **{d: p[d + "_order"] for d in ("package", "position", "tolerance")}}
+            values = {"business": b["priority"], "package": u.package, "position": u.position, "tolerance": u.tolerance}
+            ordinal = 0
+            for dimension in p["weight_dimensions"]:
+                order = categories[dimension]
+                ordinal = ordinal * len(order) + len(order) - 1 - order.index(values[dimension])
+            return (ordinal + 1) / p["weight_reference"]
         group = "realtime" if b["mos_type"] else u.business
         return (
             p["weights"][u.package][group]
@@ -23,10 +34,8 @@ class Policy:
         )
 
     def protection(self, u):
-        return (
-            self.c["businesses"][u.business]["priority"],
-            self.c["policy"]["package_order"].index(u.package),
-        )
+        dimensions = {"business": self.c["businesses"][u.business]["priority"], "package": self.c["policy"]["package_order"].index(u.package)}
+        return tuple(dimensions[d] for d in self.c["policy"]["priority_order"])
 
     def stage(self, u):
         return (
@@ -164,6 +173,16 @@ class Policy:
 
     def rank(self, users, actions, mode):
         h = sum(a.h for a in actions)
+        if self.c["policy"]["objective"] == "total_utility":
+            return (-h,)
         return (
             (*self.violation_vector(users, actions), -h) if mode != "NORMAL" else (-h,)
         )
+
+    def components(self, user, action):
+        target = min(user.direction_targets.values()) if user.direction_targets else user.target
+        debt = 0.0 if action.mos is None or user.history_mos is None else min(self.c["utility"]["debt_cap"], max(0, (target - user.history_mos) / self.c["models"]["score_span"]))
+        return {"weight": self.weight(user), "debt": debt,
+                "experience_benefit": self.weight(user) * action.experience,
+                "fairness_compensation": self.c["utility"]["eta_fair"] * debt * action.experience,
+                "stability_cost": action.stability_cost, "H": action.h}

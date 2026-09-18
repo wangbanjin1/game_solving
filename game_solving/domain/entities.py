@@ -57,6 +57,7 @@ class User:
     direction_baselines: dict[str, float] = field(default_factory=dict)
     cap: Optional[Bandwidth] = None
     total_cap_kbps: Optional[float] = None
+    qoe_category: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -117,6 +118,10 @@ class SolveResult:
     run_status: str = "FAILED"
     executable: bool = False
     convergence_scope: str = "evaluated_candidates"
+    terminal_decisions: list[Action] = field(default_factory=list)
+    returned_matches_terminal: bool = False
+    output_selection: str = "best_feasible_by_policy"
+    work_counts: dict = field(default_factory=dict)
 
 
 def to_dict(value):

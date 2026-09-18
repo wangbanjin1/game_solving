@@ -1,0 +1,82 @@
+<section id="capacity-detail" class="panel" style="margin-bottom:16px">
+<h2>当前场景：余量与带宽上限</h2>
+<p id="capacity-note" class="notice"></p><div id="capacity-current" class="table-wrap"></div>
+<h3>各场景容量对照 · 点击切换</h3><div id="capacity-scenes" class="table-wrap"></div>
+<p class="hint">单位 kbps。求解可用上限 = 小区总上限 − 非受控占用 − 预留；余量比例 =（求解可用上限 − 初始用户占用）÷ 初始用户占用。上下行分别约束，场景内上限不随迭代变化。</p>
+</section>
+<section id="strategy-detail" class="panel" style="margin-top:16px">
+<h2>标准答案：一组完整的联合策略</h2>
+<p id="proof-note" class="notice"></p><div id="strategy-answer" class="table-wrap"></div>
+<p class="hint">带宽单位 kbps。标准答案按固定总效用 H 比较，使用 policy_decisions；加权 MOS 最优的另一组动作不能混作 H 最优答案。精确性仅覆盖声明的有限候选集合，当前模型固定媒体与网络环境。</p>
+<h2 style="margin-top:24px">逐轮策略与状态回放</h2>
+<div class="toolbar"><button id="round-prev">上一轮</button><label for="round-select">轮次</label><select id="round-select"></select><button id="round-next">下一轮</button><button id="download-evidence">下载本场景完整证据 JSON</button></div>
+<p id="round-state" class="notice"></p><div id="round-users" class="table-wrap"></div>
+<h3>用户为什么选择这个动作</h3><label for="candidate-user">用户</label> <select id="candidate-user"></select>
+<p class="hint">个人请求最大化 H − 影子资源成本；同分时依次按初始锚点、较低总带宽、动作 ID 决胜。协调器再检查共同容量，可能调整个人请求。候选数量是本轮实际开放集合，可能随轮次扩展。</p>
+<div id="candidate-actions" class="table-wrap"></div>
+<h3>资源协调的每一步</h3><div id="round-events" class="table-wrap"></div>
+<h3>效用分项（本轮实际分配）</h3><div id="round-components" class="table-wrap"></div>
+<p class="hint">这些状态是同一场景内的优化迭代，并非真实时间业务运行；历史公平输入、RTT、丢包等外部条件保持不变。影子成本用于本轮个人选择，不混入跨轮比较的固定 H。</p>
+</section>
+<script>
+{
+const section=$('strategy-detail');document.querySelector('main .grid').before(section);
+document.querySelector('main > section.panel').before($('capacity-detail'));
+const num=x=>x==null?'—':typeof x==='number'?String(Number(x.toFixed(6))):String(x);
+const yes=x=>x==null?'—':x?'是':'否';
+const bw=a=>a?.bandwidth?num(a.bandwidth.ul)+' / '+num(a.bandwidth.dl):'—';
+const byUser=xs=>new Map((xs||[]).map(x=>[x.user_id,x]));
+const currentScene=()=>scenes.find(s=>s.id===$('scene').value);
+const currentRound=()=>currentScene()?.detail_trace?.find(t=>String(t.iteration)===$('round-select').value);
+const fill=(id,headers,rows)=>$(id).replaceChildren(table(headers,rows.map(r=>r.map(num))));
+function renderStrategies(){
+ const s=currentScene();if(!s)return;const ref=s.reference||{};
+ const label=x=>{const b=x.resource_budget||{};return '余量 UL '+num(b.ul?.headroom_percent)+'% / DL '+num(b.dl?.headroom_percent)+'%';};
+ for(const o of $('scene').options){const x=scenes.find(x=>x.id===o.value);o.textContent=x.id+' · '+label(x)+' · '+(x.status==='SUCCESS'?'成功':'失败');}
+ $('capacity-note').textContent=s.id+' ｜ '+label(s)+(s.capacity_mode==='current_headroom'?'。本批同组场景共用相同的用户初始状态和历史，改变容量余量来比较求解结果。':'。以下数值读取自该场景输入。');
+ fill('capacity-current',['方向','初始用户占用','初始额外余量','余量比例','小区总上限','非受控占用','预留','求解可用上限'],['ul','dl'].map(d=>{const b=s.resource_budget?.[d]||{};return [d==='ul'?'上行 UL':'下行 DL',b.initial_kbps,b.initial_margin_kbps,num(b.headroom_percent)+'%',b.total_limit_kbps,b.unmanaged_kbps,b.reserve_kbps,b.available_kbps];}));
+ const ct=table(['场景','上行余量','下行余量','初始上行','初始下行','上行总上限','下行总上限','上行可用上限','下行可用上限'],scenes.map(x=>{const b=x.resource_budget||{};return [x.id,num(b.ul?.headroom_percent)+'%',num(b.dl?.headroom_percent)+'%',num(b.ul?.initial_kbps),num(b.dl?.initial_kbps),num(b.ul?.total_limit_kbps),num(b.dl?.total_limit_kbps),num(b.ul?.available_kbps),num(b.dl?.available_kbps)];}));
+ [...ct.tBodies[0].rows].forEach((r,i)=>{r.dataset.id=scenes[i].id;if(s.id===scenes[i].id)r.style.background='#e3f4ed';r.onclick=()=>{if(![...$('scene').options].some(o=>o.value===scenes[i].id)){$('filter').value='ALL';filter();}$('scene').value=scenes[i].id;show();};});$('capacity-scenes').replaceChildren(ct);
+ const exact=ref.status==='exact_discrete'&&ref.complete&&ref.policy_objective==='H';
+ $('proof-note').textContent=(exact?'搜索已完成：下面的参考组是有限候选空间内总 H 最大的标准答案。':'搜索未证明总 H 最优：下面的参考组只能作为当前已知方案，不能称为标准答案。')+
+ ' 候选数：'+(ref.candidate_counts||[]).join(' × ')+'；搜索工作量：'+num(ref.steps)+'；返回 H：'+num(s.H_returned)+'；参考 H：'+num(ref.H_reference)+'；差距：'+num(ref.H_gap)+'；参考策略复算通过：'+yes(ref.policy_witness_validated)+'。';
+ const answer=byUser(ref.policy_decisions),returned=byUser(s.decisions),terminal=byUser(s.terminal_decisions),rows=[];
+ for(const u of s.users||[]){
+  for(const [name,a] of [['初始',{bandwidth:u.current,mos:u.observed_mos,target_met:u.observed_mos==null?null:u.observed_mos>=u.target}],['算法返回',returned.get(u.user_id)],['停止时',terminal.get(u.user_id)],[exact?'暴搜标准答案':'参考（未证最优）',answer.get(u.user_id)]]){
+   rows.push([u.user_id,u.package,u.business,name,a?.action_id,bw(a),a?.mos,u.target,yes(a?.target_met),a?.h]);
+  }
+ }
+ fill('strategy-answer',['用户','套餐','业务','方案','动作 ID','上行 / 下行','MOS','目标 MOS','达标','个人 H'],rows);
+ $('round-select').replaceChildren();for(const t of s.detail_trace||[]){const o=el('option','第 '+t.iteration+' 轮');o.value=t.iteration;$('round-select').append(o);}renderRound();
+}
+function renderRound(){
+ const s=currentScene(),t=currentRound();if(!t){$('round-state').textContent='此结果没有保存逐轮用户明细，请开启 trace_users 后重新求解。';['round-users','candidate-actions','round-events','round-components'].forEach(id=>$(id).replaceChildren());$('candidate-user').replaceChildren();return;}
+ const index=s.detail_trace.indexOf(t),prior=byUser(index>0?s.detail_trace[index-1].users:[]),initial=byUser(s.users),ref=byUser(s.reference?.policy_decisions);
+ const previous=x=>prior.get(x.user_id)?.allocated||{bandwidth:initial.get(x.user_id)?.current,mos:initial.get(x.user_id)?.observed_mos};
+ $('round-state').textContent='本轮 H '+num(t.H)+'；历史最好 H '+num(t.best_H)+'（记录轮次 '+num(t.best_iteration)+'，0 表示迭代前）'+
+ '；需求 UL/DL '+num(t.raw?.ul)+' / '+num(t.raw?.dl)+'；分配 '+num(t.allocated?.ul)+' / '+num(t.allocated?.dl)+
+ '；可用上限 UL/DL '+num(s.resource_budget?.ul?.available_kbps)+' / '+num(s.resource_budget?.dl?.available_kbps)+
+ '；剩余容量 '+num(s.capacity.ul==null?null:s.capacity.ul*1000-t.allocated?.ul)+' / '+num(s.capacity.dl==null?null:s.capacity.dl*1000-t.allocated?.dl)+
+ '；价格 '+(t.prices||[]).map(num).join(' / ')+' → '+(t.next_prices||[]).map(num).join(' / ')+
+ '；策略变化比例 '+num(t.strategy_change)+'；资源变化比例 '+num(t.resource_change)+'；效用变化比例 '+num(t.utility_change)+
+ '；稳定计数 '+num(t.stable_count)+' / '+num(t.stable_required)+'；完整动作范围 '+yes(t.full_scope)+'；局部检查通过 '+yes(t.local_optimal)+'。';
+ fill('round-users',['用户','上轮上/下行','本轮请求上/下行','协调后上/下行','上轮 MOS','请求 MOS','协调后 MOS','MOS 变化','达标','个人 H','参考上/下行'],(t.users||[]).map(u=>[u.user_id,bw(previous(u)),bw(u.requested),bw(u.allocated),previous(u).mos,u.requested.mos,u.allocated.mos,u.allocated.mos!=null&&previous(u).mos!=null?u.allocated.mos-previous(u).mos:null,yes(u.allocated.target_met),u.allocated.H,bw(ref.get(u.user_id))]));
+ const selected=$('candidate-user').value;$('candidate-user').replaceChildren();for(const u of t.users||[]){const o=el('option',u.user_id);o.value=u.user_id;$('candidate-user').append(o);}if((t.users||[]).some(u=>u.user_id===selected))$('candidate-user').value=selected;renderCandidates();
+ const reasons={capacity_repair:'超容量修复',slack_upgrade:'利用余量升级',positive_utility_upgrade:'利用余量升级',net_utility_exchange:'释放资源并升级其他用户'};
+ const events=[];for(const [i,e] of (t.coordination_events||[]).entries())for(const c of e.changes||[])events.push([i+1,reasons[e.reason]||e.reason,c.user_id,bw(c.before),bw(c.after),c.before.mos,c.after.mos,c.after.h-c.before.h,e.net_benefit]);
+ fill('round-events',['步骤','原因','用户','调整前上/下行','调整后上/下行','调整前 MOS','调整后 MOS','个人 ΔH','本步骤总 ΔH'],events);
+ if(!events.length)$('round-events').append(el('p','本轮无资源协调事件。','hint'));
+ fill('round-components',['用户','权重','体验收益','历史欠账','公平补偿','稳定性成本','H','当前分配影子成本'],(t.users||[]).map(u=>[u.user_id,u.utility?.weight,u.utility?.experience_benefit,u.utility?.debt,u.utility?.fairness_compensation,u.utility?.stability_cost,u.utility?.H,u.shadow_cost]));
+}
+function renderCandidates(){const u=currentRound()?.users?.find(u=>u.user_id===$('candidate-user').value);const candidates=[...(u?.candidates||[])].sort((a,b)=>b.selection_score-a.selection_score||Number(b.anchor)-Number(a.anchor)||(a.bandwidth.ul+a.bandwidth.dl)-(b.bandwidth.ul+b.bandwidth.dl)||(a.action_id<b.action_id?1:a.action_id>b.action_id?-1:0));
+ fill('candidate-actions',['动作 ID','上行 / 下行','MOS','H','影子成本','选择评分 H−成本','个人选中','协调后采用'],candidates.map(a=>[a.action_id,bw(a),a.mos,a.h,a.shadow_cost,a.selection_score,yes(a.action_id===u.requested.action_id),yes(a.action_id===u.allocated.action_id)]));
+ if(!candidates.length)$('candidate-actions').append(el('p','此记录未保存候选评分。重新求解后可查看。','hint'));
+}
+const originalShow=show;show=function(){originalShow();renderStrategies();};
+$('round-select').onchange=renderRound;$('candidate-user').onchange=renderCandidates;
+for(const [id,delta] of [['round-prev',-1],['round-next',1]])$(id).onclick=()=>{const e=$('round-select');e.selectedIndex=Math.max(0,Math.min(e.options.length-1,e.selectedIndex+delta));renderRound();};
+$('scene').onchange=show;
+$('download-evidence').onclick=()=>{const s=currentScene();if(!s)return;const url=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)],{type:'application/json'})),a=el('a');a.href=url;a.download=s.id+'_evidence.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+renderStrategies();
+}
+</script>

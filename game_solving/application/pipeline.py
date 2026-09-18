@@ -13,6 +13,7 @@ from game_solving.evaluation.validation import check_actions
 from game_solving.evaluation.reference import evaluate_reference
 from game_solving.evaluation.metrics import evaluate
 from game_solving.evaluation.history import validate_history
+from game_solving.evaluation.distribution import describe_scene
 from .services import Services
 from game_solving.evaluation.comparison import compare, render
 
@@ -119,6 +120,9 @@ class Pipeline:
             scenes = [scene_from_dict(row) for row in read_jsonl(input_path)]
             if not scenes:
                 raise ValueError("EMPTY_INPUT")
+        store.write("initial_distribution.jsonl", [describe_scene(scene, self.services.policy) for scene in scenes], True)
+        if command == "solve":
+            store.write("solver_inputs.jsonl", scenes, True)
         results = []
         labels = []
         metrics = []
@@ -148,6 +152,13 @@ class Pipeline:
                 if c["reference"]["enabled"]:
                     logger.debug("开始独立参考计算：%s", scene.scene_id)
                 reference = evaluate_reference(scene, result, c, self.services.policy)
+                if reference.get("policy_decisions"):
+                    from game_solving.domain.entities import Action, Bandwidth
+                    reference_actions = [Action(**{**a, "bandwidth": Bandwidth(**a["bandwidth"])}) for a in reference["policy_decisions"]]
+                    violations = check_actions(scene, reference_actions, self.services.policy, recompute=True)
+                    if violations:
+                        raise AssertionError(f"REFERENCE_RETURNED_INFEASIBLE: {violations}")
+                    reference["policy_witness_validated"] = True
                 if c["reference"]["enabled"]:
                     logger.debug(
                         "独立参考完成：%s，状态=%s", scene.scene_id, reference["status"]
@@ -167,10 +178,18 @@ class Pipeline:
             report_tmp = store.path / "comparison.md.tmp"
             report_tmp.write_text("# 求解前后对比\n\n" + "\n".join(render(item) for item in comparisons), encoding="utf-8")
             report_tmp.replace(report_path)
-            store.write("solve_results.jsonl", results, True)
+            # Persist full per-user traces once; keep solver results/HTML compact.
+            stored_results = []
+            for result in results:
+                stored = asdict(result)
+                stored["trace"] = [{key: value for key, value in row.items() if key not in ("users", "coordination_events")} for row in result.trace]
+                stored["detail_trace_file"] = "iteration_trace.jsonl"
+                stored_results.append(stored)
+            store.write("solve_results.jsonl", stored_results, True)
             store.write("run_labels.jsonl", labels, True)
             store.write("reference_results.jsonl", references, True)
             store.write("metrics.jsonl", metrics, True)
+            store.write("iteration_trace.jsonl", [{"scene_id": result.scene_id, **row} for result in results for row in result.trace], True)
             store.write(
                 "static_labels.jsonl",
                 [

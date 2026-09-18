@@ -15,22 +15,23 @@
     "users_per_cell": 30,
     "max_users": 1000,
     "distribution_mode": "independent",
+    "business_probs_by_package": {},
+    "qoe_counts": {},
+    "qoe_business_mapping": {},
     "joint_rows": [],
     "package_probs": {
       "normal": 0.7,
       "vip": 0.3
     },
     "business_probs": {
-      "meeting": 0.15,
-      "voip": 0.1,
-      "cloudgame": 0.1,
-      "game": 0.1,
-      "openlive": 0.1,
-      "watchlive": 0.1,
-      "video": 0.15,
-      "shortvideo": 0.1,
-      "browsing": 0.05,
-      "download": 0.05
+      "shortvideo": 0.3667681747059912,
+      "video": 0.2814223463499167,
+      "meeting": 0.07035516597405657,
+      "cloudgame": 0.07035516597405657,
+      "voip": 0.07035516597405657,
+      "watchlive": 0.07035516597405657,
+      "game": 0.07035516597405657,
+      "openlive": 3.36490738092434e-05
     },
     "position_probs": {
       "far": 0.2,
@@ -48,11 +49,35 @@
     }
   },
   "generation": {
+    "throughput_reference": {
+      "source": "user_reported_iperf",
+      "devices": 5,
+      "aggregate_ul_kbps": 120000,
+      "aggregate_dl_kbps": 120000,
+      "simultaneous_directions_confirmed": false
+    },
+    "high_load_sampling": {
+      "probability": 0.0,
+      "business_min_fraction": {}
+    },
+    "capacity_mode": "fixed",
+    "headroom_ratios": [
+      0.0,
+      0.05,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "compliance_probs_by_package": {},
+    "require_target_reachable": false,
     "history": {
       "enabled": false,
       "periods": 5,
       "interval_seconds": 60.0,
-      "bandwidth_multiplier": [0.5, 1.5]
+      "bandwidth_multiplier": [
+        0.5,
+        1.5
+      ]
     },
     "quota_mode": "reachable",
     "strict_quotas": true,
@@ -119,6 +144,28 @@
     }
   },
   "policy": {
+    "priority_order": [
+      "business",
+      "package"
+    ],
+    "objective": "legacy_guarantee",
+    "weight_mode": "legacy",
+    "weight_dimensions": [
+      "business",
+      "package",
+      "position",
+      "tolerance"
+    ],
+    "position_order": [
+      "far",
+      "middle",
+      "near"
+    ],
+    "tolerance_order": [
+      "low",
+      "medium",
+      "high"
+    ],
     "targets": {
       "normal": 2.5,
       "vip": 4.0,
@@ -182,6 +229,15 @@
     "bandwidth_reference_kbps": 1000.0
   },
   "solver": {
+    "price_update": "legacy",
+    "price_smoothing": 0.25,
+    "price_deadband": 0.01,
+    "price_max_step": 0.02,
+    "trace_users": false,
+    "candidate_mos_offsets": [],
+    "epsilon_price": 0.001,
+    "exchange_max_donors": 1,
+    "exchange_shortlist": 16,
     "max_iterations": 50,
     "max_total_steps": 200000,
     "time_budget_ms": 2000.0,

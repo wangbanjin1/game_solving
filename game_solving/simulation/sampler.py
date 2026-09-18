@@ -3,6 +3,7 @@
 import math
 from dataclasses import replace
 from game_solving.domain.entities import User, Stream, Bandwidth
+from game_solving.optimization.feasibility import minimum_action
 
 
 def band(mos, target, c):
@@ -48,7 +49,7 @@ class ConditionalSampler:
             lo = math.nextafter(lo, hi)
         return rng.uniform(lo, hi)
 
-    def environment(self, business, rng):
+    def environment(self, business, rng, high_load_floor=0):
         c = self.c
         b = c["businesses"][business]
         state = rng.choices(
@@ -56,7 +57,7 @@ class ConditionalSampler:
             weights=list(c["generation"]["quality_probs"].values()),
         )[0]
         media = (
-            rng.choice(b["media"])
+            rng.choice([m for m in b["media"] if m["max_kbps"] >= high_load_floor])
             if b["media"]
             else {
                 "min_kbps": b["quota_ul_kbps"],
@@ -70,7 +71,7 @@ class ConditionalSampler:
         if phase == "initial" and business == "meeting" and not b["initial_enabled"]:
             raise ValueError("MEETING_INITIAL_BUFFER_UNAVAILABLE")
         return Stream(
-            media["min_kbps"],
+            max(media["min_kbps"], high_load_floor),
             media["resolution"],
             media["width"],
             media["height"],
@@ -99,11 +100,16 @@ class ConditionalSampler:
         rates = {"ul": b["quota_ul_kbps"], "dl": b["quota_dl_kbps"]}
         direction_mos = {}
         proposal_targets = {}
+        load = c["generation"]["high_load_sampling"]
+        fraction = load["business_min_fraction"].get(business, 0)
+        high_load = bool(fraction and load["probability"] and rng.random() < load["probability"])
+        reference = c["generation"]["throughput_reference"]
         if b["mos_type"]:
             directions = list(b["media_directions"]) or ["session"]
             rng.shuffle(directions)
             for d in directions:
-                s = self.environment(business, rng)
+                floor = (reference["aggregate_" + d + "_kbps"] / reference["devices"] * fraction) if high_load and d != "session" else 0
+                s = self.environment(business, rng, floor)
                 if d == "session":
                     streams[d] = s
                     direction_mos[d] = self.model.forward(business, s, budget)
@@ -112,7 +118,7 @@ class ConditionalSampler:
                 s = replace(
                     s,
                     min_kbps=max(s.min_kbps, contract),
-                    bitrate_kbps=max(s.min_kbps, contract),
+                    bitrate_kbps=max(s.bitrate_kbps, contract),
                 )
                 if s.min_kbps > s.max_kbps:
                     return None, "CONTRACT_EXCEEDS_MEDIA_MAX"
@@ -129,7 +135,7 @@ class ConditionalSampler:
                 if low > high:
                     return None, "MOS_BAND_UNREACHABLE_OR_LOW_ACCEPTANCE"
                 wanted = rng.uniform(low, high)
-                inverse = self.model.inverse(business, wanted, s, budget)
+                inverse = self.model.inverse(business, wanted, replace(s, min_kbps=max(s.min_kbps, floor)), budget)
                 if not inverse.feasible:
                     return None, inverse.reason
                 rates[d] = inverse.bandwidth_kbps
@@ -166,7 +172,13 @@ class ConditionalSampler:
         action = self.policy.make_action(user, user.current, budget, True)
         if action is None:
             return None, "CURRENT_HARD_CONSTRAINT_CONFLICT"
+        if c["generation"]["require_target_reachable"]:
+            target_action, _ = minimum_action(user, "target", self.policy, budget)
+            if target_action is None:
+                return None, "INDIVIDUAL_TARGET_UNREACHABLE"
         audit = {
+            "high_load_sample": high_load,
+            "high_load_min_fraction": fraction if high_load else None,
             "user_id": user.user_id,
             "requested_band": requested,
             "realized_band": realized,

@@ -19,7 +19,7 @@ from game_solving.simulation.history import HistoryGenerator
 
 class HistoryTests(unittest.TestCase):
     def config(self, **history):
-        return load_config("configs/tiny.json", {
+        return load_config("tests/fixtures/meeting.json", {
             "generation": {"history": {"enabled": True, **history}}
         })
 
@@ -54,7 +54,7 @@ class HistoryTests(unittest.TestCase):
         scenes, audits, report = Services(config).generator().generate()
         repeated = Services(config).generator().generate()
         self.assertEqual((scenes, audits, report), repeated)
-        old_scenes, old_audits, _ = Services(load_config("configs/tiny.json")).generator().generate()
+        old_scenes, old_audits, _ = Services(load_config("tests/fixtures/meeting.json")).generator().generate()
         self.assertEqual(report["failed"], 0)
         self.assertTrue(all(u.history_mos is not None for s in scenes for u in s.users))
         self.assertEqual(
@@ -118,9 +118,9 @@ class HistoryTests(unittest.TestCase):
         self.assertGreater(len(varied), 1)
 
     def test_generation_budget_is_shared_and_failure_is_reported(self):
-        base = load_config("configs/tiny.json", {"num_scenes": 1})
+        base = load_config("tests/fixtures/meeting.json", {"num_scenes": 1})
         _, audits, _ = Services(base).generator().generate()
-        config = load_config("configs/tiny.json", {
+        config = load_config("tests/fixtures/meeting.json", {
             "num_scenes": 1,
             "generation": {
                 "max_model_evaluations": audits[0]["generation_steps"],
@@ -187,7 +187,7 @@ class HistoryTests(unittest.TestCase):
         self.assertNotEqual(outcomes[False, 0.5], outcomes[True, 0.5])
 
     def test_pipeline_roundtrip_and_standalone_solve(self):
-        config = load_config("configs/history.json")
+        config = load_config("tests/fixtures/meeting_history.json")
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             generated, solved = root / "generated", root / "solved"

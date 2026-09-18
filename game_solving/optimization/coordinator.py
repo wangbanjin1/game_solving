@@ -9,6 +9,9 @@ class ResourceCoordinator:
         self.policy = policy
 
     def coordinate(self, scene, raw, pools, budget, mode, prices):
+        if mode == "UTILITY":
+            from .utility_coordinator import coordinate_utility
+            return coordinate_utility(self, scene, raw, pools, budget, prices)
         chosen = list(raw)
         p = self.c["solver"]
         tol = p["epsilon_bandwidth_kbps"]

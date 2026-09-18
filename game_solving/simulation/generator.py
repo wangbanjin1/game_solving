@@ -1,6 +1,8 @@
 """Generation orchestration, explicit failed scenes and private audit separation."""
 
 import logging
+import copy
+from dataclasses import replace, asdict
 from collections import defaultdict, Counter
 from game_solving.domain.entities import Scene, Bandwidth
 from game_solving.infrastructure.config import model_hash
@@ -47,7 +49,7 @@ class DatasetGenerator:
                 quotas = (
                     allocate(
                         len(group),
-                        c["generation"]["compliance_probs"],
+                        c["generation"]["compliance_probs_by_package"].get(key[0], c["generation"]["compliance_probs"]),
                         rng_for(c["seed"], index, "quota", *key),
                     )
                     if c["generation"]["quota_mode"] == "specified"
@@ -111,12 +113,16 @@ class DatasetGenerator:
                                 + person["user_id"]
                             )
                         pools.append(pool)
-                    selected, nodes = assemble(
-                        pools,
-                        capacity - unmanaged - reserve,
-                        c["generation"]["assembly_max_nodes"],
-                        scene_budget,
-                    )
+                    if c["generation"]["capacity_mode"] == "current_headroom":
+                        selected, nodes = [pool[0] for pool in pools], 0
+                        used = Bandwidth(sum(x[0].current.ul for x in selected), sum(x[0].current.dl for x in selected))
+                        ratio = min(c["generation"]["headroom_ratios"])
+                        capacity = Bandwidth(used.ul * (1 + ratio), used.dl * (1 + ratio)) + unmanaged + reserve
+                    else:
+                        selected, nodes = assemble(
+                            pools, capacity - unmanaged - reserve,
+                            c["generation"]["assembly_max_nodes"], scene_budget,
+                        )
                     sid = f"scene_{index:06d}"
                     scene = Scene(
                         sid,
@@ -176,9 +182,28 @@ class DatasetGenerator:
                     }
                 )
                 logger.warning("场景 %d 生成失败：%s", index + 1, reason)
+        if c["generation"]["capacity_mode"] == "current_headroom":
+            variants, variant_audits = [], []
+            for scene, audit in zip(scenes, audits):
+                used = Bandwidth(sum(u.current.ul for u in scene.users), sum(u.current.dl for u in scene.users))
+                for index, ratio in enumerate(c["generation"]["headroom_ratios"]):
+                    sid = scene.scene_id + f"_headroom_{index:02d}"
+                    capacity = Bandwidth(used.ul * (1 + ratio), used.dl * (1 + ratio)) + scene.unmanaged + scene.reserve
+                    variants.append(replace(scene, scene_id=sid, capacity=capacity))
+                    cloned = copy.deepcopy(audit)
+                    cloned.update(scene_id=sid, base_scene_id=scene.scene_id, headroom_ratio=ratio, current_total=asdict(used))
+                    if "history" in cloned:
+                        cloned["history"]["scene_id"] = sid
+                    variant_audits.append(cloned)
+            scenes, audits = variants, variant_audits
+            failures = [dict(failure, scene_id=failure["scene_id"] + f"_headroom_{i:02d}") for failure in failures for i in range(len(c["generation"]["headroom_ratios"]))]
         logger.info("生成完成：成功=%d，失败=%d", len(scenes), len(failures))
         report = {
-            "requested": c["num_scenes"],
+            "throughput_reference": copy.deepcopy(c["generation"]["throughput_reference"]),
+            "throughput_reference_role": "sampling_scale_only_not_cell_capacity_or_per_user_demand",
+            "high_load_sampling": copy.deepcopy(c["generation"]["high_load_sampling"]),
+            "high_load_samples": sum(u.get("high_load_sample", False) for a in audits for u in a["users"]),
+            "requested": c["num_scenes"] * (len(c["generation"]["headroom_ratios"]) if c["generation"]["capacity_mode"] == "current_headroom" else 1),
             "successful": len(scenes),
             "failed": len(failures),
             "failures": failures,
