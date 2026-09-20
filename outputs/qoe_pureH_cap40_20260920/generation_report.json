@@ -1,0 +1,39 @@
+{
+  "failed": 0,
+  "failures": [],
+  "high_load_samples": 160,
+  "high_load_sampling": {
+    "business_min_fraction": {
+      "cloudgame": 0.25,
+      "meeting": 0.125,
+      "openlive": 0.125,
+      "shortvideo": 0.125,
+      "video": 0.25,
+      "watchlive": 0.25
+    },
+    "probability": 0.2
+  },
+  "quota_gaps": 0,
+  "quota_mode": "specified",
+  "realized_bands": {
+    "met": 108,
+    "severe": 72,
+    "unmet": 180
+  },
+  "rejection_counts": {
+    "LOOKUP_BANDWIDTH_OUTSIDE_STREAM_DOMAIN": 62,
+    "MOS_BAND_UNREACHABLE_OR_LOW_ACCEPTANCE": 305,
+    "QUANTIZED_BAND_MISMATCH": 93,
+    "TARGET_UNREACHABLE_IN_LOOKUP": 36
+  },
+  "requested": 4,
+  "successful": 4,
+  "throughput_reference": {
+    "aggregate_dl_kbps": 120000,
+    "aggregate_ul_kbps": 120000,
+    "devices": 5,
+    "simultaneous_directions_confirmed": false,
+    "source": "user_reported_iperf"
+  },
+  "throughput_reference_role": "sampling_scale_only_not_cell_capacity_or_per_user_demand"
+}

@@ -1,0 +1,1487 @@
+{
+  "allow_partial": false,
+  "applications": {
+    "anqutuwei_game": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 300,
+      "bandwidth_min_kbps_by_direction": {
+        "dl": 300,
+        "ul": 300
+      },
+      "business": "game",
+      "name": "暗区突围",
+      "service_delay_max_ms": 100,
+      "stalling_duration_max_seconds": null
+    },
+    "bilibili_live": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 4000,
+      "business": "openlive",
+      "name": "哔哩哔哩开直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "bilibili_vod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1500,
+      "business": "video",
+      "name": "哔哩哔哩视频",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "bilibili_watch": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 2000,
+      "business": "watchlive",
+      "name": "哔哩哔哩看直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "chuanyuehuoxian_game": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 300,
+      "bandwidth_min_kbps_by_direction": {
+        "dl": 300,
+        "ul": 300
+      },
+      "business": "game",
+      "name": "穿越火线",
+      "service_delay_max_ms": 80,
+      "stalling_duration_max_seconds": null
+    },
+    "danzaipaidu_game": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 300,
+      "bandwidth_min_kbps_by_direction": {
+        "dl": 300,
+        "ul": 300
+      },
+      "business": "game",
+      "name": "蛋仔派对",
+      "service_delay_max_ms": 100,
+      "stalling_duration_max_seconds": null
+    },
+    "dingding_meeting": {
+      "avg_qoe_min": 50,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 500,
+      "business": "meeting",
+      "name": "钉钉",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "douyin_live": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 1500,
+      "business": "openlive",
+      "name": "抖音开直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "douyin_svod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1500,
+      "business": "shortvideo",
+      "name": "抖音短视频",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "douyin_watch": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1500,
+      "business": "watchlive",
+      "name": "抖音看直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "douyu_live": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 2000,
+      "business": "openlive",
+      "name": "斗鱼开直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "douyu_watch": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1500,
+      "business": "watchlive",
+      "name": "斗鱼看直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "feishu_meeting": {
+      "avg_qoe_min": 50,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 500,
+      "business": "meeting",
+      "name": "飞书",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "haokan_svod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1500,
+      "business": "shortvideo",
+      "name": "好看视频",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "hepingjingying_game": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 300,
+      "bandwidth_min_kbps_by_direction": {
+        "dl": 300,
+        "ul": 300
+      },
+      "business": "game",
+      "name": "和平精英",
+      "service_delay_max_ms": 100,
+      "stalling_duration_max_seconds": null
+    },
+    "hongguo_svod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 2000,
+      "business": "shortvideo",
+      "name": "红果短剧",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "huya_live": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 3000,
+      "business": "openlive",
+      "name": "虎牙开直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "huya_watch": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 3000,
+      "business": "watchlive",
+      "name": "虎牙看直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "iqiyi_vod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1000,
+      "business": "video",
+      "name": "爱奇艺视频",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "jingdong_watch": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 2000,
+      "business": "watchlive",
+      "name": "京东看直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "jinritoutiao_svod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1500,
+      "business": "shortvideo",
+      "name": "今日头条短视频",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "kuaishou_live": {
+      "avg_qoe_min": 70,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 1200,
+      "business": "openlive",
+      "name": "快手开直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "kuaishou_svod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1500,
+      "business": "shortvideo",
+      "name": "快手短视频",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "kuaishou_watch": {
+      "avg_qoe_min": 70,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1200,
+      "business": "watchlive",
+      "name": "快手看直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "mangguo_vod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1000,
+      "business": "video",
+      "name": "芒果TV",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "migu_game": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1800,
+      "business": "cloudgame",
+      "name": "咪咕快游",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "migu_vod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1500,
+      "business": "video",
+      "name": "咪咕视频",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "pinduoduo_live": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 1000,
+      "business": "openlive",
+      "name": "拼多多开直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "pinduoduo_watch": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 3000,
+      "business": "watchlive",
+      "name": "拼多多看直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "qq_voip": {
+      "avg_qoe_min": 50,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 512,
+      "business": "voip",
+      "name": "QQVOIP",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "sanjiaozhouxingdong_game": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 300,
+      "bandwidth_min_kbps_by_direction": {
+        "dl": 300,
+        "ul": 300
+      },
+      "business": "game",
+      "name": "三角洲行动",
+      "service_delay_max_ms": 80,
+      "stalling_duration_max_seconds": null
+    },
+    "taobao_live": {
+      "avg_qoe_min": 70,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 1000,
+      "business": "openlive",
+      "name": "淘宝开直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "taobao_svod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 2000,
+      "business": "shortvideo",
+      "name": "淘宝短视频",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "taobao_watch": {
+      "avg_qoe_min": 70,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1500,
+      "business": "watchlive",
+      "name": "淘宝看直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "tencent_meeting": {
+      "avg_qoe_min": 50,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 500,
+      "business": "meeting",
+      "name": "腾讯会议",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "tencent_vod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1000,
+      "business": "video",
+      "name": "腾讯视频",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "wangyi_cloudgame": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1800,
+      "business": "cloudgame",
+      "name": "网易云游戏",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "wangzherongyao_game": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 300,
+      "bandwidth_min_kbps_by_direction": {
+        "dl": 300,
+        "ul": 300
+      },
+      "business": "game",
+      "name": "王者荣耀",
+      "service_delay_max_ms": 60,
+      "stalling_duration_max_seconds": null
+    },
+    "weishi_svod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1500,
+      "business": "shortvideo",
+      "name": "微视",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "weixin_live": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 1000,
+      "business": "openlive",
+      "name": "微信开直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "weixin_svod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1500,
+      "business": "shortvideo",
+      "name": "微信短视频",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "weixin_voip": {
+      "avg_qoe_min": 50,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 512,
+      "business": "voip",
+      "name": "微信VOIP",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "wexin_watch": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1000,
+      "business": "watchlive",
+      "name": "微信看直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "xiaohongshu_live": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 2000,
+      "business": "openlive",
+      "name": "小红书开直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "xiaohongshu_svod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1500,
+      "business": "shortvideo",
+      "name": "小红书短视频",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "xiaohongshu_watch": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 3000,
+      "business": "watchlive",
+      "name": "小红书看直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "xigua_svod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1500,
+      "business": "shortvideo",
+      "name": "西瓜短视频",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "xigua_vod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 500,
+      "business": "video",
+      "name": "西瓜视频",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "yingxionglianmeng_game": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 300,
+      "bandwidth_min_kbps_by_direction": {
+        "dl": 300,
+        "ul": 300
+      },
+      "business": "game",
+      "name": "英雄联盟",
+      "service_delay_max_ms": 60,
+      "stalling_duration_max_seconds": null
+    },
+    "youku_vod": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1000,
+      "business": "video",
+      "name": "优酷视频",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "yuanshen_game": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 300,
+      "bandwidth_min_kbps_by_direction": {
+        "dl": 300,
+        "ul": 300
+      },
+      "business": "game",
+      "name": "原神",
+      "service_delay_max_ms": 100,
+      "stalling_duration_max_seconds": null
+    },
+    "yunshixun_meeting": {
+      "avg_qoe_min": 50,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 500,
+      "business": "meeting",
+      "name": "云视讯",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "yy_live": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "ul",
+      "bandwidth_min_kbps": 1000,
+      "business": "openlive",
+      "name": "YY开直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    },
+    "yy_watch": {
+      "avg_qoe_min": 60,
+      "bandwidth_direction": "dl",
+      "bandwidth_min_kbps": 1500,
+      "business": "watchlive",
+      "name": "YY看直播",
+      "service_delay_max_ms": null,
+      "stalling_duration_max_seconds": 2
+    }
+  },
+  "business_basic_kbps": {
+    "cloudgame": {
+      "dl": 3100,
+      "ul": 0
+    },
+    "game": {
+      "dl": 300,
+      "ul": 300
+    },
+    "meeting": {
+      "dl": 1300,
+      "ul": 1300
+    },
+    "openlive": {
+      "dl": 0,
+      "ul": 1400
+    },
+    "shortvideo": {
+      "dl": 1800,
+      "ul": 0
+    },
+    "video": {
+      "dl": 3000,
+      "ul": 0
+    },
+    "voip": {
+      "dl": 1600,
+      "ul": 1600
+    },
+    "watchlive": {
+      "dl": 1400,
+      "ul": 0
+    }
+  },
+  "businesses": {
+    "browsing": {
+      "coefficients": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_enabled": false,
+      "media": [],
+      "media_directions": [],
+      "mos_type": null,
+      "priority": 3,
+      "quality_model": "general",
+      "quota_dl_kbps": 1600.0,
+      "quota_ul_kbps": 50.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "cloudgame": {
+      "coefficients": [
+        0.25,
+        0.05,
+        0.05,
+        0.25
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 480,
+          "max_kbps": 6000,
+          "min_kbps": 1000,
+          "resolution": 480,
+          "width": 854
+        },
+        {
+          "height": 540,
+          "max_kbps": 10000,
+          "min_kbps": 1500,
+          "resolution": 540,
+          "width": 960
+        },
+        {
+          "height": 720,
+          "max_kbps": 15000,
+          "min_kbps": 3000,
+          "resolution": 720,
+          "width": 1280
+        },
+        {
+          "height": 1080,
+          "max_kbps": 20000,
+          "min_kbps": 6000,
+          "resolution": 1080,
+          "width": 1920
+        }
+      ],
+      "media_directions": [
+        "dl"
+      ],
+      "mos_type": "B",
+      "priority": 1,
+      "quality_model": "general",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 100.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "download": {
+      "coefficients": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "initial_enabled": false,
+      "media": [],
+      "media_directions": [],
+      "mos_type": null,
+      "priority": 4,
+      "quality_model": "general",
+      "quota_dl_kbps": 100.0,
+      "quota_ul_kbps": 50.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "game": {
+      "coefficients": [
+        0,
+        0,
+        0.25,
+        0.04
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 0,
+          "max_kbps": 1000,
+          "min_kbps": 100,
+          "resolution": 0,
+          "width": 0
+        }
+      ],
+      "media_directions": [
+        "ul",
+        "dl"
+      ],
+      "mos_type": "B",
+      "priority": 1,
+      "quality_model": "game",
+      "quota_dl_kbps": 100.0,
+      "quota_ul_kbps": 100.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_game",
+      "weight_factor": 1.0
+    },
+    "meeting": {
+      "coefficients": [
+        0.25,
+        0.05,
+        0.05,
+        0.25
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 270,
+          "max_kbps": 1500,
+          "min_kbps": 200,
+          "resolution": 270,
+          "width": 480
+        },
+        {
+          "height": 360,
+          "max_kbps": 2500,
+          "min_kbps": 300,
+          "resolution": 360,
+          "width": 640
+        },
+        {
+          "height": 720,
+          "max_kbps": 6000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        }
+      ],
+      "media_directions": [
+        "ul",
+        "dl"
+      ],
+      "mos_type": "A",
+      "priority": 0,
+      "quality_model": "general",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 0.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "openlive": {
+      "coefficients": [
+        0.25,
+        0.05,
+        0.25,
+        0.1
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 480,
+          "max_kbps": 1500,
+          "min_kbps": 300,
+          "resolution": 480,
+          "width": 854
+        },
+        {
+          "height": 540,
+          "max_kbps": 2500,
+          "min_kbps": 500,
+          "resolution": 540,
+          "width": 960
+        },
+        {
+          "height": 720,
+          "max_kbps": 4000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        },
+        {
+          "height": 1080,
+          "max_kbps": 6000,
+          "min_kbps": 1500,
+          "resolution": 1080,
+          "width": 1920
+        }
+      ],
+      "media_directions": [
+        "ul"
+      ],
+      "mos_type": "A",
+      "priority": 1,
+      "quality_model": "general",
+      "quota_dl_kbps": 100.0,
+      "quota_ul_kbps": 0.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "shortvideo": {
+      "coefficients": [
+        0,
+        0,
+        0.04,
+        0.25
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 360,
+          "max_kbps": 1500,
+          "min_kbps": 200,
+          "resolution": 360,
+          "width": 640
+        },
+        {
+          "height": 480,
+          "max_kbps": 2500,
+          "min_kbps": 300,
+          "resolution": 480,
+          "width": 854
+        },
+        {
+          "height": 540,
+          "max_kbps": 3500,
+          "min_kbps": 500,
+          "resolution": 540,
+          "width": 960
+        },
+        {
+          "height": 720,
+          "max_kbps": 6000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        },
+        {
+          "height": 1080,
+          "max_kbps": 10000,
+          "min_kbps": 1500,
+          "resolution": 1080,
+          "width": 1920
+        },
+        {
+          "height": 2160,
+          "max_kbps": 20000,
+          "min_kbps": 6000,
+          "resolution": 2160,
+          "width": 3840
+        }
+      ],
+      "media_directions": [
+        "dl"
+      ],
+      "mos_type": "A",
+      "priority": 2,
+      "quality_model": "bitrate",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 100.0,
+      "range_source": "inherited_video",
+      "rtt_range": "rtt_video",
+      "weight_factor": 1.0
+    },
+    "video": {
+      "coefficients": [
+        0.04,
+        0.25,
+        0.04,
+        0.25
+      ],
+      "initial_enabled": true,
+      "media": [
+        {
+          "height": 360,
+          "max_kbps": 1500,
+          "min_kbps": 200,
+          "resolution": 360,
+          "width": 640
+        },
+        {
+          "height": 480,
+          "max_kbps": 2500,
+          "min_kbps": 300,
+          "resolution": 480,
+          "width": 854
+        },
+        {
+          "height": 540,
+          "max_kbps": 3500,
+          "min_kbps": 500,
+          "resolution": 540,
+          "width": 960
+        },
+        {
+          "height": 720,
+          "max_kbps": 6000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        },
+        {
+          "height": 1080,
+          "max_kbps": 10000,
+          "min_kbps": 1500,
+          "resolution": 1080,
+          "width": 1920
+        },
+        {
+          "height": 2160,
+          "max_kbps": 20000,
+          "min_kbps": 6000,
+          "resolution": 2160,
+          "width": 3840
+        }
+      ],
+      "media_directions": [
+        "dl"
+      ],
+      "mos_type": "A",
+      "priority": 2,
+      "quality_model": "general",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 100.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_video",
+      "weight_factor": 1.0
+    },
+    "voip": {
+      "coefficients": [
+        0,
+        0,
+        0.15,
+        0.15
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 270,
+          "max_kbps": 1500,
+          "min_kbps": 200,
+          "resolution": 270,
+          "width": 480
+        },
+        {
+          "height": 360,
+          "max_kbps": 2500,
+          "min_kbps": 300,
+          "resolution": 360,
+          "width": 640
+        },
+        {
+          "height": 720,
+          "max_kbps": 6000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        }
+      ],
+      "media_directions": [
+        "ul",
+        "dl"
+      ],
+      "mos_type": "B",
+      "priority": 0,
+      "quality_model": "call",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 0.0,
+      "range_source": "normalized",
+      "rtt_range": "rtt_interactive",
+      "weight_factor": 1.0
+    },
+    "watchlive": {
+      "coefficients": [
+        0.25,
+        0.05,
+        0.25,
+        0.1
+      ],
+      "initial_enabled": false,
+      "media": [
+        {
+          "height": 360,
+          "max_kbps": 1500,
+          "min_kbps": 200,
+          "resolution": 360,
+          "width": 640
+        },
+        {
+          "height": 480,
+          "max_kbps": 2500,
+          "min_kbps": 300,
+          "resolution": 480,
+          "width": 854
+        },
+        {
+          "height": 540,
+          "max_kbps": 3500,
+          "min_kbps": 500,
+          "resolution": 540,
+          "width": 960
+        },
+        {
+          "height": 720,
+          "max_kbps": 6000,
+          "min_kbps": 800,
+          "resolution": 720,
+          "width": 1280
+        },
+        {
+          "height": 1080,
+          "max_kbps": 10000,
+          "min_kbps": 1500,
+          "resolution": 1080,
+          "width": 1920
+        },
+        {
+          "height": 2160,
+          "max_kbps": 20000,
+          "min_kbps": 6000,
+          "resolution": 2160,
+          "width": 3840
+        }
+      ],
+      "media_directions": [
+        "dl"
+      ],
+      "mos_type": "A",
+      "priority": 1,
+      "quality_model": "general",
+      "quota_dl_kbps": 0.0,
+      "quota_ul_kbps": 100.0,
+      "range_source": "inherited_video",
+      "rtt_range": "rtt_video",
+      "weight_factor": 1.0
+    }
+  },
+  "cell": {
+    "capacity_dl_kbps": 120000,
+    "capacity_ul_kbps": 120000,
+    "reserve_dl_kbps": 0,
+    "reserve_ul_kbps": 0,
+    "unmanaged_dl_kbps": 0,
+    "unmanaged_ul_kbps": 0
+  },
+  "extensions": {
+    "experiment_assumptions": {
+      "calibrated": false,
+      "qoe_live": "QoE live maps to watchlive; openlive is a separate category",
+      "scenario_batch": "9_20_1 uses 0/2/5/8/10 percent headroom and a lower neutral price start",
+      "weights": "Experiment order: package > business > position > tolerance"
+    }
+  },
+  "generation": {
+    "assembly_max_nodes": 20000,
+    "capacity_mode": "current_headroom",
+    "compliance_probs": {
+      "met": 0.5,
+      "over": 0.1,
+      "severe": 0.1,
+      "unmet": 0.3
+    },
+    "compliance_probs_by_package": {
+      "normal": {
+        "met": 0.2,
+        "severe": 0.3,
+        "unmet": 0.5
+      },
+      "vip": {
+        "met": 0.3,
+        "severe": 0.2,
+        "unmet": 0.5
+      }
+    },
+    "delta_over": 0.3,
+    "delta_severe": 0.7,
+    "headroom_ratios": [
+      0.0,
+      0.01,
+      0.03,
+      0.05
+    ],
+    "high_load_sampling": {
+      "business_min_fraction": {
+        "cloudgame": 0.25,
+        "meeting": 0.125,
+        "openlive": 0.125,
+        "shortvideo": 0.125,
+        "video": 0.25,
+        "watchlive": 0.25
+      },
+      "probability": 0.2
+    },
+    "history": {
+      "bandwidth_multiplier": [
+        0.5,
+        1.5
+      ],
+      "enabled": true,
+      "interval_seconds": 30,
+      "periods": 10
+    },
+    "max_model_evaluations": 1000000,
+    "mixed_probability": 0.2,
+    "non_key_current_multiplier": [
+      1.0,
+      3.0
+    ],
+    "quality_probs": {
+      "average": 0.4,
+      "good": 0.4,
+      "poor": 0.2
+    },
+    "quota_mode": "specified",
+    "require_target_reachable": false,
+    "role_max_attempts": 500,
+    "scene_max_attempts": 10,
+    "split_probs": {
+      "test": 0.1,
+      "train": 0.8,
+      "validation": 0.1
+    },
+    "state_pool_size": 2,
+    "stream_phase": "steady",
+    "strict_quotas": false,
+    "throughput_reference": {
+      "aggregate_dl_kbps": 120000,
+      "aggregate_ul_kbps": 120000,
+      "devices": 5,
+      "simultaneous_directions_confirmed": false,
+      "source": "user_reported_iperf"
+    }
+  },
+  "kqi_response": {
+    "enabled": true,
+    "loss_elasticity": 0.6,
+    "maximum_degradation_ratio": 3.0,
+    "minimum_loss_ratio": 0.2,
+    "minimum_rtt_ratio": 0.45,
+    "minimum_stall_ratio": 0.15,
+    "resolution_adaptation": true,
+    "rtt_elasticity": 0.35,
+    "stall_elasticity": 0.8
+  },
+  "logging": {
+    "level": "INFO"
+  },
+  "metrics": {
+    "denominator_epsilon": 1e-06,
+    "epsilon_mos_change": 0.01
+  },
+  "models": {
+    "avg_qoe_per_mos": 20.0,
+    "bitrate_scale": 928.984,
+    "buffer_decay": 0.0003,
+    "call": {
+      "bitrate_amplitude": 4.1192,
+      "bitrate_power": 2.1276,
+      "d_coefficient": 0.0975,
+      "fps": 30.0,
+      "fps_power": 1.2667,
+      "interaction_amplitude": 3.615,
+      "interaction_offset": 0.256,
+      "interaction_power": -2.016,
+      "interaction_scale": 396.6,
+      "loss_percent_scale": 100.0,
+      "loss_scale": 1.383,
+      "pixels_power": 0.3177,
+      "resolution_amplitude": 0.6571,
+      "resolution_power": -1.295,
+      "resolution_reference": 232000.0
+    },
+    "dynamic_base": 0.1,
+    "dynamic_decay_divisor": 2.0,
+    "dynamic_multiplier": 2.0,
+    "game_quality": 4.5,
+    "lookup_directory": "outputs/9_20_1/mos_kqi_relation_v2",
+    "lookup_forward_directory": "solver_lookup",
+    "lookup_reverse_directory": "mos_choice_typical",
+    "loss_decay": 180.94,
+    "maximum_mos": 5.0,
+    "minimum_mos": 1.0,
+    "name": "lookup_table_v1",
+    "resolution_scale": 410.0,
+    "rtt_decay": 0.0035,
+    "score_span": 4.0,
+    "stall_window_seconds": 10.0
+  },
+  "num_scenes": 1,
+  "policy": {
+    "allow_soft_degrade": true,
+    "baselines": {
+      "normal": 2.5,
+      "vip": 4.0
+    },
+    "bitrate_adaptation": true,
+    "contract_dl_kbps": 0.0,
+    "contract_ul_kbps": 0.0,
+    "evaluation_packages": [
+      "vip"
+    ],
+    "hard_mos": false,
+    "normal_request_mos_cap": 4.0,
+    "objective": "total_utility",
+    "package_order": [
+      "vip",
+      "normal"
+    ],
+    "position_factors": {
+      "far": 1.0,
+      "middle": 1.0,
+      "near": 1.0
+    },
+    "position_order": [
+      "far",
+      "middle",
+      "near"
+    ],
+    "priority_order": [
+      "package",
+      "business"
+    ],
+    "profiles": {
+      "demo_gbr": "GBR",
+      "demo_non_gbr": "Non-GBR"
+    },
+    "session_aggregation": "min",
+    "targets": {
+      "normal": 2.5,
+      "vip": 4.0
+    },
+    "tolerance_factors": {
+      "high": 1.0,
+      "low": 1.0,
+      "medium": 1.0
+    },
+    "tolerance_order": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "weight_dimensions": [
+      "package",
+      "business",
+      "position",
+      "tolerance"
+    ],
+    "weight_mode": "ordered",
+    "weight_reference": 64,
+    "weights": {
+      "normal": {
+        "browsing": 3.0,
+        "download": 1.0,
+        "realtime": 4.0
+      },
+      "vip": {
+        "browsing": 5.0,
+        "download": 2.0,
+        "realtime": 6.0
+      }
+    }
+  },
+  "population": {
+    "business_probs": {
+      "cloudgame": 0.07035516597405657,
+      "game": 0.07035516597405657,
+      "meeting": 0.07035516597405657,
+      "openlive": 3.36490738092434e-05,
+      "shortvideo": 0.3667681747059912,
+      "video": 0.2814223463499167,
+      "voip": 0.07035516597405657,
+      "watchlive": 0.07035516597405657
+    },
+    "business_probs_by_package": {},
+    "distribution_mode": "independent",
+    "joint_rows": [],
+    "max_users": 1000,
+    "minimum_app_coverage": true,
+    "minimum_qoe_counts": {
+      "qoe_openlive": 10
+    },
+    "package_probs": {
+      "normal": 0.7,
+      "vip": 0.3
+    },
+    "position_probs": {
+      "far": 0.2,
+      "middle": 0.5,
+      "near": 0.3
+    },
+    "profile_probs": {
+      "demo_gbr": 0.3,
+      "demo_non_gbr": 0.7
+    },
+    "qoe_business_mapping": {
+      "qoe_cloudgame": {
+        "cloudgame": 1.0
+      },
+      "qoe_game": {
+        "game": 1.0
+      },
+      "qoe_live": {
+        "watchlive": 1.0
+      },
+      "qoe_meeting": {
+        "meeting": 1.0
+      },
+      "qoe_openlive": {
+        "openlive": 1.0
+      },
+      "qoe_shortvideo": {
+        "shortvideo": 1.0
+      },
+      "qoe_video": {
+        "video": 1.0
+      },
+      "qoe_voip": {
+        "voip": 1.0
+      }
+    },
+    "qoe_counts": {
+      "qoe_cloudgame": 41817,
+      "qoe_game": 41817,
+      "qoe_live": 41817,
+      "qoe_meeting": 41817,
+      "qoe_openlive": 20,
+      "qoe_shortvideo": 217996,
+      "qoe_video": 167269,
+      "qoe_voip": 41817
+    },
+    "tolerance_probs": {
+      "high": 0.3,
+      "low": 0.3,
+      "medium": 0.4
+    },
+    "users_per_cell": 300
+  },
+  "ranges": {
+    "buffer": {
+      "average": [
+        1000,
+        2000
+      ],
+      "good": [
+        0,
+        1000
+      ],
+      "poor": [
+        2000,
+        10000
+      ]
+    },
+    "jitter": {
+      "average": [
+        10,
+        20
+      ],
+      "good": [
+        0,
+        10
+      ],
+      "poor": [
+        20,
+        50
+      ]
+    },
+    "loss": {
+      "average": [
+        0.0015,
+        0.005
+      ],
+      "good": [
+        0,
+        0.0015
+      ],
+      "poor": [
+        0.005,
+        0.05
+      ]
+    },
+    "rtt_game": {
+      "average": [
+        50,
+        100
+      ],
+      "good": [
+        0,
+        50
+      ],
+      "poor": [
+        100,
+        460
+      ]
+    },
+    "rtt_interactive": {
+      "average": [
+        80,
+        150
+      ],
+      "good": [
+        0,
+        80
+      ],
+      "poor": [
+        150,
+        300
+      ]
+    },
+    "rtt_video": {
+      "average": [
+        100,
+        200
+      ],
+      "good": [
+        0,
+        100
+      ],
+      "poor": [
+        200,
+        500
+      ]
+    },
+    "stall": {
+      "average": [
+        0.1,
+        0.3
+      ],
+      "good": [
+        0,
+        0.1
+      ],
+      "poor": [
+        0.3,
+        1.0
+      ]
+    }
+  },
+  "reference": {
+    "enabled": true,
+    "max_nodes": 100000000,
+    "mos_grid": [
+      1.0,
+      2.25,
+      3.25,
+      3.75,
+      4.25,
+      4.75,
+      5.0
+    ],
+    "time_budget_ms": 60000
+  },
+  "schema_version": "2.0",
+  "seed": 20260920,
+  "solver": {
+    "bandwidth_quantum_kbps": 1.0,
+    "candidate_mos_offsets": [
+      0.1
+    ],
+    "epsilon_bandwidth_kbps": 0.001,
+    "epsilon_gain": 1e-06,
+    "epsilon_mos": 1e-06,
+    "epsilon_price": 0.001,
+    "epsilon_resource": 0.0001,
+    "epsilon_strategy": 0.01,
+    "epsilon_utility": 0.0001,
+    "exchange_max_donors": 2,
+    "exchange_pairs_per_iteration": 512,
+    "exchange_shortlist": 16,
+    "gamma0": 0.05,
+    "group_start_iteration": 2,
+    "initial_mos_band_width": 0.5,
+    "kept_candidates_per_user": 128,
+    "lambda_initial": [
+      0.005,
+      0.005
+    ],
+    "level_edges": [
+      1.0,
+      2.5,
+      3.5,
+      4.0,
+      4.5,
+      5.0
+    ],
+    "max_iterations": 200,
+    "max_total_steps": 30000000,
+    "mos_grid": [
+      1.0,
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0,
+      4.5,
+      5.0
+    ],
+    "price_deadband": 0.01,
+    "price_floor": 0.01,
+    "price_max_step": 0.02,
+    "price_smoothing": 0.25,
+    "price_update": "smoothed",
+    "raw_candidates_per_user": 2048,
+    "stable_rounds": 3,
+    "time_budget_ms": 120000,
+    "trace_candidates": false,
+    "trace_users": true
+  },
+  "utility": {
+    "bandwidth_reference_kbps": 1000.0,
+    "beta_change": 0.1,
+    "debt_cap": 1.0,
+    "eta_fair": 0.5,
+    "history_window_seconds": 300.0,
+    "normal_residual_factor": 0.001,
+    "switch_cost": 0.0,
+    "vip_guarantee_bonus": 1000000.0
+  }
+}
