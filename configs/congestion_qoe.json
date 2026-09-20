@@ -1,6 +1,6 @@
 {
   "seed": 20260918,
-  "num_scenes": 1,
+  "num_scenes": 5,
   "population": {
     "users_per_cell": 100,
     "package_probs": {"normal": 0.6, "vip": 0.25, "super_vip": 0.15},
@@ -9,6 +9,7 @@
       "qoe_video": 167269, "qoe_meeting": 41817, "qoe_cloudgame": 41817,
       "qoe_voip": 41817, "qoe_live": 41817, "qoe_game": 41817, "qoe_openlive": 20
     },
+    "minimum_qoe_counts": {"qoe_openlive": 2},
     "qoe_business_mapping": {
       "qoe_shortvideo": {"shortvideo": 1.0}, "qoe_video": {"video": 1.0},
       "qoe_meeting": {"meeting": 1.0}, "qoe_cloudgame": {"cloudgame": 1.0},
@@ -37,7 +38,13 @@
     },
     "history": {"enabled": true, "periods": 10, "interval_seconds": 30}
   },
-  "policy": {"objective": "total_utility", "weight_mode": "ordered", "weight_reference": 64},
+  "policy": {
+    "objective": "total_utility",
+    "weight_mode": "ordered",
+    "weight_dimensions": ["package", "business", "position", "tolerance"],
+    "priority_order": ["package", "business"],
+    "weight_reference": 64
+  },
   "solver": {
     "max_iterations": 500, "max_total_steps": 5000000, "time_budget_ms": 30000,
     "price_update": "smoothed", "trace_users": true,
@@ -48,7 +55,7 @@
   "extensions": {
     "experiment_assumptions": {
       "qoe_live": "QoE live maps to watchlive; openlive is a separate category",
-      "weights": "Unconfirmed order: business > package > position > tolerance",
+      "weights": "Experiment order: package > business > position > tolerance",
       "calibrated": false
     }
   }

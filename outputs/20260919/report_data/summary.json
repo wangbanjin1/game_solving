@@ -1,0 +1,12 @@
+{
+  "failed_scenes": 0,
+  "feasible_scenes": 0,
+  "max_iterations": 0,
+  "max_solver_ms": 0,
+  "max_steps": 0,
+  "scenes": 25,
+  "statuses": {},
+  "stops": {},
+  "successful_scenes": 0,
+  "weighted_mos_gain": 0
+}

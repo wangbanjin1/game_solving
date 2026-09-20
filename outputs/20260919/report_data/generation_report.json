@@ -1,0 +1,37 @@
+{
+  "failed": 0,
+  "failures": [],
+  "high_load_samples": 305,
+  "high_load_sampling": {
+    "business_min_fraction": {
+      "cloudgame": 0.25,
+      "meeting": 0.125,
+      "openlive": 0.125,
+      "shortvideo": 0.125,
+      "video": 0.25,
+      "watchlive": 0.25
+    },
+    "probability": 0.2
+  },
+  "quota_gaps": 40,
+  "quota_mode": "specified",
+  "realized_bands": {
+    "met": 645,
+    "severe": 655,
+    "unmet": 1200
+  },
+  "rejection_counts": {
+    "MOS_BAND_UNREACHABLE_OR_LOW_ACCEPTANCE": 8526,
+    "QUANTIZED_BAND_MISMATCH": 2035
+  },
+  "requested": 25,
+  "successful": 25,
+  "throughput_reference": {
+    "aggregate_dl_kbps": 120000,
+    "aggregate_ul_kbps": 120000,
+    "devices": 5,
+    "simultaneous_directions_confirmed": false,
+    "source": "user_reported_iperf"
+  },
+  "throughput_reference_role": "sampling_scale_only_not_cell_capacity_or_per_user_demand"
+}

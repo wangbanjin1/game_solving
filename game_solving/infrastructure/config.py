@@ -10,6 +10,7 @@ from game_solving.domain.validation import number
 REPLACE_MAPS = {
     "business_min_fraction",
     "qoe_counts",
+    "minimum_qoe_counts",
     "qoe_business_mapping",
     "business_probs_by_package",
     "compliance_probs_by_package",
@@ -85,6 +86,7 @@ def validate(config):
             if not any(m["max_kbps"] >= floor for m in c["businesses"][business]["media"]):
                 raise ValueError("HIGH_LOAD_OUTSIDE_MEDIA_MODEL_RANGE")
     qoe = c["population"]["qoe_counts"]
+    minimum_qoe = c["population"]["minimum_qoe_counts"]
     mapping = c["population"]["qoe_business_mapping"]
     if qoe:
         allowed_qoe = {"qoe_shortvideo", "qoe_video", "qoe_meeting", "qoe_cloudgame", "qoe_voip", "qoe_live", "qoe_game", "qoe_openlive"}
@@ -103,6 +105,13 @@ def validate(config):
                 number(probability, category, high=1)
             if abs(sum(table.values()) - 1) > 1e-9:
                 raise ValueError("INVALID_QOE_PROBABILITIES")
+    if minimum_qoe:
+        if not qoe or set(minimum_qoe) - set(qoe):
+            raise ValueError("INVALID_MINIMUM_QOE_CATEGORY")
+        if any(type(v) is not int or v < 0 for v in minimum_qoe.values()):
+            raise ValueError("INVALID_MINIMUM_QOE_COUNT")
+        if sum(minimum_qoe.values()) > c["population"]["users_per_cell"]:
+            raise ValueError("MINIMUM_QOE_COUNTS_EXCEED_POPULATION")
     if c["generation"]["capacity_mode"] not in ("fixed", "current_headroom"):
         raise ValueError("INVALID_CAPACITY_MODE")
     ratios = c["generation"]["headroom_ratios"]

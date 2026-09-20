@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>QoE 双向带宽项目 · 阅读与上手指南</title>
+  <style>
+    :root{
+      --navy:#112941;--blue:#287eb8;--cyan:#2d9f91;--gold:#e7a735;
+      --ink:#17283a;--muted:#607286;--line:#dbe5ec;--soft:#f3f7fa;
+      --white:#fff;--danger:#c6535b;--shadow:0 14px 42px rgba(17,41,65,.10);
+      --radius:16px;--mono:"Cascadia Code","Consolas","SFMono-Regular",monospace;
+      --sans:"Microsoft YaHei UI","Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;color:var(--ink);background:#edf3f7;font-family:var(--sans);line-height:1.72}
+    a{color:var(--blue);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .hero{background:linear-gradient(135deg,#0d2237 0%,#173e5e 70%,#1e6680 100%);color:white;padding:58px 48px 52px}
+    .hero-inner{max-width:1220px;margin:auto}
+    .eyebrow{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#8cd3cd;font-weight:700}
+    h1{font-size:clamp(34px,4vw,58px);line-height:1.12;margin:12px 0 16px;letter-spacing:-.03em}
+    .hero p{max-width:780px;color:#d8e7f1;font-size:17px;margin:0}
+    .hero-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+    .pill{border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.09);padding:7px 12px;border-radius:999px;font-size:13px}
+    .layout{max-width:1380px;margin:0 auto;display:grid;grid-template-columns:278px minmax(0,1fr);gap:28px;padding:30px}
+    aside{position:sticky;top:18px;align-self:start;background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;max-height:calc(100vh - 36px);overflow:auto}
+    .brand{font-weight:800;color:var(--navy);padding:4px 8px 14px;border-bottom:1px solid var(--line);margin-bottom:12px}
+    .search{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:var(--soft);outline:none}
+    .search:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(40,126,184,.12)}
+    nav{margin-top:12px}
+    nav a{display:block;padding:7px 9px;border-radius:8px;color:#526579;font-size:14px}
+    nav a:hover,nav a.active{background:#eaf4fa;color:var(--blue);text-decoration:none;font-weight:700}
+    .progress-box{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+    .bar{height:7px;border-radius:999px;background:#e5edf2;overflow:hidden;margin-top:7px}
+    .bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .25s}
+    main{min-width:0}
+    section{background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:32px;margin-bottom:24px;scroll-margin-top:18px}
+    h2{font-size:26px;color:var(--navy);margin:0 0 18px;line-height:1.3}
+    h3{font-size:18px;color:var(--navy);margin:26px 0 9px}
+    h4{font-size:15px;color:var(--blue);margin:20px 0 7px}
+    p{margin:8px 0}
+    .lead{font-size:17px;color:#40556a}
+    .callout{border-left:4px solid var(--cyan);background:#edf8f6;padding:14px 17px;border-radius:0 10px 10px 0;margin:16px 0}
+    .warn{border-left-color:var(--gold);background:#fff8e9}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .card{border:1px solid var(--line);border-radius:13px;padding:17px;background:#fff}
+    .card strong{display:block;color:var(--navy);margin-bottom:5px}
+    .card small{color:var(--muted)}
+    .step{position:relative;padding-left:52px;min-height:44px;margin:18px 0}
+    .step-num{position:absolute;left:0;top:0;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:white;font-weight:800}
+    .step h3{margin:0 0 5px}
+    .flow{display:grid;grid-template-columns:repeat(6,minmax(105px,1fr));gap:22px;margin:24px 0}
+    .flow div{position:relative;background:var(--soft);border:1px solid var(--line);padding:16px 10px;border-radius:12px;text-align:center;font-weight:700;color:var(--navy)}
+    .flow div:not(:last-child)::after{content:"→";position:absolute;right:-19px;color:var(--blue);font-size:22px;top:50%;transform:translateY(-50%)}
+    pre{position:relative;background:#0f2234;color:#e7f1f8;border-radius:12px;padding:18px 52px 18px 18px;overflow:auto;line-height:1.58}
+    code{font-family:var(--mono);font-size:.92em}
+    :not(pre)>code{background:#edf3f7;padding:2px 6px;border-radius:5px;color:#174e73}
+    .copy{position:absolute;right:10px;top:10px;border:1px solid #486176;background:#20394d;color:#dbe9f2;border-radius:7px;padding:5px 8px;cursor:pointer;font-family:var(--sans);font-size:12px}
+    .copy:hover{background:#2b526d}
+    table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+    th{background:#edf4f8;color:var(--navy);text-align:left;font-weight:800}
+    th,td{border:1px solid var(--line);padding:10px 12px;vertical-align:top}
+    tr:nth-child(even) td{background:#fafcfd}
+    .tag{display:inline-block;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:700;background:#e9f5f3;color:#247c71}
+    .tag.blue{background:#eaf3fa;color:#226a9b}.tag.gold{background:#fff4dd;color:#99670d}
+    .formula{font-family:Cambria Math,"Times New Roman",serif;text-align:center;background:#f7fafc;border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0;font-size:18px}
+    .checklist{display:grid;gap:8px;margin:16px 0}
+    .checklist label{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer}
+    .checklist label:has(input:checked){background:#eef8f6;border-color:#98d3ca;color:#286e66}
+    .checklist input{margin-top:6px;accent-color:var(--cyan)}
+    details{border:1px solid var(--line);border-radius:12px;margin:10px 0;background:#fff}
+    summary{cursor:pointer;padding:13px 16px;font-weight:800;color:var(--navy)}
+    details>div{padding:0 16px 15px}
+    .file{font-family:var(--mono);word-break:break-all}
+    .hidden{display:none!important}
+    footer{max-width:1380px;margin:0 auto;padding:8px 30px 45px;color:var(--muted);font-size:13px}
+    @media(max-width:1050px){
+      .layout{grid-template-columns:1fr}.flow{grid-template-columns:repeat(3,1fr)}
+      aside{position:relative;top:0;max-height:none}nav{columns:2}.grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:680px){
+      .hero{padding:40px 22px}.layout{padding:16px}.grid,.flow{grid-template-columns:1fr}
+      .flow div:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-24px}
+      section{padding:22px}nav{columns:1}table{display:block;overflow-x:auto}
+    }
+    @media print{
+      body{background:#fff}.hero{padding:30px;color:#111;background:#fff;border-bottom:2px solid #111}
+      .hero p,.eyebrow{color:#333}.layout{display:block;padding:0}aside{display:none}
+      section{box-shadow:none;border:0;border-bottom:1px solid #bbb;border-radius:0;break-inside:avoid}
+      .copy{display:none}a{color:#111}
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">PROJECT ONBOARDING GUIDE</div>
+      <h1>QoE 用户双向带宽<br>项目阅读与上手指南</h1>
+      <p>从第一次运行，到理解100人场景、MOS反推、候选动作、影子价格、资源协调和结果评价。按本页顺序阅读，可以逐步建立完整的代码心智模型。</p>
+      <div class="hero-meta">
+        <span class="pill">Python 3.10+</span>
+        <span class="pill">标准库运行</span>
+        <span class="pill">100人 × 25场景</span>
+        <span class="pill">配置驱动</span>
+        <span class="pill">离线可复现</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <div class="brand">阅读导航</div>
+      <input id="search" class="search" type="search" placeholder="搜索文件、类或概念">
+      <nav id="nav">
+        <a href="#overview">01 · 总览</a>
+        <a href="#quickstart">02 · 快速运行</a>
+        <a href="#reading">03 · 推荐顺序</a>
+        <a href="#config">04 · 配置系统</a>
+        <a href="#domain">05 · 数据对象</a>
+        <a href="#simulation">06 · 数据生成</a>
+        <a href="#model">07 · MOS模型</a>
+        <a href="#optimization">08 · 求解算法</a>
+        <a href="#evaluation">09 · 评价报告</a>
+        <a href="#files">10 · 文件索引</a>
+        <a href="#modify">11 · 修改定位</a>
+        <a href="#tests">12 · 测试命令</a>
+        <a href="#practice">13 · 上手练习</a>
+      </nav>
+      <div class="progress-box">
+        已完成 <span id="progressText">0 / 8</span>
+        <div class="bar"><span id="progressBar"></span></div>
+      </div>
+    </aside>
+
+    <main>
+      <section id="overview" class="searchable">
+        <h2>01 · 先建立项目全貌</h2>
+        <p class="lead">项目解决的问题是：在一个共享上下行资源池中，为每名用户从有限合法动作中选择一组带宽，使总用户效用最大，同时保证容量和个人硬约束成立。</p>
+        <div class="formula">max H = max Σ Hᵢ(aᵢ)</div>
+        <div class="flow" aria-label="系统流程">
+          <div>加载配置</div><div>生成用户</div><div>计算 MOS</div>
+          <div>构造候选</div><div>协调资源</div><div>评价报告</div>
+        </div>
+        <div class="grid">
+          <div class="card"><strong>输入</strong><small>用户、业务、套餐、KQI、当前带宽、小区容量</small></div>
+          <div class="card"><strong>决策</strong><small>每名用户的上下行带宽动作</small></div>
+          <div class="card"><strong>输出</strong><small>MOS、效用、达标状态、资源占用、收敛证据</small></div>
+        </div>
+        <div class="callout"><strong>当前100人实验：</strong>5个基础样本，每个样本派生0%、5%、10%、15%、20%五档余量，共25个场景。</div>
+      </section>
+
+      <section id="quickstart" class="searchable">
+        <h2>02 · 先跑通，再阅读</h2>
+        <p>在仓库根目录 <code>C:\coding\boyiqiujie</code> 执行。每次使用新的输出目录，便于保留实验对照。</p>
+        <h3>小规模快速实验</h3>
+        <pre><code>cd C:\coding\boyiqiujie
+python --version
+python -m game_solving run --config configs/congestion_exact.json --output outputs/learning_exact
+python -m game_solving.visualization --input outputs/learning_exact --output outputs/learning_exact_report.html</code></pre>
+        <h3>完整100人实验</h3>
+        <pre><code>python -m game_solving generate --config configs/congestion_qoe.json --output outputs/my_qoe_data
+
+python -m game_solving solve --config configs/congestion_qoe.json --input outputs/my_qoe_data/solver_inputs.jsonl --output outputs/my_qoe_solve
+
+python -m game_solving.visualization --input outputs/my_qoe_solve --output outputs/my_qoe_report.html</code></pre>
+        <h3>详细日志与临时预算覆盖</h3>
+        <pre><code>python -m game_solving solve --config configs/congestion_qoe.json --input outputs/my_qoe_data/solver_inputs.jsonl --output outputs/my_qoe_debug --log-level DEBUG --max-iterations 20 --max-total-steps 500000 --time-budget-ms 5000</code></pre>
+        <div class="callout warn"><strong>输出目录规则：</strong>求解输出目录应为空或不存在。修改模型或生成配置后，需要重新生成数据，再重新求解。</div>
+      </section>
+
+      <section id="reading" class="searchable">
+        <h2>03 · 推荐阅读顺序</h2>
+        <div class="checklist" id="checklist">
+          <label><input type="checkbox" data-key="run"><span><strong>1. 跑通小实验</strong><br>确认本地环境、命令入口和输出文件。</span></label>
+          <label><input type="checkbox" data-key="docs"><span><strong>2. 阅读业务与设计文档</strong><br>先理解目标、术语、公式和实验边界。</span></label>
+          <label><input type="checkbox" data-key="config"><span><strong>3. 阅读配置系统</strong><br>理解默认配置与实验覆盖配置的关系。</span></label>
+          <label><input type="checkbox" data-key="domain"><span><strong>4. 阅读核心数据对象</strong><br>掌握 Scene、User、Stream、Action。</span></label>
+          <label><input type="checkbox" data-key="simulation"><span><strong>5. 阅读数据生成</strong><br>跟踪一个用户怎样从人口属性变成完整状态。</span></label>
+          <label><input type="checkbox" data-key="model"><span><strong>6. 阅读MOS模型和候选动作</strong><br>理解正向计算、反推码率和动作剪枝。</span></label>
+          <label><input type="checkbox" data-key="solver"><span><strong>7. 阅读求解主循环</strong><br>理解个人请求、资源协调、价格更新和收敛。</span></label>
+          <label><input type="checkbox" data-key="evaluation"><span><strong>8. 阅读评价和测试</strong><br>理解结果为何可信，以及结论的边界。</span></label>
+        </div>
+        <h3>先读的文档</h3>
+        <table>
+          <thead><tr><th>文档</th><th>阅读目的</th></tr></thead>
+          <tbody>
+            <tr><td><a href="../../README.md">README.md</a></td><td>命令、业务范围、输出语义</td></tr>
+            <tr><td><a href="代码设计与汇报说明.md">代码设计与汇报说明.md</a></td><td>当前100人实验和公式总览</td></tr>
+            <tr><td><a href="../../docs/archive/original_data_sim.txt">original_data_sim.txt</a></td><td>原始数据模拟需求（归档）</td></tr>
+            <tr><td><a href="../../docs/archive/original_algorithm.txt">original_algorithm.txt</a></td><td>原始算法流程和角色效用（归档）</td></tr>
+            <tr><td><a href="../../docs/MOS与上下行带宽公式_简版.md">MOS与上下行带宽公式_简版.md</a></td><td>MOS正向和反向公式</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="config" class="searchable">
+        <h2>04 · 配置系统</h2>
+        <p>程序总是先加载完整默认配置，再用实验配置覆盖指定字段：</p>
+        <div class="formula">Config<sub>final</sub> = Config<sub>default</sub> ⊕ Config<sub>experiment</sub></div>
+        <div class="grid">
+          <div class="card"><strong><a href="../../configs/default.json">configs/default.json</a></strong><small>完整默认参数：模型、业务、范围、效用和求解器。</small></div>
+          <div class="card"><strong><a href="../../configs/congestion_qoe.json">configs/congestion_qoe.json</a></strong><small>当前100人QoE拥塞实验覆盖配置。</small></div>
+          <div class="card"><strong><a href="../../configs/congestion_exact.json">configs/congestion_exact.json</a></strong><small>小规模精确参考实验，适合学习和调试。</small></div>
+        </div>
+        <h3>核心实现</h3>
+        <table>
+          <thead><tr><th>文件 / 函数</th><th>职责</th></tr></thead>
+          <tbody>
+            <tr><td class="file"><a href="../../game_solving/infrastructure/config.py">infrastructure/config.py</a></td><td><code>load_config()</code>加载合并；<code>validate()</code>检查配置；<code>model_hash()</code>生成模型指纹。</td></tr>
+            <tr><td class="file">resolved_config.json</td><td>每次运行实际生效的完整配置，是排查参数问题的首选文件。</td></tr>
+            <tr><td class="file">manifest.json</td><td>记录配置哈希、模型哈希、输入哈希、Python版本和任务完成状态。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="domain" class="searchable">
+        <h2>05 · 核心数据对象</h2>
+        <p>从 <a href="../../game_solving/domain/entities.py">domain/entities.py</a> 开始。先理解对象，再进入算法。</p>
+        <table>
+          <thead><tr><th>类</th><th>表示什么</th><th>关键字段</th></tr></thead>
+          <tbody>
+            <tr><td><code>Bandwidth</code></td><td>一组上下行资源</td><td><code>ul</code>、<code>dl</code></td></tr>
+            <tr><td><code>Stream</code></td><td>一个媒体方向</td><td>码率、分辨率、RTT、丢包、卡顿、上下限</td></tr>
+            <tr><td><code>User</code></td><td>一个用户的完整求解状态</td><td>业务、套餐、位置、容忍度、当前带宽、目标、历史</td></tr>
+            <tr><td><code>Scene</code></td><td>一个小区场景</td><td>用户、容量、预留、非受控流量、模型哈希</td></tr>
+            <tr><td><code>Action</code></td><td>一个候选或最终动作</td><td>带宽、方向MOS、总MOS、效用、达标状态</td></tr>
+            <tr><td><code>InverseResult</code></td><td>MOS反推结果</td><td>是否可达、带宽、复算MOS、失败原因</td></tr>
+            <tr><td><code>SolveResult</code></td><td>一个场景的求解结果</td><td>决策、停止原因、轨迹、证据、工作量</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><strong>对象关系：</strong>Scene包含User，User包含一个或多个Stream；求解器为每个User选择一个Action。</div>
+      </section>
+
+      <section id="simulation" class="searchable">
+        <h2>06 · 数据生成</h2>
+        <div class="step"><div class="step-num">1</div><h3><a href="../../game_solving/simulation/population.py">population.py</a></h3><p><code>generate_people()</code>生成套餐、业务、位置、容忍度和profile。<code>allocate_with_minimums()</code>负责开直播至少2人的覆盖约束。</p></div>
+        <div class="step"><div class="step-num">2</div><h3><a href="../../game_solving/simulation/sampler.py">sampler.py</a></h3><p><code>ConditionalSampler.environment()</code>选择媒体档位并采样KQI；<code>propose()</code>按目标MOS反推码率，再正向复核。</p></div>
+        <div class="step"><div class="step-num">3</div><h3><a href="../../game_solving/simulation/assembler.py">assembler.py</a></h3><p><code>assemble()</code>在有限搜索预算中，为所有用户挑选一组可装配的初始状态。</p></div>
+        <div class="step"><div class="step-num">4</div><h3><a href="../../game_solving/simulation/history.py">simulation/history.py</a></h3><p><code>HistoryGenerator</code>生成10个30秒片段，得到300秒时间加权历史MOS。</p></div>
+        <div class="step"><div class="step-num">5</div><h3><a href="../../game_solving/simulation/generator.py">generator.py</a></h3><p><code>DatasetGenerator.generate()</code>串起全部生成步骤，并派生五档容量场景。</p></div>
+        <h3>100人业务构成</h3>
+        <table>
+          <thead><tr><th>业务</th><th>人数</th><th>主要资源方向</th></tr></thead>
+          <tbody>
+            <tr><td>短视频</td><td>36</td><td>下行</td></tr>
+            <tr><td>长视频</td><td>27</td><td>下行</td></tr>
+            <tr><td>会议、云游戏、语音、看直播、游戏</td><td>各7</td><td>按业务定义</td></tr>
+            <tr><td>开直播</td><td>2</td><td>上行</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="model" class="searchable">
+        <h2>07 · MOS模型和候选动作</h2>
+        <div class="grid">
+          <div class="card"><strong><a href="../../game_solving/models/mos.py">MosModel.dimensions()</a></strong><small>计算画质Q、交互I、观看V和聚合因子。</small></div>
+          <div class="card"><strong><a href="../../game_solving/models/mos.py">MosModel.forward()</a></strong><small>从码率和KQI正向计算MOS。</small></div>
+          <div class="card"><strong><a href="../../game_solving/models/mos.py">MosModel.inverse()</a></strong><small>反推达到目标MOS的最小量化码率。</small></div>
+        </div>
+        <div class="formula">b*(M) = min { b : MOS(b) ≥ M }</div>
+        <h3>候选动作构造</h3>
+        <p><a href="../../game_solving/optimization/candidates.py">optimization/candidates.py</a> 中的 <code>CandidateBuilder</code>负责：</p>
+        <ol>
+          <li>保留当前锚点、基本保障和目标动作；</li>
+          <li>加入最低、最高、当前码率；</li>
+          <li>加入统一MOS网格、用户目标和上下邻近点；</li>
+          <li>分别反推上下行码率并组合；</li>
+          <li>调用<code>Policy.make_action()</code>删除非法组合；</li>
+          <li>执行双资源Pareto剪枝；</li>
+          <li>最终限制每名用户最多128个候选。</li>
+        </ol>
+        <p><code>scope()</code>在迭代过程中逐步开放更远的MOS层级，使早期搜索更稳定。</p>
+      </section>
+
+      <section id="optimization" class="searchable">
+        <h2>08 · 权重、效用和求解算法</h2>
+        <h3>Policy：规则中心</h3>
+        <p><a href="../../game_solving/optimization/policy.py">optimization/policy.py</a> 中的 <code>Policy</code>负责权重、硬约束、动作构造和全局方案排序。</p>
+        <table>
+          <thead><tr><th>方法</th><th>职责</th></tr></thead>
+          <tbody>
+            <tr><td><code>weight()</code></td><td>套餐 → 业务 → 位置 → 容忍度混合进位权重</td></tr>
+            <tr><td><code>hard_errors()</code></td><td>合同、媒体范围、用户上限、固定定额、硬MOS检查</td></tr>
+            <tr><td><code>make_action()</code></td><td>从Bandwidth生成完整Action并计算效用</td></tr>
+            <tr><td><code>rank()</code></td><td>比较两组全局分配方案</td></tr>
+          </tbody>
+        </table>
+        <div class="formula">Hᵢ = (wᵢ + 0.5Dᵢ)Eᵢ − Cᵢ</div>
+        <h3>Solver：主循环</h3>
+        <p><a href="../../game_solving/optimization/solver.py">optimization/solver.py</a> 中的 <code>Solver.solve()</code>是算法主入口：</p>
+        <div class="flow">
+          <div>可行性预检</div><div>生成候选池</div><div>个人请求</div>
+          <div>资源协调</div><div>更新价格</div><div>判断收敛</div>
+        </div>
+        <div class="formula">aᵢ⁽ᵏ⁾ = arg max [ Hᵢ(a) − (λUL·bUL + λDL·bDL)/1000 ]</div>
+        <h3>当前100人实验的实际协调路径</h3>
+        <p>当前目标是<code>total_utility</code>，因此求解器进入 <span class="tag">UTILITY</span> 模式，实际协调实现位于 <a href="../../game_solving/optimization/utility_coordinator.py">utility_coordinator.py</a>：</p>
+        <ol>
+          <li>按单位有效资源的最小效用损失修复超载；</li>
+          <li>接受容量允许的正效用升级；</li>
+          <li>尝试一个或两个供体支持一个接收者；</li>
+          <li>只接受净效用严格提高且容量合法的交换。</li>
+        </ol>
+        <p><a href="../../game_solving/optimization/prices.py">prices.py</a>负责影子价格更新；<a href="../../game_solving/optimization/budget.py">budget.py</a>统一限制工作量和时间。</p>
+      </section>
+
+      <section id="evaluation" class="searchable">
+        <h2>09 · 评价、证据和报告</h2>
+        <table>
+          <thead><tr><th>文件</th><th>核心实现</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td><a href="../../game_solving/evaluation/validation.py">validation.py</a></td><td><code>check_actions()</code></td><td>重新计算MOS、个人约束和小区容量</td></tr>
+            <tr><td><a href="../../game_solving/evaluation/distribution.py">distribution.py</a></td><td><code>describe_scene()</code></td><td>初始套餐、业务、MOS和达标分布</td></tr>
+            <tr><td><a href="../../game_solving/evaluation/metrics.py">metrics.py</a></td><td><code>evaluate()</code></td><td>加权MOS增益、资源和状态指标</td></tr>
+            <tr><td><a href="../../game_solving/evaluation/reference.py">reference.py</a></td><td><code>evaluate_reference()</code></td><td>独立有限预算参考搜索</td></tr>
+            <tr><td><a href="../../game_solving/evaluation/comparison.py">comparison.py</a></td><td><code>compare()</code></td><td>生成求解前后文本对比</td></tr>
+            <tr><td><a href="../../game_solving/visualization/report.py">visualization/report.py</a></td><td><code>generate_report()</code></td><td>生成离线HTML报告</td></tr>
+          </tbody>
+        </table>
+        <div class="callout warn"><strong>结果边界：</strong><code>CONVERGED_LOCAL</code>表示当前候选集和有限交换邻域内收敛；<code>best_known</code>表示预算内找到的参考解，均不等于全局最优证明。</div>
+      </section>
+
+      <section id="files" class="searchable">
+        <h2>10 · 核心文件索引</h2>
+        <details open><summary>应用入口</summary><div>
+          <p><a href="../../game_solving/__main__.py">game_solving/__main__.py</a>：模块入口。</p>
+          <p><a href="../../game_solving/application/cli.py">application/cli.py</a>：命令解析和退出码。</p>
+          <p><a href="../../game_solving/application/pipeline.py">application/pipeline.py</a>：生成、求解、评价和落盘的总流水线。</p>
+          <p><a href="../../game_solving/application/services.py">application/services.py</a>：装配MosModel、Policy、DatasetGenerator和Solver。</p>
+        </div></details>
+        <details><summary>领域层</summary><div>
+          <p><a href="../../game_solving/domain/entities.py">domain/entities.py</a>：核心数据类。</p>
+          <p><a href="../../game_solving/domain/ports.py">domain/ports.py</a>：模型、候选提供器和协调器协议。</p>
+          <p><a href="../../game_solving/domain/validation.py">domain/validation.py</a>：流和场景的输入校验。</p>
+        </div></details>
+        <details><summary>生成层</summary><div>
+          <p><a href="../../game_solving/simulation/population.py">population.py</a>：人数和属性配额。</p>
+          <p><a href="../../game_solving/simulation/sampler.py">sampler.py</a>：媒体/KQI/MOS条件采样。</p>
+          <p><a href="../../game_solving/simulation/generator.py">generator.py</a>：数据生成总调度。</p>
+          <p><a href="../../game_solving/simulation/history.py">history.py</a>：历史体验。</p>
+          <p><a href="../../game_solving/simulation/assembler.py">assembler.py</a>：有限状态装配。</p>
+        </div></details>
+        <details><summary>优化层</summary><div>
+          <p><a href="../../game_solving/optimization/policy.py">policy.py</a>：权重、约束和效用。</p>
+          <p><a href="../../game_solving/optimization/candidates.py">candidates.py</a>：候选构造和剪枝。</p>
+          <p><a href="../../game_solving/optimization/solver.py">solver.py</a>：价格迭代主循环。</p>
+          <p><a href="../../game_solving/optimization/utility_coordinator.py">utility_coordinator.py</a>：当前总效用协调器。</p>
+          <p><a href="../../game_solving/optimization/coordinator.py">coordinator.py</a>：保障优先协调器。</p>
+          <p><a href="../../game_solving/optimization/feasibility.py">feasibility.py</a>：hard/basic/target可行性证书。</p>
+          <p><a href="../../game_solving/optimization/prices.py">prices.py</a>：影子价格。</p>
+        </div></details>
+      </section>
+
+      <section id="modify" class="searchable">
+        <h2>11 · 想改什么，应该去哪里</h2>
+        <table>
+          <thead><tr><th>修改目标</th><th>首选位置</th><th>通常是否需要重新生成</th></tr></thead>
+          <tbody>
+            <tr><td>用户数、套餐和业务比例</td><td><code>configs/*.json → population</code></td><td>是</td></tr>
+            <tr><td>开直播保底人数</td><td><code>population.minimum_qoe_counts</code></td><td>是</td></tr>
+            <tr><td>会议分辨率和码率</td><td><code>businesses.meeting.media</code></td><td>是</td></tr>
+            <tr><td>RTT、丢包、卡顿范围</td><td><code>ranges</code></td><td>是</td></tr>
+            <tr><td>套餐目标MOS</td><td><code>policy.targets / baselines</code></td><td>是</td></tr>
+            <tr><td>套餐优先公式</td><td><code>Policy.weight()</code></td><td>模型指纹变化，需重新生成</td></tr>
+            <tr><td>MOS公式</td><td><code>models/mos.py</code></td><td>是</td></tr>
+            <tr><td>候选MOS粒度</td><td><code>solver.mos_grid / candidate_mos_offsets</code></td><td>可直接对同一输入重新求解，但建议单独版本记录</td></tr>
+            <tr><td>候选剪枝</td><td><code>CandidateBuilder.build()</code></td><td>重新求解</td></tr>
+            <tr><td>超载修复与交换</td><td><code>utility_coordinator.py</code></td><td>重新求解</td></tr>
+            <tr><td>影子价格</td><td><code>prices.py</code>和<code>solver</code>配置</td><td>重新求解</td></tr>
+            <tr><td>评价指标</td><td><code>evaluation/metrics.py</code></td><td>通常需重新求解或重算结果</td></tr>
+            <tr><td>HTML页面</td><td><code>visualization/*.html</code></td><td>只需重新生成报告</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="tests" class="searchable">
+        <h2>12 · 测试与验证命令</h2>
+        <h3>完整测试</h3>
+        <pre><code>python -m unittest discover -s tests -v</code></pre>
+        <h3>只测MOS模型</h3>
+        <pre><code>python -m unittest discover -s tests -p "test_models.py" -v</code></pre>
+        <h3>只测拥塞和权重</h3>
+        <pre><code>python -m unittest discover -s tests -p "test_congestion.py" -v</code></pre>
+        <table>
+          <thead><tr><th>测试文件</th><th>覆盖内容</th></tr></thead>
+          <tbody>
+            <tr><td><a href="../../tests/test_models.py">test_models.py</a></td><td>MOS正向、反向、边界、可达性</td></tr>
+            <tr><td><a href="../../tests/test_pipeline.py">test_pipeline.py</a></td><td>生成、求解、序列化和输出</td></tr>
+            <tr><td><a href="../../tests/test_congestion.py">test_congestion.py</a></td><td>五档容量、套餐优先、资源协调</td></tr>
+            <tr><td><a href="../../tests/test_history.py">test_history.py</a></td><td>历史MOS和公平补偿</td></tr>
+            <tr><td><a href="../../tests/test_visualization.py">test_visualization.py</a></td><td>离线HTML报告</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="practice" class="searchable">
+        <h2>13 · 推荐的第一次修改练习</h2>
+        <p>先做一次只改配置的候选粒度实验，观察配置如何影响候选数量、工作量和最终效果。</p>
+        <h3>步骤</h3>
+        <ol>
+          <li>复制<code>configs/congestion_qoe.json</code>为<code>configs/learning_qoe.json</code>。</li>
+          <li>把<code>candidate_mos_offsets</code>从<code>[0.1]</code>改为<code>[0.05, 0.1]</code>。</li>
+          <li>使用新输出目录重新生成和求解。</li>
+          <li>比较<code>summary.json</code>、<code>comparison.md</code>和<code>iteration_trace.jsonl</code>。</li>
+        </ol>
+        <pre><code>python -m game_solving generate --config configs/learning_qoe.json --output outputs/learning_qoe_data
+python -m game_solving solve --config configs/learning_qoe.json --input outputs/learning_qoe_data/solver_inputs.jsonl --output outputs/learning_qoe_solve</code></pre>
+        <h3>重点观察</h3>
+        <div class="grid">
+          <div class="card"><strong>候选数量</strong><small>细化MOS目标后，每个用户候选池是否明显增大。</small></div>
+          <div class="card"><strong>工作量与时间</strong><small><code>max_steps</code>和<code>max_solver_ms</code>怎样变化。</small></div>
+          <div class="card"><strong>最终收益</strong><small><code>weighted_mos_gain</code>和达标人数是否真正改善。</small></div>
+        </div>
+        <div class="callout"><strong>学习闭环：</strong>每次只改一类参数，保留旧输出，再比较输入、求解轨迹和结果。这样最容易定位一项修改到底影响了哪一层。</div>
+      </section>
+    </main>
+  </div>
+
+  <footer>本页为离线单文件指南。进度勾选保存在当前浏览器本地；“打印”可直接生成PDF版阅读手册。</footer>
+
+  <script>
+    document.querySelectorAll('pre').forEach(pre=>{
+      const b=document.createElement('button');b.className='copy';b.textContent='复制';
+      b.addEventListener('click',async()=>{
+        try{await navigator.clipboard.writeText(pre.innerText.replace(/^复制\s*/,''));b.textContent='已复制'}
+        catch{b.textContent='请手动复制'}
+        setTimeout(()=>b.textContent='复制',1400)
+      });
+      pre.appendChild(b);
+    });
+
+    const checks=[...document.querySelectorAll('#checklist input')];
+    function updateProgress(){
+      const done=checks.filter(x=>x.checked).length;
+      document.getElementById('progressText').textContent=done+' / '+checks.length;
+      document.getElementById('progressBar').style.width=(done/checks.length*100)+'%';
+    }
+    checks.forEach(c=>{
+      c.checked=localStorage.getItem('qoe-guide-'+c.dataset.key)==='1';
+      c.addEventListener('change',()=>{localStorage.setItem('qoe-guide-'+c.dataset.key,c.checked?'1':'0');updateProgress()});
+    });
+    updateProgress();
+
+    const search=document.getElementById('search');
+    search.addEventListener('input',()=>{
+      const q=search.value.trim().toLowerCase();
+      document.querySelectorAll('.searchable').forEach(s=>s.classList.toggle('hidden',q && !s.innerText.toLowerCase().includes(q)));
+    });
+
+    const nav=[...document.querySelectorAll('nav a')];
+    const sections=[...document.querySelectorAll('main section')];
+    const observer=new IntersectionObserver(entries=>{
+      const visible=entries.filter(x=>x.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+      if(!visible)return;
+      nav.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+visible.target.id));
+    },{rootMargin:'-15% 0px -65% 0px',threshold:[0,.25,.5]});
+    sections.forEach(s=>observer.observe(s));
+  </script>
+</body>
+</html>

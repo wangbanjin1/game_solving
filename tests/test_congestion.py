@@ -71,13 +71,11 @@ class CongestionTests(unittest.TestCase):
         users = generate_people(c, 0)
         counts = {category: sum(u["qoe_category"] == category for u in users) for category in c["population"]["qoe_counts"]}
         self.assertEqual(sum(counts.values()), 100)
-        self.assertEqual(counts["qoe_shortvideo"], 37)
-        self.assertEqual(counts["qoe_video"], 28)
+        self.assertGreaterEqual(counts["qoe_openlive"], 2)
         self.assertNotIn("sta", counts)
         self.assertNotIn("sa", counts)
         self.assertTrue(all(u["business"] not in ("browsing", "download") for u in users))
         self.assertEqual(sum(c["population"]["qoe_counts"].values()), 594370)
-        self.assertEqual(counts["qoe_openlive"], 0)
         self.assertEqual(sum(u["package"] == "normal" for u in users), 60)
         self.assertEqual(users, generate_people(c, 0))
 
@@ -96,13 +94,15 @@ class CongestionTests(unittest.TestCase):
                 self.assertEqual(row["realized_band"], "unmet")
 
     def test_ordered_weight_and_components(self):
-        scene = self.services.generator().generate()[0][0]
+        c = load_config("configs/congestion_qoe.json", {"num_scenes": 1})
+        services = Services(c)
+        scene = services.generator().generate()[0][0]
         u = scene.users[0]
-        high = replace(u, business="meeting", package="normal", position="near", tolerance="high")
-        low = replace(u, business="download", package="super_vip", position="far", tolerance="low")
-        self.assertGreater(self.services.policy.weight(high), self.services.policy.weight(low))
-        a = self.services.policy.make_action(u, u.current)
-        parts = self.services.policy.components(u, a)
+        high = replace(u, business="download", package="super_vip", position="near", tolerance="high")
+        low = replace(u, business="meeting", package="normal", position="far", tolerance="low")
+        self.assertGreater(services.policy.weight(high), services.policy.weight(low))
+        a = services.policy.make_action(u, u.current)
+        parts = services.policy.components(u, a)
         self.assertAlmostEqual(parts["experience_benefit"] + parts["fairness_compensation"] - parts["stability_cost"], a.h)
 
     def test_price_damping_sign_and_bounds(self):
@@ -167,6 +167,8 @@ class CongestionTests(unittest.TestCase):
             {"population": {"qoe_counts": {"sa": 10}}},
             {"population": {"qoe_counts": {"sa": 10}, "qoe_business_mapping": {"sa": {"browsing": 1}}}},
             {"population": {"qoe_counts": {"qoe_video": 10}, "qoe_business_mapping": {"qoe_video": {"browsing": 1}}}},
+            {"population": {"minimum_qoe_counts": {"qoe_openlive": 1}}},
+            {"population": {"users_per_cell": 1, "qoe_counts": {"qoe_video": 10}, "minimum_qoe_counts": {"qoe_video": 2}, "qoe_business_mapping": {"qoe_video": {"video": 1.0}}}},
         ):
             with self.subTest(overrides=overrides), self.assertRaises(ValueError):
                 load_config(overrides=overrides)

@@ -17,6 +17,7 @@
     "distribution_mode": "independent",
     "business_probs_by_package": {},
     "qoe_counts": {},
+    "minimum_qoe_counts": {},
     "qoe_business_mapping": {},
     "joint_rows": [],
     "package_probs": {
@@ -145,14 +146,14 @@
   },
   "policy": {
     "priority_order": [
-      "business",
-      "package"
+      "package",
+      "business"
     ],
     "objective": "legacy_guarantee",
     "weight_mode": "legacy",
     "weight_dimensions": [
-      "business",
       "package",
+      "business",
       "position",
       "tolerance"
     ],

@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>百人场景候选空间、博弈求解与参考搜索问答</title>
+  <style>
+    :root{
+      --navy:#102a43;--blue:#1976a8;--cyan:#16877c;--gold:#c98b22;--red:#b74d55;
+      --ink:#172b3a;--muted:#617587;--line:#d9e4eb;--soft:#f2f7fa;--white:#fff;
+      --shadow:0 12px 36px rgba(16,42,67,.10);--radius:16px;
+      --sans:"Microsoft YaHei UI","Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+      --mono:"Cascadia Code","Consolas",monospace;
+    }
+    *{box-sizing:border-box}html{scroll-behavior:smooth}
+    body{margin:0;background:#edf3f6;color:var(--ink);font-family:var(--sans);line-height:1.72}
+    a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+    .hero{padding:54px 42px;background:linear-gradient(135deg,#0c2237,#174b68 72%,#16877c);color:white}
+    .hero>div{max-width:1260px;margin:auto}.eyebrow{font-weight:800;letter-spacing:.18em;color:#8ed8d0;font-size:13px}
+    h1{font-size:clamp(34px,4.4vw,58px);line-height:1.14;margin:12px 0 14px;letter-spacing:-.03em}
+    .hero p{max-width:900px;color:#dcebf3;font-size:17px}.pills{display:flex;flex-wrap:wrap;gap:9px;margin-top:24px}
+    .pill{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.09);padding:6px 11px;border-radius:999px;font-size:13px}
+    .layout{max-width:1400px;margin:auto;padding:28px;display:grid;grid-template-columns:285px minmax(0,1fr);gap:26px}
+    aside{position:sticky;top:16px;align-self:start;max-height:calc(100vh - 32px);overflow:auto;background:white;border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+    aside strong{display:block;color:var(--navy);padding:2px 7px 12px;border-bottom:1px solid var(--line)}
+    .search{width:100%;margin:13px 0 8px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--soft);font:inherit;outline:none}
+    .search:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(25,118,168,.12)}
+    nav a{display:block;padding:7px 9px;border-radius:8px;color:#526a7b;font-size:14px}
+    nav a:hover,nav a.active{background:#e8f3f8;color:var(--blue);font-weight:800;text-decoration:none}
+    main{min-width:0}section{scroll-margin-top:18px;background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:31px;margin-bottom:22px}
+    h2{margin:0 0 16px;color:var(--navy);font-size:25px;line-height:1.35}h3{color:var(--navy);font-size:18px;margin:25px 0 8px}
+    p{margin:8px 0}.lead{font-size:17px;color:#40586a}.muted{color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:16px 0}
+    .card{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff}.card strong{display:block;color:var(--navy);margin-bottom:4px}.card small{color:var(--muted)}
+    .callout{border-left:4px solid var(--cyan);background:#edf8f6;padding:14px 17px;border-radius:0 10px 10px 0;margin:16px 0}
+    .warn{border-left-color:var(--gold);background:#fff8e9}.danger{border-left-color:var(--red);background:#fff2f3}
+    .formula{font-family:Cambria Math,"Times New Roman",serif;text-align:center;background:#f7fafc;border:1px solid var(--line);border-radius:10px;padding:13px;margin:13px 0;font-size:18px;overflow:auto}
+    table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}th{background:#edf4f8;color:var(--navy);text-align:left}th,td{border:1px solid var(--line);padding:9px 11px;vertical-align:top}tr:nth-child(even) td{background:#fafcfd}
+    code{font-family:var(--mono);font-size:.92em}:not(pre)>code{background:#edf3f7;color:#15547a;padding:2px 6px;border-radius:5px}
+    pre{background:#102537;color:#e7f1f7;border-radius:11px;padding:16px;overflow:auto;line-height:1.55}
+    .flow{display:grid;grid-template-columns:repeat(5,minmax(110px,1fr));gap:20px;margin:20px 0}
+    .flow div{position:relative;text-align:center;background:var(--soft);border:1px solid var(--line);border-radius:11px;padding:14px 9px;font-weight:800;color:var(--navy)}
+    .flow div:not(:last-child)::after{content:"→";position:absolute;right:-17px;top:50%;transform:translateY(-50%);color:var(--blue);font-size:21px}
+    details{border:1px solid var(--line);border-radius:11px;margin:10px 0}summary{cursor:pointer;padding:12px 15px;color:var(--navy);font-weight:800}details>div{padding:0 15px 14px}
+    .badge{display:inline-block;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:800;background:#e6f4f1;color:#196f66}.badge.gold{background:#fff1d7;color:#8c5e08}.badge.red{background:#fdebed;color:#a33c45}
+    .hidden{display:none!important}footer{max-width:1400px;margin:auto;padding:4px 28px 40px;color:var(--muted);font-size:13px}
+    @media(max-width:1050px){.layout{grid-template-columns:1fr}aside{position:relative;top:0;max-height:none}nav{columns:2}.grid{grid-template-columns:1fr 1fr}.flow{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:680px){.hero{padding:38px 21px}.layout{padding:14px}.grid,.flow{grid-template-columns:1fr}nav{columns:1}section{padding:21px}table{display:block;overflow-x:auto}.flow div:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-24px}}
+    @media print{body{background:white}.hero{background:white;color:#111;border-bottom:2px solid #111;padding:28px}.hero p,.eyebrow{color:#333}.layout{display:block;padding:0}aside{display:none}section{box-shadow:none;border:0;border-bottom:1px solid #bbb;border-radius:0;break-inside:avoid}a{color:#111}footer{padding:10px}}
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Q&amp;A · 2026-09-20</div>
+      <h1>百人场景候选空间、<br>博弈求解与参考搜索</h1>
+      <p>汇总本轮核心问题：候选粒度如何形成、博弈求解和“暴搜”有什么区别、为什么差距为 0 仍不能称为标准答案，以及哪些参数在 JSON 中、哪些规则写在代码里。</p>
+      <div class="pills">
+        <span class="pill">真实百人样本</span><span class="pill">总 H 目标</span>
+        <span class="pill">有限候选空间</span><span class="pill">配置溯源</span><span class="pill">汇报口径</span>
+      </div>
+    </div>
+  </header>
+  <div class="layout">
+    <aside>
+      <strong>问题导航</strong>
+      <input id="search" class="search" type="search" placeholder="搜索问题、参数或公式">
+      <nav id="nav">
+        <a href="#conclusion">01 · 先看结论</a>
+        <a href="#granularity">02 · 粒度如何确定</a>
+        <a href="#difference">03 · 博弈与暴搜</a>
+        <a href="#hundred">04 · 百人实例</a>
+        <a href="#single-user">05 · 单用户空间差异</a>
+        <a href="#delta">06 · 为什么有 Δ 与参考网格</a>
+        <a href="#evidence">07 · 文档是否提到</a>
+        <a href="#h-formula">08 · H、历史与 λ</a>
+        <a href="#json-code">09 · JSON 与代码边界</a>
+        <a href="#reporting">10 · 汇报表述</a>
+      </nav>
+    </aside>
+    <main>
+      <section id="conclusion" class="searchable">
+        <h2>01 · 先看结论</h2>
+        <div class="grid">
+          <div class="card"><strong>博弈求解</strong><small>通过价格、个人选择和资源协调，快速得到一套合法且质量较好的方案。</small></div>
+          <div class="card"><strong>参考搜索</strong><small>在独立构造的有限候选空间中尝试找出更好的联合方案，用于检查主算法。</small></div>
+          <div class="card"><strong>百人结果</strong><small>参考搜索未完成，只能标记 best_known；差距为 0 不等于证明全局最优。</small></div>
+        </div>
+        <div class="callout"><strong>一句话：</strong>博弈算法负责快速给答案，参考搜索负责尝试推翻这个答案；当前参考搜索没有推翻它，但也没有完成足够搜索来证明它最优。</div>
+      </section>
+
+      <section id="granularity" class="searchable">
+        <h2>02 · 暴搜答案的粒度和区间如何确定</h2>
+        <p class="lead">参考搜索不是在整个带宽区间内每隔 1 kbps 全量枚举，而是从 MOS 关键点反推一组有限带宽候选。</p>
+        <h3>合法带宽区间</h3>
+        <div class="formula">B<sub>min</sub> = q · ceil(max(B<sub>media-min</sub>, B<sub>contract</sub>) / q)</div>
+        <div class="formula">B<sub>max</sub> = q · floor(B<sub>media-max</sub> / q)，其中 q = 1 kbps</div>
+        <p>区间由媒体档位上下限、合同下限和用户上限共同决定。1 kbps 是反推结果的量化精度，不代表区间里的每一个整数都进入暴搜。</p>
+        <h3>有限 MOS 关键点</h3>
+        <table>
+          <thead><tr><th>来源</th><th>候选点</th></tr></thead>
+          <tbody>
+            <tr><td>博弈基础网格</td><td><code>1, 2, 2.5, 3, 3.5, 4, 4.5, 5</code></td></tr>
+            <tr><td>参考额外网格</td><td><code>1, 2.25, 3.25, 3.75, 4.25, 4.75, 5</code></td></tr>
+            <tr><td>用户关键点</td><td>当前 MOS、基本保障、目标 MOS、各方向目标与保障</td></tr>
+            <tr><td>邻近采样</td><td>上述关键点的 ±<code>candidate_mos_offsets</code>，百人实验为 ±0.1</td></tr>
+            <tr><td>资源边界</td><td>合法下界、合法上界、当前带宽、算法最终动作</td></tr>
+          </tbody>
+        </table>
+        <div class="formula">B<sub>candidate</sub> = q · ceil(f<sup>−1</sup>(M<sub>target</sub>, K<sub>fixed</sub>) / q)</div>
+        <p>每个 MOS 点经过模型反推得到最小带宽，再用量化后的带宽正向复算 MOS；不可达或越界的候选会被删除。双向业务将合法上、下行候选两两组合。</p>
+      </section>
+
+      <section id="difference" class="searchable">
+        <h2>03 · 博弈求解和参考“暴搜”的区别</h2>
+        <table>
+          <thead><tr><th>项目</th><th>博弈求解</th><th>参考搜索</th></tr></thead>
+          <tbody>
+            <tr><td>任务</td><td>快速得到可执行方案</td><td>独立检查是否能找到更好方案</td></tr>
+            <tr><td>方法</td><td>影子价格、个人请求、资源协调、交换</td><td>有限候选联合深度优先枚举并做容量剪枝</td></tr>
+            <tr><td>单用户网格</td><td>求解网格＋用户关键点</td><td>求解网格＋参考网格＋用户关键点＋算法动作</td></tr>
+            <tr><td>Pareto 剪枝</td><td>使用</td><td>不复用主算法的 Pareto 剪枝</td></tr>
+            <tr><td>数量截断</td><td>原始 2048、保留 128</td><td>不使用主算法的 128 保留上限，但受参考总预算限制</td></tr>
+            <tr><td>结果含义</td><td>通常是有限邻域中的局部结果</td><td>完整才是 exact_discrete；中断时只是 best_known</td></tr>
+          </tbody>
+        </table>
+        <div class="flow"><div>构造个人候选</div><div>博弈快速求解</div><div>得到可行方案</div><div>参考搜索尝试改进</div><div>给出证明状态</div></div>
+      </section>
+
+      <section id="hundred" class="searchable">
+        <h2>04 · 用当前真实百人场景走一遍</h2>
+        <p>样本：<code>scene_000000_headroom_00</code>。</p>
+        <div class="grid">
+          <div class="card"><strong>100 人</strong><small>普通 60、VIP 25、超级 VIP 15</small></div>
+          <div class="card"><strong>上行 50,821 kbps</strong><small>最终分配 50,722，剩余 99</small></div>
+          <div class="card"><strong>下行 260,096 kbps</strong><small>最终分配 260,084，剩余 12</small></div>
+        </div>
+        <table>
+          <thead><tr><th>用户</th><th>套餐 / 业务</th><th>参考候选数</th><th>最终 UL / DL</th><th>MOS</th><th>H</th></tr></thead>
+          <tbody>
+            <tr><td>user_00000</td><td>普通 / 短视频</td><td>10</td><td>100 / 1771</td><td>2.7301</td><td>0.177341</td></tr>
+            <tr><td>user_00001</td><td>VIP / 短视频</td><td>7</td><td>100 / 4672</td><td>3.6594</td><td>0.764407</td></tr>
+            <tr><td>user_00002</td><td>普通 / 短视频</td><td>4</td><td>100 / 1905</td><td>1.6436</td><td>0.072107</td></tr>
+            <tr><td>user_00003</td><td>普通 / 开直播</td><td>9</td><td>2500 / 100</td><td>2.9641</td><td>0.277715</td></tr>
+            <tr><td>user_00004</td><td>VIP / 看直播</td><td>8</td><td>100 / 3703</td><td>4.1001</td><td>0.979068</td></tr>
+          </tbody>
+        </table>
+        <h3>博弈算法先给出方案</h3>
+        <p>算法经过 9 轮、181,093 个工作步骤后局部收敛：</p>
+        <div class="formula">H<sub>algorithm</sub> = 50.9855204672</div>
+        <p>该方案通过容量和硬约束复核，状态为 <span class="badge">CONVERGED_LOCAL</span>。</p>
+        <h3>参考搜索再尝试推翻它</h3>
+        <p>100 名用户的候选数乘积约为：</p>
+        <div class="formula">|Ω| = ∏<sub>i=1</sub><sup>100</sup> |A<sub>i</sub>| ≈ 2.8 × 10<sup>84</sup></div>
+        <p>仅前六个人就有 <code>10 × 7 × 4 × 9 × 8 × 3 = 60,480</code> 种朴素组合。百人参考搜索只有 1 秒和 30,000 工作量预算，实际执行 22,636 后因时间停止。</p>
+        <table>
+          <thead><tr><th>字段</th><th>结果</th><th>正确解释</th></tr></thead>
+          <tbody>
+            <tr><td>返回 H</td><td>50.98552</td><td>博弈算法返回方案的总 H</td></tr>
+            <tr><td>参考 H</td><td>50.98552</td><td>截至停止时参考搜索已知的最好 H</td></tr>
+            <tr><td>差距</td><td>0</td><td>有限预算内没有找到更优方案</td></tr>
+            <tr><td>参考状态</td><td><span class="badge gold">best_known</span></td><td>搜索未完成，不能称为标准答案</td></tr>
+          </tbody>
+        </table>
+        <div class="callout warn"><strong>为什么一开始就相等：</strong>参考搜索先把博弈结果作为已知可行解，再尝试寻找更好的组合。因此“差距 0”只说明尚未找到更好方案，不等于已经证明没有更好方案。</div>
+      </section>
+
+      <section id="single-user" class="searchable">
+        <h2>05 · 单个用户的可选空间有什么不同</h2>
+        <h3>博弈求解空间</h3>
+        <p>使用求解网格、用户关键点和 ±Δ，组合上下行后执行硬约束过滤、Pareto 剪枝和数量截断。剪枝后每人最多保留 128 个，而且第一轮只开放当前 MOS 等级附近的一部分动作，之后逐轮扩展。</p>
+        <h3>参考搜索空间</h3>
+        <p>在上述关键点基础上加入参考网格和算法最终动作，不调用主算法的 Pareto 剪枝，也不使用 128 个保留上限。当前报告中出现单用户 144、143 个参考候选，正是两套空间独立构造的证据。</p>
+        <div class="formula">A<sub>i</sub><sup>game,round</sup> ⊆ A<sub>i</sub><sup>game,full</sup>；A<sub>i</sub><sup>reference</sup> 通常更宽</div>
+        <div class="callout"><strong>为什么把算法动作注入参考空间：</strong>保证博弈结果能够在参考空间中复现，避免因为网格不一致造成不公平比较。</div>
+      </section>
+
+      <section id="delta" class="searchable">
+        <h2>06 · 为什么博弈看关键点附近，参考搜索又增加较密网格</h2>
+        <p>博弈采用“全局粗网格＋个人关键位置局部细化”。例如当前 MOS 3.63、保障 3.5、目标 4.0、Δ=0.1，会加入 3.53、3.73、3.4、3.6、3.9、4.1 等个性化采样点。</p>
+        <table>
+          <thead><tr><th>局部位置</th><th>解决的问题</th></tr></thead>
+          <tbody>
+            <tr><td>当前 MOS 附近</td><td>提供小幅升级或降级动作，避免只能跨越 0.5 MOS 大步调整</td></tr>
+            <tr><td>基本保障附近</td><td>区分“刚刚达标”和“刚刚不达标”的资源成本</td></tr>
+            <tr><td>目标附近</td><td>找到刚好达到目标的最低资源动作，并判断继续升级是否值得</td></tr>
+          </tbody>
+        </table>
+        <p>参考搜索增加错位网格，用来检查主算法粗网格之间是否存在更好的联合解。两组网格合并后，3～5 区间形成近似 0.25 的采样：</p>
+        <div class="formula">3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5</div>
+        <div class="callout danger"><strong>需要准确表述：</strong>参考搜索并非在整个 1～5 区间严格每 0.25 搜索。1～3 仍较稀疏，而且它同时包含用户关键点和 ±0.1 点。</div>
+        <p>Δ=0.1 和错位参考网格目前属于工程经验参数，尚没有真实数据敏感性实验表明它们是唯一或最优选择。</p>
+      </section>
+
+      <section id="evidence" class="searchable">
+        <h2>07 · 这些内容是否来自设计文档</h2>
+        <table>
+          <thead><tr><th>内容</th><th>文档状态</th><th>位置</th></tr></thead>
+          <tbody>
+            <tr><td>博弈 MOS 关键网格</td><td><span class="badge">明确写明</span></td><td><a href="../../docs/个人用户双向带宽_数据模拟与博弈求解方案.md">数据模拟与博弈求解方案 §8.2</a></td></tr>
+            <tr><td>从当前邻域开始并逐步扩展</td><td><span class="badge">明确写明</span></td><td><a href="../../docs/个人用户双向带宽_数据模拟与博弈求解方案.md">数据模拟与博弈求解方案 §8.3</a></td></tr>
+            <tr><td>当前、保障、目标附近增加采样</td><td><span class="badge">明确写明</span></td><td><a href="../../docs/拥塞实验设计与验证.md">拥塞实验设计与验证</a></td></tr>
+            <tr><td>参考包含两套网格和算法动作</td><td><span class="badge">明确写明</span></td><td><a href="../../docs/代码架构与配置说明.md">代码架构与配置说明 §4</a></td></tr>
+            <tr><td>为什么一定取 Δ=0.1</td><td><span class="badge red">没有数据论证</span></td><td>当前属于实验配置</td></tr>
+            <tr><td>为什么选择这些 0.25 错位点</td><td><span class="badge red">没有数据论证</span></td><td>当前属于工程采样设计</td></tr>
+          </tbody>
+        </table>
+        <p>因此应区分：候选构造方式是文档规定的实现；具体数值的最优性没有被文档或真实数据证明。</p>
+      </section>
+
+      <section id="h-formula" class="searchable">
+        <h2>08 · H、历史补偿和 λ 分别是什么</h2>
+        <div class="formula">H<sub>i</sub> = (w<sub>i</sub> + η<sub>fair</sub>D<sub>i</sub>)E<sub>i</sub> − β<sub>change</sub>|E<sub>i</sub> − E<sub>i,current</sub>|</div>
+        <div class="formula">D<sub>i</sub> = clip((M<sub>target</sub> − M<sub>history</sub>) / score_span, 0, debt_cap)</div>
+        <table>
+          <thead><tr><th>符号</th><th>含义</th><th>当前百人配置</th></tr></thead>
+          <tbody>
+            <tr><td>w<sub>i</sub></td><td>套餐、业务、位置、容忍度生成的个人权重</td><td><code>weight_mode=ordered</code>，套餐优先于业务</td></tr>
+            <tr><td>E<sub>i</sub></td><td>归一化体验；MOS 业务通常为 (MOS−1)/4</td><td><code>minimum_mos=1</code>，<code>score_span=4</code></td></tr>
+            <tr><td>D<sub>i</sub></td><td>历史欠账；没有历史或历史已达目标时为 0</td><td><code>debt_cap=1</code></td></tr>
+            <tr><td>η<sub>fair</sub></td><td>历史欠账补偿强度</td><td><code>0.5</code></td></tr>
+            <tr><td>β<sub>change</sub></td><td>相对当前体验的变化惩罚</td><td><code>0.1</code></td></tr>
+          </tbody>
+        </table>
+        <h3>λ 不是历史惩罚</h3>
+        <div class="formula">selection_score = H<sub>i</sub> − (λ<sub>UL</sub>B<sub>UL</sub> + λ<sub>DL</sub>B<sub>DL</sub>) / B<sub>ref</sub></div>
+        <p><code>solver.lambda_initial=[0.02,0.02]</code> 是上下行初始影子价格，只影响博弈过程中用户如何选择带宽，不进入最终总 H。历史相关系数是 <code>utility.eta_fair</code>，变化惩罚系数是 <code>utility.beta_change</code>。</p>
+        <div class="formula">λ<sub>d</sub><sup>k+1</sup> = max(0, λ<sub>d</sub><sup>k</sup> + γ<sub>0</sub> · r<sub>d</sub><sup>k</sup> / √(k+1))</div>
+      </section>
+
+      <section id="json-code" class="searchable">
+        <h2>09 · 哪些在 JSON，哪些写在代码里</h2>
+        <h3>JSON 中可直接修改</h3>
+        <table>
+          <thead><tr><th>类别</th><th>主要参数</th></tr></thead>
+          <tbody>
+            <tr><td>候选粒度</td><td><code>solver.mos_grid</code>、<code>candidate_mos_offsets</code>、<code>level_edges</code>、<code>bandwidth_quantum_kbps</code></td></tr>
+            <tr><td>候选规模</td><td><code>raw_candidates_per_user</code>、<code>kept_candidates_per_user</code></td></tr>
+            <tr><td>参考搜索</td><td><code>reference.mos_grid</code>、<code>max_nodes</code>、<code>time_budget_ms</code></td></tr>
+            <tr><td>H 系数</td><td><code>eta_fair</code>、<code>debt_cap</code>、<code>beta_change</code>、<code>score_span</code></td></tr>
+            <tr><td>权重顺序</td><td><code>weight_mode</code>、<code>weight_dimensions</code>、<code>priority_order</code>、各等级顺序与业务优先级</td></tr>
+            <tr><td>历史生成</td><td><code>generation.history.enabled/periods/interval_seconds/bandwidth_multiplier</code></td></tr>
+            <tr><td>影子价格</td><td><code>lambda_initial</code>、<code>gamma0</code>、平滑、死区、单步上限</td></tr>
+            <tr><td>求解预算</td><td><code>max_iterations</code>、<code>max_total_steps</code>、<code>time_budget_ms</code></td></tr>
+          </tbody>
+        </table>
+        <h3>需要修改 Python 代码</h3>
+        <table>
+          <thead><tr><th>写死的规则</th><th>实现文件</th></tr></thead>
+          <tbody>
+            <tr><td>H 的公式结构、历史欠账公式、线性体验归一化、绝对变化惩罚</td><td><a href="../../game_solving/optimization/policy.py">optimization/policy.py</a></td></tr>
+            <tr><td>有序权重的混合进位算法</td><td><a href="../../game_solving/optimization/policy.py">optimization/policy.py</a></td></tr>
+            <tr><td>候选来源、上下行笛卡尔积、Pareto 支配条件、逐轮扩大方式</td><td><a href="../../game_solving/optimization/candidates.py">optimization/candidates.py</a></td></tr>
+            <tr><td>影子成本形式与用户请求比较流程</td><td><a href="../../game_solving/optimization/solver.py">optimization/solver.py</a></td></tr>
+            <tr><td>价格按 1/√(k+1) 衰减、非负截断及平滑更新结构</td><td><a href="../../game_solving/optimization/prices.py">optimization/prices.py</a></td></tr>
+            <tr><td>参考 DFS、容量剪枝、状态 exact_discrete / best_known 判定</td><td><a href="../../game_solving/evaluation/reference.py">evaluation/reference.py</a></td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><strong>判断原则：</strong>数值、顺序、网格和预算大多在 JSON；公式形式、候选构造流程、剪枝条件、搜索方法和证明状态写在代码中。</div>
+        <details>
+          <summary>当前百人实验的关键生效参数</summary>
+          <div><pre><code>{
+  "policy": {
+    "objective": "total_utility",
+    "weight_mode": "ordered",
+    "weight_dimensions": ["package", "business", "position", "tolerance"],
+    "priority_order": ["package", "business"],
+    "weight_reference": 64
+  },
+  "utility": {
+    "eta_fair": 0.5,
+    "debt_cap": 1.0,
+    "history_window_seconds": 300,
+    "beta_change": 0.1,
+    "bandwidth_reference_kbps": 1000
+  },
+  "solver": {
+    "candidate_mos_offsets": [0.1],
+    "lambda_initial": [0.02, 0.02],
+    "gamma0": 0.05,
+    "mos_grid": [1, 2, 2.5, 3, 3.5, 4, 4.5, 5]
+  },
+  "reference": {
+    "enabled": true,
+    "max_nodes": 30000,
+    "time_budget_ms": 1000,
+    "mos_grid": [1, 2.25, 3.25, 3.75, 4.25, 4.75, 5]
+  }
+}</code></pre></div>
+        </details>
+      </section>
+
+      <section id="reporting" class="searchable">
+        <h2>10 · 推荐汇报表述</h2>
+        <div class="callout"><strong>百人结果：</strong>博弈算法经过 9 轮迭代得到总 H=50.98552 的合法方案，上下行容量分别剩余 99 kbps 和 12 kbps。独立参考搜索在约 2.8×10<sup>84</sup> 个有限候选组合空间内进行了 22,636 次有界搜索，没有发现更优方案，因此当前已知差距为 0；但参考搜索因 1 秒预算停止，状态为 best_known，不能作为全局最优证明。</div>
+        <h3>避免使用的说法</h3>
+        <ul>
+          <li>“暴搜证明了百人场景全局最优。”</li>
+          <li>“参考 H 是标准答案。”</li>
+          <li>“整个 MOS 1～5 都按 0.25 搜索。”</li>
+          <li>“λ 是历史惩罚系数。”</li>
+        </ul>
+        <h3>配置与证据入口</h3>
+        <ul>
+          <li><a href="../../configs/default.json">基础配置 default.json</a></li>
+          <li><a href="../../configs/congestion_qoe.json">百人实验配置 congestion_qoe.json</a></li>
+          <li><a href="../20260919/report_solve/resolved_config.json">本次求解最终生效配置</a></li>
+          <li><a href="../20260919/report_solve/reference_results.jsonl">参考搜索原始结果</a></li>
+          <li><a href="../20260919/report_solve/solve_results.jsonl">博弈求解原始结果</a></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <footer>生成日期：2026-09-20 · QoE 双向带宽博弈求解项目 · 本页为当前实现与输出的解释材料</footer>
+  <script>
+    const input=document.getElementById('search');
+    const sections=[...document.querySelectorAll('.searchable')];
+    const links=[...document.querySelectorAll('nav a')];
+    input.addEventListener('input',()=>{
+      const q=input.value.trim().toLowerCase();
+      sections.forEach(s=>s.classList.toggle('hidden',q && !s.innerText.toLowerCase().includes(q)));
+    });
+    const observer=new IntersectionObserver(entries=>{
+      entries.filter(e=>e.isIntersecting).forEach(e=>{
+        links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id));
+      });
+    },{rootMargin:'-15% 0px -70% 0px'});
+    sections.forEach(s=>observer.observe(s));
+  </script>
+</body>
+</html>

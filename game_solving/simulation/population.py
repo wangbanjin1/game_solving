@@ -24,6 +24,18 @@ def allocate(n, probs, rng):
     return result
 
 
+def allocate_with_minimums(n, probs, minimums, rng):
+    """Allocate exactly n labels while reserving explicit coverage floors."""
+    reserved = [key for key, size in minimums.items() for _ in range(size)]
+    result = reserved + [
+        key
+        for key, size in counts(n - len(reserved), probs).items()
+        for _ in range(size)
+    ]
+    rng.shuffle(result)
+    return result
+
+
 def generate_people(c, index):
     p = c["population"]
     n = p["users_per_cell"]
@@ -50,7 +62,12 @@ def generate_people(c, index):
                 person["business"] = business
     if p["qoe_counts"]:
         size = sum(p["qoe_counts"].values())
-        categories = allocate(n, {k: v / size for k, v in p["qoe_counts"].items()}, rng_for(c["seed"], index, "qoe"))
+        categories = allocate_with_minimums(
+            n,
+            {k: v / size for k, v in p["qoe_counts"].items()},
+            p["minimum_qoe_counts"],
+            rng_for(c["seed"], index, "qoe"),
+        )
         for person, category in zip(people, categories):
             person["qoe_category"] = category
         for category, probs in p["qoe_business_mapping"].items():
