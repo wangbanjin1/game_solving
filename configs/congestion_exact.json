@@ -3,7 +3,7 @@
   "num_scenes": 1,
   "population": {
     "users_per_cell": 4,
-    "package_probs": {"normal": 0.6, "vip": 0.25, "super_vip": 0.15},
+    "package_probs": {"normal": 0.7, "vip": 0.3},
     "business_probs": {"shortvideo": 1.0}
   },
   "generation": {
@@ -18,8 +18,8 @@
     "objective": "total_utility",
     "weight_mode": "ordered",
     "weight_reference": 64,
-    "targets": {"normal": 3.0, "vip": 3.5, "super_vip": 4.0},
-    "baselines": {"normal": 2.5, "vip": 2.5, "super_vip": 2.5}
+    "targets": {"normal": 3.0, "vip": 3.5},
+    "baselines": {"normal": 2.5, "vip": 2.5}
   },
   "solver": {
     "max_iterations": 500,

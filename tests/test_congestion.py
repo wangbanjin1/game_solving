@@ -76,7 +76,7 @@ class CongestionTests(unittest.TestCase):
         self.assertNotIn("sa", counts)
         self.assertTrue(all(u["business"] not in ("browsing", "download") for u in users))
         self.assertEqual(sum(c["population"]["qoe_counts"].values()), 594370)
-        self.assertEqual(sum(u["package"] == "normal" for u in users), 60)
+        self.assertEqual(sum(u["package"] == "normal" for u in users), 70)
         self.assertEqual(users, generate_people(c, 0))
 
     def test_conditional_business_and_quota_distribution(self):
@@ -89,7 +89,7 @@ class CongestionTests(unittest.TestCase):
         self.assertEqual(report["failed"], 0)
         for u, row in zip(scenes[0].users, audits[0]["users"]):
             if u.package == "normal":
-                self.assertEqual(row["realized_band"], "met")
+                self.assertIsNone(row["realized_band"])
             if u.package == "vip":
                 self.assertEqual(row["realized_band"], "unmet")
 
@@ -98,7 +98,7 @@ class CongestionTests(unittest.TestCase):
         services = Services(c)
         scene = services.generator().generate()[0][0]
         u = scene.users[0]
-        high = replace(u, business="download", package="super_vip", position="near", tolerance="high")
+        high = replace(u, business="download", package="vip", position="near", tolerance="high")
         low = replace(u, business="meeting", package="normal", position="far", tolerance="low")
         self.assertGreater(services.policy.weight(high), services.policy.weight(low))
         a = services.policy.make_action(u, u.current)

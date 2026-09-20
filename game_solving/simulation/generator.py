@@ -43,7 +43,7 @@ class DatasetGenerator:
             groups = defaultdict(list)
             requests = {}
             for person in people:
-                if c["businesses"][person["business"]]["mos_type"]:
+                if c["businesses"][person["business"]]["mos_type"] and person["package"] in c["policy"]["evaluation_packages"]:
                     groups[(person["package"], person["business"])].append(person)
             for key, group in groups.items():
                 quotas = (

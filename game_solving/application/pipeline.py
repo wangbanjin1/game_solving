@@ -67,6 +67,7 @@ class Pipeline:
                 {
                     "ranges": c["ranges"],
                     "businesses": c["businesses"],
+                    "applications": c["applications"],
                     "proxy": "identity_demo",
                     "calibrated": False,
                 },

@@ -35,7 +35,7 @@ def validate_history(scene, history, policy):
             bandwidth = Bandwidth(**record["bandwidth"])
             number(bandwidth.ul, "history_ul")
             number(bandwidth.dl, "history_dl")
-            action = policy.make_action(user, bandwidth)
+            action = policy.make_action(user, bandwidth, anchor=True)
             if action is None or action.mos != record["mos"] or action.direction_mos != record["direction_mos"]:
                 raise ValueError("HISTORY_MOS_MISMATCH")
             actions.append(action)

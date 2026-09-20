@@ -88,7 +88,7 @@ class Solver:
                     best = basic
             else:
                 mode = "DEGRADED"
-            if c["policy"]["objective"] == "total_utility":
+            if c["policy"]["objective"] in ("total_utility", "vip_guarantee"):
                 mode = "UTILITY"
                 # Basic initialization may be worse than the valid current state.
                 for candidate in (anchors, hard):
@@ -137,7 +137,7 @@ class Solver:
                         ) / c["utility"]["bandwidth_reference_kbps"]
                         candidates.append(
                             (
-                                a.h - cost,
+                                self.policy.decision_score(u, a) - cost,
                                 a.anchor,
                                 -a.bandwidth.ul - a.bandwidth.dl,
                                 a.action_id,
@@ -145,6 +145,35 @@ class Solver:
                             )
                         )
                     raw.append(max(candidates, key=lambda x: x[:4])[-1])
+                decision_mode = "individual_alignment"
+                group_summaries = []
+                if k + 1 >= p["group_start_iteration"]:
+                    # Select one common MOS line per role group, then map it to
+                    # each member's executable candidate. Capacity repair may
+                    # still split individuals, which preserves feasibility.
+                    grouped = {}
+                    for i, user in enumerate(scene.users):
+                        grouped.setdefault(self.policy.group_key(user), []).append(i)
+                    for key, indices in grouped.items():
+                        levels = sorted({a.mos for i in indices for a in scopes[i] if a.mos is not None})
+                        if not levels:
+                            continue
+                        choices = []
+                        for level in levels:
+                            mapped = []
+                            score = 0.0
+                            for i in indices:
+                                action = min(scopes[i], key=lambda a: (abs((a.mos if a.mos is not None else level) - level), a.action_id))
+                                mapped.append(action)
+                                score += self.policy.decision_score(scene.users[i], action) - (
+                                    prices[0] * action.bandwidth.ul + prices[1] * action.bandwidth.dl
+                                ) / c["utility"]["bandwidth_reference_kbps"]
+                            choices.append((score, -level, mapped, level))
+                        _, _, mapped, level = max(choices, key=lambda x: (x[0], x[1]))
+                        for i, action in zip(indices, mapped):
+                            raw[i] = action
+                        group_summaries.append({"group": list(key), "users": len(indices), "selected_mos_line": level})
+                    decision_mode = "grouped_common_mos"
                 raw_total = total(raw)
                 logger.debug("第 %d 轮个人选择完成：原始需求上下行=(%.3f, %.3f) Mbps，开始资源协调", k+1, raw_total.ul/1000, raw_total.dl/1000)
                 repaired, local = self.coordinator.coordinate(
@@ -193,6 +222,10 @@ class Solver:
                         "raw": asdict(raw_total),
                         "allocated": asdict(used),
                         "H": h,
+                        "decision_mode": decision_mode,
+                        "groups": group_summaries,
+                        "vip_quality_met": sum(u.package == "vip" and a.quality_guarantee_met for u, a in zip(scene.users, repaired)),
+                        "vip_quality_total": sum(u.package == "vip" for u in scene.users),
                         "V": self.policy.violation_vector(scene.users, repaired),
                         "prices": prices[:],
                         "next_prices": next_prices,
@@ -210,17 +243,18 @@ class Solver:
                         "exchange_truncated": getattr(self.coordinator, "exchange_truncated", False),
                         "coordination_events": getattr(self.coordinator, "events", []),
                         **({"users": [
-                            {"user_id": u.user_id, "package": u.package, "business": u.business,
-                             "requested": {"action_id": request.action_id, "bandwidth": asdict(request.bandwidth), "mos": request.mos, "H": request.h},
-                             "allocated": {"action_id": action.action_id, "bandwidth": asdict(action.bandwidth), "mos": action.mos, "direction_mos": action.direction_mos, "H": action.h, "basic_met": action.basic_met, "target_met": action.target_met},
+                            {"user_id": u.user_id, "package": u.package, "business": u.business, "app_id": u.app_id, "group": list(self.policy.group_key(u)),
+                             "requested": {"action_id": request.action_id, "bandwidth": asdict(request.bandwidth), "mos": request.mos, "KQI": request.predicted_kqi, "H": request.h},
+                             "allocated": {"action_id": action.action_id, "bandwidth": asdict(action.bandwidth), "mos": action.mos, "direction_mos": action.direction_mos, "KQI": action.predicted_kqi, "quality_guarantee_met": action.quality_guarantee_met, "quality_violations": action.quality_violations, "target_evaluated": action.target_evaluated, "H": action.h, "basic_met": action.basic_met, "target_met": action.target_met},
+                             "kqi_change_from_initial": {d: {field: values[field] - anchors[i].predicted_kqi.get(d, {}).get(field, values[field]) for field in ("avg_qoe", "bitrate_kbps", "resolution", "service_delay_ms", "loss_ratio", "stall_ratio", "stalling_duration_seconds_proxy") if values.get(field) is not None} for d, values in action.predicted_kqi.items()},
                              "utility": self.policy.components(u, action),
                              "shadow_cost": (prices[0] * action.bandwidth.ul + prices[1] * action.bandwidth.dl) / c["utility"]["bandwidth_reference_kbps"],
                              "delta_H_from_initial": action.h - anchors[i].h if anchors[i] else None,
                              "candidate_count": len(scopes[i]),
                              "candidates": [dict(asdict(a),
                                  shadow_cost=(prices[0] * a.bandwidth.ul + prices[1] * a.bandwidth.dl) / c["utility"]["bandwidth_reference_kbps"],
-                                 selection_score=a.h - (prices[0] * a.bandwidth.ul + prices[1] * a.bandwidth.dl) / c["utility"]["bandwidth_reference_kbps"])
-                                 for a in scopes[i]]}
+                                 selection_score=self.policy.decision_score(u, a) - (prices[0] * a.bandwidth.ul + prices[1] * a.bandwidth.dl) / c["utility"]["bandwidth_reference_kbps"])
+                                 for a in scopes[i]] if p["trace_candidates"] else []}
                             for i, (u, request, action) in enumerate(zip(scene.users, raw, repaired))
                         ]} if p["trace_users"] else {}),
                         **metrics,

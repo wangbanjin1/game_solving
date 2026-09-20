@@ -46,6 +46,18 @@ def generate_report(input_dir, output_path):
     scenes = []
     for sid, result in results.items():
         snapshot = inputs.get(sid, {})
+        package_by_user = {u["user_id"]: u.get("package") for u in snapshot.get("users", [])}
+
+        def policy_summary(decisions):
+            vip = [a for a in decisions if package_by_user.get(a.get("user_id")) == "vip"]
+            return {
+                "vip_total": len(vip),
+                "vip_quality_met": sum(bool(a.get("quality_guarantee_met")) for a in vip),
+                "vip_target_met": sum(bool(a.get("target_met")) for a in vip),
+                "vip_gap": sum(float(a.get("gap", 0.0)) for a in vip),
+                "vip_H": sum(float(a.get("h", 0.0)) for a in vip),
+            }
+
         capacity = {}
         resource_budget = {}
         for d in ("ul", "dl"):
@@ -75,6 +87,12 @@ def generate_report(input_dir, output_path):
                           detail_trace=detailed_traces.get(sid, []),
                           H_returned=sum(a["h"] for a in result.get("decisions", [])),
                           H_terminal=sum(a["h"] for a in result.get("terminal_decisions", [])) if result.get("terminal_decisions") else None,
+                          returned_policy=policy_summary(result.get("decisions", [])),
+                          terminal_policy=policy_summary(result.get("terminal_decisions", [])),
+                          policy_objective=config.get("policy", {}).get("objective"),
+                          model_name=config.get("models", {}).get("name"),
+                          lookup_directory=config.get("models", {}).get("lookup_directory"),
+                          avg_qoe_per_mos=config.get("models", {}).get("avg_qoe_per_mos", 20.0),
                           returned_matches_terminal=result.get("returned_matches_terminal"),
                           output_selection=result.get("output_selection"))
     payload = json.dumps({"scenes": scenes}, ensure_ascii=False, allow_nan=False)

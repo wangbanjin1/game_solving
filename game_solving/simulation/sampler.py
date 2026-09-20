@@ -143,7 +143,8 @@ class ConditionalSampler:
                 direction_mos[d] = inverse.mos
                 proposal_targets[d] = wanted
             actual = min(direction_mos.values())
-            realized = band(actual, target, c)
+            evaluated = person["package"] in p["evaluation_packages"]
+            realized = band(actual, target, c) if evaluated else None
             if requested is not None and realized != requested:
                 return None, "QUANTIZED_BAND_MISMATCH"
         else:

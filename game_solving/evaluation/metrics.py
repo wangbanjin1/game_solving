@@ -35,8 +35,9 @@ def evaluate(scene, result, reference, config, policy):
         current.append(old)
         if a.mos is None:
             continue
-        count += 1
-        met += a.target_met
+        evaluated = user.package in config["policy"]["evaluation_packages"]
+        count += int(evaluated)
+        met += int(evaluated and a.target_met)
         difference = a.mos - user.observed_mos
         eps = config["metrics"]["epsilon_mos_change"]
         metric[
@@ -49,7 +50,7 @@ def evaluate(scene, result, reference, config, policy):
         weight = policy.weight(user) * config["policy"]["weight_reference"]
         metric["weighted_mos_current"] += weight * user.observed_mos
         metric["weighted_mos_algorithm"] += weight * a.mos
-        if old:
+        if old and evaluated:
             metric["newly_met"] += int(not old.target_met and a.target_met)
             metric["lost_met"] += int(old.target_met and not a.target_met)
     metric["weighted_mos_gain"] = (

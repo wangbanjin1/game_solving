@@ -88,7 +88,7 @@ def validate_scene(scene, config):
         if config["businesses"][u.business]["mos_type"] and u.observed_mos is None:
             raise ValueError("MISSING_OBSERVED_MOS")
         expected = set(config["businesses"][u.business]["media_directions"])
-        if u.business == "game":
+        if u.business == "game" and not expected:
             expected = {"session"}
         if set(u.streams) != expected:
             raise ValueError("INVALID_STREAM_DIRECTIONS")

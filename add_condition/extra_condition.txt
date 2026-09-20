@@ -1,0 +1,60 @@
+1.数据模拟需要分组：vip还是普通用户（没有了超级vip），容忍度的低中高，距离基站的距离近中远，所属的业务大类，所属业务大类里面的某个app，初始mos分数处于哪个区间当中。后续按照分组处理。
+2.不同分组下的app应用在朝着目标mos出发的时候，还要额外考虑质差保障条件（mos分条件，KQI质差参数条件，带宽的上下行速率）
+3.增加一个看直播和短视频的数据类别过来：目前只有开直播，适配，云游，视频会议，手游，voip。看直播和开直播一致，上行改为下行即可。短视频和视频一致，只是短视频没有分辨率，这个拿不到，mos计算公式也没这几个。视频缺少的码率分档参考码率	看视频业务单位时间内传输的数据量	规则近似——平均速率	[0,1Mbps]	(1Mbps, 5Mbps]	(5Mbps, 12Mbps]	
+4.增加大类里面的app应用类别一下，这个会使得质差保障的条件不一样，因此需要按这个分一下组。
+5.我们更关注vip用户达到质差保障需求，有余量的情况下才是普通用户，质差判断条件也是针对vip的，非vip不用管，质差的条件我给你，这个要考虑大类的应用
+游戏		王者荣耀	3	mobile_game	subappid=	wangzherongyao_game	时	avgQoe＜	60	或	serviceDelay ≥60	或	bandwidth-dl < 300000 
+		和平精英	3	mobile_game	subappid=	hepingjingying_game	时	avgQoe＜	60	或	serviceDelay ≥100	或	bandwidth-dl < 300000 
+		英雄联盟	3	mobile_game	subappid=	yingxionglianmeng_game	时	avgQoe＜	60	或	serviceDelay ≥60	或	bandwidth-dl < 300000 
+	6期新增	原神	3	mobile_game	subappid=	yuanshen_game	时	avgQoe＜	60	或	serviceDelay ≥100	或	bandwidth-dl < 300000 
+	6期新增	蛋仔派对	3	mobile_game	subappid=	danzaipaidu_game	时	avgQoe＜	60	或	serviceDelay ≥100	或	bandwidth-dl < 300000 
+	6期新增	三角洲行动	3	mobile_game	subappid=	sanjiaozhouxingdong_game	时	avgQoe＜	60	或	serviceDelay ≥ 80	或	bandwidth-dl < 300000 
+	6期新增	穿越火线	3	mobile_game	subappid=	chuanyuehuoxian_game	时	avgQoe＜	60	或	serviceDelay ≥ 80	或	bandwidth-dl < 300000 
+	6期新增	暗区突围	3	mobile_game	subappid=	anqutuwei_game	时	avgQoe＜	60	或	serviceDelay ≥100	或	bandwidth-dl < 300000 
+云游戏	是云游戏，5期已有包含在游戏中，保持在游戏里	咪咕快游	3	cloud_game	subappid=	migu_game	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1800000
+	是云游戏，6期新增，随咪咕快游放在游戏里	网易云游戏	3	cloud_game	subappid=	wangyi_cloudgame	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1800000
+"开直播 
+5期已有为开直播，6期和新增看直播大类区分开"		抖音	4	live_streaming	subappid=	douyin_live	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-ul <1500000
+		快手	4	live_streaming	subappid=	kuaishou_live	时	avgQoe＜70		或	stallingDuration＞2	或	bandwidth-ul <1.2000000
+		淘宝	4	live_streaming	subappid=	taobao_live	时	avgQoe＜	70	或	stallingDuration＞2	或	bandwidth-ul <1000000
+		拼多多	4	live_streaming	subappid=	pinduoduo_live	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-ul <1000000
+		虎牙直播	4	live_streaming	subappid=	huya_live	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-ul <3000000
+		斗鱼直播	4	live_streaming	subappid=	douyu_live	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-ul <2000000
+		YY直播	4	live_streaming	subappid=	yy_live	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-ul <1000000
+	6期新增	微信	4	live_streaming	subappid=	weixin_live	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-ul <1000000
+	6期新增	小红书	4	live_streaming	subappid=	xiaohongshu_live	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-ul < 2000000
+	6期新增	哔哩哔哩	4	live_streaming	subappid=	bilibili_live	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-ul < 4000000
+视频通话		微信VOIP（含企业微信VOIP）	4	voip	subappid=	weixin_voip	时	avgQoe＜	50	或	stallingDuration＞2	或	bandwidth-ul<512000 
+		QQVOIP	4	voip	subappid=	qq_voip	时	avgQoe＜	50	或	stallingDuration＞2	或	bandwidth-ul<512000 
+视频		咪咕视频	4	vod_streaming	subappid=	migu_vod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1500000
+		腾讯视频	4	vod_streaming	subappid=	tencent_vod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1000000
+		爱奇艺视频	4	vod_streaming	subappid=	iqiyi_vod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1000000
+		芒果TV	4	vod_streaming	subappid=	mangguo_vod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1000000
+		哔哩哔哩	4	vod_streaming	subappid=	bilibili_vod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1500000
+		优酷视频	4	vod_streaming	subappid=	youku_vod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1000000
+		西瓜视频	4	vod_streaming	subappid=	xigua_vod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 0.5000000
+办公		云视讯	4	meeting	subappid=	yunshixun_meeting	时	avgQoe＜	50	或	stallingDuration＞2	或	bandwidth-ul < 0.5000000
+		钉钉	4	meeting	subappid=	dingding_meeting	时	avgQoe＜	50	或	stallingDuration＞2	或	bandwidth-ul < 0.5000000
+		腾讯会议	4	meeting	subappid=	tencent_meeting	时	avgQoe＜	50	或	stallingDuration＞2	或	bandwidth-ul < 0.5000000
+		飞书	4	meeting	subappid=	feishu_meeting	时	avgQoe＜	50	或	stallingDuration＞2	或	bandwidth-ul < 0.5000000
+看直播		抖音	4	watch_live	subappid=	douyin_watch	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1500000
+		快手	4	watch_live	subappid=	kuaishou_watch	时	avgQoe＜	70	或	stallingDuration＞2	或	bandwidth-dl <1200000
+		淘宝	4	watch_live	subappid=	taobao_watch	时	avgQoe＜	70	或	stallingDuration＞2	或	bandwidth-dl < 1500000
+		拼多多	4	watch_live	subappid=	pinduoduo_watch	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 3000000
+		虎牙直播	4	watch_live	subappid=	huya_watch	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 3000000
+		斗鱼直播	4	watch_live	subappid=	douyu_watch	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1500000
+		YY直播	4	watch_live	subappid=	yy_watch	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1500000
+		微信	4	watch_live	subappid=	wexin_watch	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1000000
+		小红书	4	watch_live	subappid=	xiaohongshu_watch	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl <3000000
+		哔哩哔哩	4	watch_live	subappid=	bilibili_watch	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 2000000
+		京东	4	watch_live	subappid=	jingdong_watch	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl <2000000
+短视频	6期新增大类	抖音	4	short_video	subappid=	douyin_svod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1500000
+		快手	4	short_video	subappid=	kuaishou_svod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1500000
+		微信	4	short_video	subappid=	weixin_svod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1500000
+		小红书	4	short_video	subappid=	xiaohongshu_svod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1500000
+		今日头条	4	short_video	subappid=	jinritoutiao_svod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1500000
+		淘宝	4	short_video	subappid=	taobao_svod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 2000000
+		红果短剧	4	short_video	subappid=	hongguo_svod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 2000000
+		西瓜视频	4	short_video	subappid=	xigua_svod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1500000
+		好看视频	4	short_video	subappid=	haokan_svod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1500000
+		微视	4	short_video	subappid=	weishi_svod	时	avgQoe＜	60	或	stallingDuration＞2	或	bandwidth-dl < 1500000

@@ -58,6 +58,7 @@ class User:
     cap: Optional[Bandwidth] = None
     total_cap_kbps: Optional[float] = None
     qoe_category: Optional[str] = None
+    app_id: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -90,6 +91,10 @@ class Action:
     target_met: bool
     gap: float
     anchor: bool = False
+    predicted_kqi: dict[str, dict] = field(default_factory=dict)
+    quality_guarantee_met: bool = True
+    quality_violations: tuple[str, ...] = ()
+    target_evaluated: bool = True
 
 
 @dataclass(frozen=True)

@@ -20,7 +20,7 @@ def check_actions(scene, actions, policy, budget=None, recompute=False):
             errors.append("USER_ID_MISMATCH")
         errors.extend(
             u.user_id + ":" + e
-            for e in policy.hard_errors(u, a.bandwidth, a.direction_mos)
+            for e in policy.hard_errors(u, a.bandwidth, a.direction_mos, a.anchor)
         )
         if recompute:
             actual = policy.make_action(u, a.bandwidth, budget, anchor=a.anchor)

@@ -1,6 +1,7 @@
 {
   "schema_version": "2.0",
   "seed": 20260913,
+  "business_basic_kbps": {},
   "num_scenes": 5,
   "allow_partial": false,
   "cell": {
@@ -14,6 +15,7 @@
   "population": {
     "users_per_cell": 30,
     "max_users": 1000,
+    "minimum_app_coverage": false,
     "distribution_mode": "independent",
     "business_probs_by_package": {},
     "qoe_counts": {},
@@ -114,9 +116,13 @@
   },
   "models": {
     "name": "user_formula_v2",
+    "lookup_directory": "outputs/9_20_1/mos_kqi_relation_v2",
+    "lookup_forward_directory": "solver_lookup",
+    "lookup_reverse_directory": "mos_choice_typical",
     "minimum_mos": 1.0,
     "maximum_mos": 5.0,
     "score_span": 4.0,
+    "avg_qoe_per_mos": 20.0,
     "bitrate_scale": 928.984,
     "resolution_scale": 410.0,
     "rtt_decay": 0.0035,
@@ -126,6 +132,7 @@
     "dynamic_multiplier": 2.0,
     "dynamic_decay_divisor": 2.0,
     "game_quality": 4.5,
+    "stall_window_seconds": 10.0,
     "call": {
       "fps": 30.0,
       "d_coefficient": 0.0975,
@@ -169,14 +176,14 @@
     ],
     "targets": {
       "normal": 2.5,
-      "vip": 4.0,
-      "super_vip": 4.5
+      "vip": 4.0
     },
     "baselines": {
       "normal": 2.5,
-      "vip": 4.0,
-      "super_vip": 4.5
+      "vip": 4.0
     },
+    "normal_request_mos_cap": 4.0,
+    "evaluation_packages": ["vip"],
     "hard_mos": false,
     "allow_soft_degrade": true,
     "contract_ul_kbps": 0.0,
@@ -194,11 +201,6 @@
         "realtime": 6.0,
         "browsing": 5.0,
         "download": 2.0
-      },
-      "super_vip": {
-        "realtime": 8.0,
-        "browsing": 7.0,
-        "download": 3.0
       }
     },
     "position_factors": {
@@ -212,7 +214,6 @@
       "low": 1.0
     },
     "package_order": [
-      "super_vip",
       "vip",
       "normal"
     ],
@@ -228,6 +229,8 @@
     "beta_change": 0.1,
     "switch_cost": 0.0,
     "bandwidth_reference_kbps": 1000.0
+    ,"vip_guarantee_bonus": 1000000.0
+    ,"normal_residual_factor": 0.001
   },
   "solver": {
     "price_update": "legacy",
@@ -235,7 +238,10 @@
     "price_deadband": 0.01,
     "price_max_step": 0.02,
     "trace_users": false,
+    "trace_candidates": true,
     "candidate_mos_offsets": [],
+    "group_start_iteration": 2,
+    "initial_mos_band_width": 0.5,
     "epsilon_price": 0.001,
     "exchange_max_donors": 1,
     "exchange_shortlist": 16,
@@ -395,6 +401,73 @@
         50
       ]
     }
+  },
+  "kqi_response": {
+    "enabled": false,
+    "resolution_adaptation": false,
+    "rtt_elasticity": 0.35,
+    "loss_elasticity": 0.6,
+    "stall_elasticity": 0.8,
+    "minimum_rtt_ratio": 0.45,
+    "minimum_loss_ratio": 0.2,
+    "minimum_stall_ratio": 0.15,
+    "maximum_degradation_ratio": 3.0
+  },
+  "applications": {
+    "wangzherongyao_game": {"name":"王者荣耀","business":"game","avg_qoe_min":60,"service_delay_max_ms":60,"stalling_duration_max_seconds":null,"bandwidth_direction":"dl","bandwidth_min_kbps":300,"bandwidth_min_kbps_by_direction":{"ul":300,"dl":300}},
+    "hepingjingying_game": {"name":"和平精英","business":"game","avg_qoe_min":60,"service_delay_max_ms":100,"stalling_duration_max_seconds":null,"bandwidth_direction":"dl","bandwidth_min_kbps":300,"bandwidth_min_kbps_by_direction":{"ul":300,"dl":300}},
+    "yingxionglianmeng_game": {"name":"英雄联盟","business":"game","avg_qoe_min":60,"service_delay_max_ms":60,"stalling_duration_max_seconds":null,"bandwidth_direction":"dl","bandwidth_min_kbps":300,"bandwidth_min_kbps_by_direction":{"ul":300,"dl":300}},
+    "yuanshen_game": {"name":"原神","business":"game","avg_qoe_min":60,"service_delay_max_ms":100,"stalling_duration_max_seconds":null,"bandwidth_direction":"dl","bandwidth_min_kbps":300,"bandwidth_min_kbps_by_direction":{"ul":300,"dl":300}},
+    "danzaipaidu_game": {"name":"蛋仔派对","business":"game","avg_qoe_min":60,"service_delay_max_ms":100,"stalling_duration_max_seconds":null,"bandwidth_direction":"dl","bandwidth_min_kbps":300,"bandwidth_min_kbps_by_direction":{"ul":300,"dl":300}},
+    "sanjiaozhouxingdong_game": {"name":"三角洲行动","business":"game","avg_qoe_min":60,"service_delay_max_ms":80,"stalling_duration_max_seconds":null,"bandwidth_direction":"dl","bandwidth_min_kbps":300,"bandwidth_min_kbps_by_direction":{"ul":300,"dl":300}},
+    "chuanyuehuoxian_game": {"name":"穿越火线","business":"game","avg_qoe_min":60,"service_delay_max_ms":80,"stalling_duration_max_seconds":null,"bandwidth_direction":"dl","bandwidth_min_kbps":300,"bandwidth_min_kbps_by_direction":{"ul":300,"dl":300}},
+    "anqutuwei_game": {"name":"暗区突围","business":"game","avg_qoe_min":60,"service_delay_max_ms":100,"stalling_duration_max_seconds":null,"bandwidth_direction":"dl","bandwidth_min_kbps":300,"bandwidth_min_kbps_by_direction":{"ul":300,"dl":300}},
+    "migu_game": {"name":"咪咕快游","business":"cloudgame","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1800},
+    "wangyi_cloudgame": {"name":"网易云游戏","business":"cloudgame","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1800},
+    "douyin_live": {"name":"抖音开直播","business":"openlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":1500},
+    "kuaishou_live": {"name":"快手开直播","business":"openlive","avg_qoe_min":70,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":1200},
+    "taobao_live": {"name":"淘宝开直播","business":"openlive","avg_qoe_min":70,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":1000},
+    "pinduoduo_live": {"name":"拼多多开直播","business":"openlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":1000},
+    "huya_live": {"name":"虎牙开直播","business":"openlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":3000},
+    "douyu_live": {"name":"斗鱼开直播","business":"openlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":2000},
+    "yy_live": {"name":"YY开直播","business":"openlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":1000},
+    "weixin_live": {"name":"微信开直播","business":"openlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":1000},
+    "xiaohongshu_live": {"name":"小红书开直播","business":"openlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":2000},
+    "bilibili_live": {"name":"哔哩哔哩开直播","business":"openlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":4000},
+    "weixin_voip": {"name":"微信VOIP","business":"voip","avg_qoe_min":50,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":512},
+    "qq_voip": {"name":"QQVOIP","business":"voip","avg_qoe_min":50,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":512},
+    "migu_vod": {"name":"咪咕视频","business":"video","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1500},
+    "tencent_vod": {"name":"腾讯视频","business":"video","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1000},
+    "iqiyi_vod": {"name":"爱奇艺视频","business":"video","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1000},
+    "mangguo_vod": {"name":"芒果TV","business":"video","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1000},
+    "bilibili_vod": {"name":"哔哩哔哩视频","business":"video","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1500},
+    "youku_vod": {"name":"优酷视频","business":"video","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1000},
+    "xigua_vod": {"name":"西瓜视频","business":"video","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":500},
+    "yunshixun_meeting": {"name":"云视讯","business":"meeting","avg_qoe_min":50,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":500},
+    "dingding_meeting": {"name":"钉钉","business":"meeting","avg_qoe_min":50,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":500},
+    "tencent_meeting": {"name":"腾讯会议","business":"meeting","avg_qoe_min":50,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":500},
+    "feishu_meeting": {"name":"飞书","business":"meeting","avg_qoe_min":50,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"ul","bandwidth_min_kbps":500},
+    "douyin_watch": {"name":"抖音看直播","business":"watchlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1500},
+    "kuaishou_watch": {"name":"快手看直播","business":"watchlive","avg_qoe_min":70,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1200},
+    "taobao_watch": {"name":"淘宝看直播","business":"watchlive","avg_qoe_min":70,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1500},
+    "pinduoduo_watch": {"name":"拼多多看直播","business":"watchlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":3000},
+    "huya_watch": {"name":"虎牙看直播","business":"watchlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":3000},
+    "douyu_watch": {"name":"斗鱼看直播","business":"watchlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1500},
+    "yy_watch": {"name":"YY看直播","business":"watchlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1500},
+    "wexin_watch": {"name":"微信看直播","business":"watchlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1000},
+    "xiaohongshu_watch": {"name":"小红书看直播","business":"watchlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":3000},
+    "bilibili_watch": {"name":"哔哩哔哩看直播","business":"watchlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":2000},
+    "jingdong_watch": {"name":"京东看直播","business":"watchlive","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":2000},
+    "douyin_svod": {"name":"抖音短视频","business":"shortvideo","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1500},
+    "kuaishou_svod": {"name":"快手短视频","business":"shortvideo","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1500},
+    "weixin_svod": {"name":"微信短视频","business":"shortvideo","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1500},
+    "xiaohongshu_svod": {"name":"小红书短视频","business":"shortvideo","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1500},
+    "jinritoutiao_svod": {"name":"今日头条短视频","business":"shortvideo","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1500},
+    "taobao_svod": {"name":"淘宝短视频","business":"shortvideo","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":2000},
+    "hongguo_svod": {"name":"红果短剧","business":"shortvideo","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":2000},
+    "xigua_svod": {"name":"西瓜短视频","business":"shortvideo","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1500},
+    "haokan_svod": {"name":"好看视频","business":"shortvideo","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1500},
+    "weishi_svod": {"name":"微视","business":"shortvideo","avg_qoe_min":60,"service_delay_max_ms":null,"stalling_duration_max_seconds":2,"bandwidth_direction":"dl","bandwidth_min_kbps":1500}
   },
   "businesses": {
     "openlive": {

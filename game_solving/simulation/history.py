@@ -26,7 +26,7 @@ class HistoryGenerator:
         for user in scene.users:
             budget.consume(kind="history_initialization")
             floor, reason = minimum_action(user, "hard", self.policy, budget)
-            current = self.policy.make_action(user, user.current, budget)
+            current = self.policy.make_action(user, user.current, budget, True)
             if floor is None or current is None:
                 raise ValueError("HISTORY_REQUIRES_FEASIBLE_CURRENT: " + str(reason))
             floors.append(floor.bandwidth)

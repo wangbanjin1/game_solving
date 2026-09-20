@@ -8,9 +8,14 @@
 <h2>标准答案：一组完整的联合策略</h2>
 <p id="proof-note" class="notice"></p><div id="strategy-answer" class="table-wrap"></div>
 <p class="hint">带宽单位 kbps。标准答案按固定总效用 H 比较，使用 policy_decisions；加权 MOS 最优的另一组动作不能混作 H 最优答案。精确性仅覆盖声明的有限候选集合，当前模型固定媒体与网络环境。</p>
+<h3 style="margin-top:20px">参考答案 KQI 明细（每个用户 · 每个方向）</h3><div id="strategy-kqi" class="table-wrap"></div>
 <h2 style="margin-top:24px">逐轮策略与状态回放</h2>
 <div class="toolbar"><button id="round-prev">上一轮</button><label for="round-select">轮次</label><select id="round-select"></select><button id="round-next">下一轮</button><button id="download-evidence">下载本场景完整证据 JSON</button></div>
-<p id="round-state" class="notice"></p><div id="round-users" class="table-wrap"></div>
+<p id="round-state" class="notice"></p>
+<h3>KQI 变化汇总</h3><div id="round-kqi-summary" class="table-wrap"></div>
+<h3>KQI 明细（初始 → 当前）</h3><div id="round-kqi" class="table-wrap"></div>
+<h3>本轮分组决策</h3><div id="round-groups" class="table-wrap"></div>
+<h3>逐用户策略</h3><div id="round-users" class="table-wrap"></div>
 <h3>用户为什么选择这个动作</h3><label for="candidate-user">用户</label> <select id="candidate-user"></select>
 <p class="hint">个人请求最大化 H − 影子资源成本；同分时依次按初始锚点、较低总带宽、动作 ID 决胜。协调器再检查共同容量，可能调整个人请求。候选数量是本轮实际开放集合，可能随轮次扩展。</p>
 <div id="candidate-actions" class="table-wrap"></div>
@@ -42,25 +47,35 @@ function renderStrategies(){
  ' 候选数：'+(ref.candidate_counts||[]).join(' × ')+'；搜索工作量：'+num(ref.steps)+'；返回 H：'+num(s.H_returned)+'；参考 H：'+num(ref.H_reference)+'；差距：'+num(ref.H_gap)+'；参考策略复算通过：'+yes(ref.policy_witness_validated)+'。';
  const answer=byUser(ref.policy_decisions),returned=byUser(s.decisions),terminal=byUser(s.terminal_decisions),rows=[];
  for(const u of s.users||[]){
+  const evaluated=u.package==='vip';
   for(const [name,a] of [['初始',{bandwidth:u.current,mos:u.observed_mos,target_met:u.observed_mos==null?null:u.observed_mos>=u.target}],['算法返回',returned.get(u.user_id)],['停止时',terminal.get(u.user_id)],[exact?'暴搜标准答案':'参考（未证最优）',answer.get(u.user_id)]]){
-   rows.push([u.user_id,u.package,u.business,name,a?.action_id,bw(a),a?.mos,u.target,yes(a?.target_met),a?.h]);
+   rows.push([u.user_id,u.package,u.business,u.app_id,name,a?.action_id,bw(a),a?.mos,evaluated?u.target:null,evaluated?yes(a?.target_met):'不评价',evaluated?yes(a?.quality_guarantee_met):'不评价',a?.h]);
   }
  }
- fill('strategy-answer',['用户','套餐','业务','方案','动作 ID','上行 / 下行','MOS','目标 MOS','达标','个人 H'],rows);
+ fill('strategy-answer',['用户','套餐','业务','App','方案','动作 ID','上行 / 下行','MOS','目标 MOS','达标','VIP质差保障','个人 H'],rows);
+ const refKqi=[];for(const a of ref.policy_decisions||[]){const u=(s.users||[]).find(x=>x.user_id===a.user_id)||{};for(const [d,k] of Object.entries(a.predicted_kqi||{})){refKqi.push([a.user_id,u.package==='vip'?'VIP':'普通',u.business,u.app_id,d,k.avg_qoe,k.bitrate_kbps,k.service_delay_ms,k.loss_ratio,k.stall_ratio,k.stalling_duration_seconds_proxy]);}}
+ fill('strategy-kqi',['用户','套餐','业务','App','方向','avgQoe','码率 kbps','时延 ms','丢包率','卡顿率','卡顿时长代理 s'],refKqi);
  $('round-select').replaceChildren();for(const t of s.detail_trace||[]){const o=el('option','第 '+t.iteration+' 轮');o.value=t.iteration;$('round-select').append(o);}renderRound();
 }
 function renderRound(){
  const s=currentScene(),t=currentRound();if(!t){$('round-state').textContent='此结果没有保存逐轮用户明细，请开启 trace_users 后重新求解。';['round-users','candidate-actions','round-events','round-components'].forEach(id=>$(id).replaceChildren());$('candidate-user').replaceChildren();return;}
  const index=s.detail_trace.indexOf(t),prior=byUser(index>0?s.detail_trace[index-1].users:[]),initial=byUser(s.users),ref=byUser(s.reference?.policy_decisions);
  const previous=x=>prior.get(x.user_id)?.allocated||{bandwidth:initial.get(x.user_id)?.current,mos:initial.get(x.user_id)?.observed_mos};
- $('round-state').textContent='本轮 H '+num(t.H)+'；历史最好 H '+num(t.best_H)+'（记录轮次 '+num(t.best_iteration)+'，0 表示迭代前）'+
+ $('round-state').textContent='决策方式 '+(t.decision_mode==='grouped_common_mos'?'分组同 MOS 起跑线':'逐用户初态对齐')+'；分组数 '+num(t.groups?.length)+'；VIP质差保障 '+num(t.vip_quality_met)+' / '+num(t.vip_quality_total)+'；本轮 H '+num(t.H)+'；历史最好 H '+num(t.best_H)+'（记录轮次 '+num(t.best_iteration)+'，0 表示迭代前）'+
  '；需求 UL/DL '+num(t.raw?.ul)+' / '+num(t.raw?.dl)+'；分配 '+num(t.allocated?.ul)+' / '+num(t.allocated?.dl)+
  '；可用上限 UL/DL '+num(s.resource_budget?.ul?.available_kbps)+' / '+num(s.resource_budget?.dl?.available_kbps)+
  '；剩余容量 '+num(s.capacity.ul==null?null:s.capacity.ul*1000-t.allocated?.ul)+' / '+num(s.capacity.dl==null?null:s.capacity.dl*1000-t.allocated?.dl)+
  '；价格 '+(t.prices||[]).map(num).join(' / ')+' → '+(t.next_prices||[]).map(num).join(' / ')+
  '；策略变化比例 '+num(t.strategy_change)+'；资源变化比例 '+num(t.resource_change)+'；效用变化比例 '+num(t.utility_change)+
  '；稳定计数 '+num(t.stable_count)+' / '+num(t.stable_required)+'；完整动作范围 '+yes(t.full_scope)+'；局部检查通过 '+yes(t.local_optimal)+'。';
- fill('round-users',['用户','上轮上/下行','本轮请求上/下行','协调后上/下行','上轮 MOS','请求 MOS','协调后 MOS','MOS 变化','达标','个人 H','参考上/下行'],(t.users||[]).map(u=>[u.user_id,bw(previous(u)),bw(u.requested),bw(u.allocated),previous(u).mos,u.requested.mos,u.allocated.mos,u.allocated.mos!=null&&previous(u).mos!=null?u.allocated.mos-previous(u).mos:null,yes(u.allocated.target_met),u.allocated.H,bw(ref.get(u.user_id))]));
+ fill('round-users',['用户','套餐','业务','App','上轮上/下行','本轮请求上/下行','协调后上/下行','上轮 MOS','请求 MOS','协调后 MOS','MOS 变化','VIP达标','VIP质差保障','个人 H','参考上/下行'],(t.users||[]).map(u=>[u.user_id,u.package,u.business,u.app_id,bw(previous(u)),bw(u.requested),bw(u.allocated),previous(u).mos,u.requested.mos,u.allocated.mos,u.allocated.mos!=null&&previous(u).mos!=null?u.allocated.mos-previous(u).mos:null,u.package==='vip'?yes(u.allocated.target_met):'不评价',u.package==='vip'?yes(u.allocated.quality_guarantee_met):'不评价',u.allocated.H,bw(ref.get(u.user_id))]));
+ const kqi=[],records=[];for(const u of t.users||[])for(const [d,current] of Object.entries(u.allocated.KQI||{})){const delta=u.kqi_change_from_initial?.[d]||{},initial={};for(const field of ['avg_qoe','bitrate_kbps','resolution','service_delay_ms','loss_ratio','stall_ratio','stalling_duration_seconds_proxy'])initial[field]=current[field]==null?null:current[field]-(delta[field]||0);records.push({u,d,current,delta,initial});kqi.push([u.user_id,u.package==='vip'?'VIP':'普通',u.app_id,d,initial.avg_qoe,current.avg_qoe,delta.avg_qoe,initial.bitrate_kbps,current.bitrate_kbps,delta.bitrate_kbps,initial.resolution,current.resolution,delta.resolution,initial.service_delay_ms,current.service_delay_ms,delta.service_delay_ms,initial.loss_ratio,current.loss_ratio,delta.loss_ratio,initial.stall_ratio,current.stall_ratio,delta.stall_ratio,(u.allocated.quality_violations||[]).join(',')]);}
+ const avg=(xs,f)=>xs.length?xs.reduce((n,x)=>n+(f(x)||0),0)/xs.length:null,metrics=[['avgQoe','avg_qoe'],['码率 kbps','bitrate_kbps'],['分辨率（垂直像素）','resolution'],['时延 ms','service_delay_ms'],['丢包率','loss_ratio'],['卡顿率','stall_ratio'],['卡顿时长代理 s','stalling_duration_seconds_proxy']];
+ fill('round-kqi-summary',['指标','初始均值','本轮均值','平均变化'],metrics.map(([name,key])=>[name,avg(records,x=>x.initial[key]),avg(records,x=>x.current[key]),avg(records,x=>x.delta[key])]));
+ const resolutionDown=packageName=>records.filter(x=>x.u.package===packageName&&(x.delta.resolution||0)<0);
+ $('round-kqi-summary').append(el('p','发生 KQI 变化的方向记录 '+records.filter(x=>Object.values(x.delta).some(v=>Math.abs(v||0)>1e-9)).length+' / '+records.length+'；分辨率下降：普通 '+resolutionDown('normal').length+' 条、VIP '+resolutionDown('vip').length+' 条；存在 VIP 质差原因的方向记录 '+records.filter(x=>x.u.package==='vip'&&(x.u.allocated.quality_violations||[]).length).length+'。','hint'));
+ fill('round-kqi',['用户','套餐','App','方向','初始 avgQoe','当前 avgQoe','ΔavgQoe','初始码率','当前码率','Δ码率','初始分辨率','当前分辨率','Δ分辨率','初始时延','当前时延','Δ时延','初始丢包率','当前丢包率','Δ丢包率','初始卡顿率','当前卡顿率','Δ卡顿率','质差原因'],kqi);
+ if(t.decision_mode==='grouped_common_mos')fill('round-groups',['套餐','容忍度','位置','业务','App','初始MOS档','组内人数','共同MOS线'],(t.groups||[]).map(g=>[...g.group,g.users,g.selected_mos_line]));else{$('round-groups').replaceChildren(el('p','第 1 轮按用户初始状态分别对齐，尚未进入分组决策；从第 2 轮开始显示六维分组。','hint'));}
  const selected=$('candidate-user').value;$('candidate-user').replaceChildren();for(const u of t.users||[]){const o=el('option',u.user_id);o.value=u.user_id;$('candidate-user').append(o);}if((t.users||[]).some(u=>u.user_id===selected))$('candidate-user').value=selected;renderCandidates();
  const reasons={capacity_repair:'超容量修复',slack_upgrade:'利用余量升级',positive_utility_upgrade:'利用余量升级',net_utility_exchange:'释放资源并升级其他用户'};
  const events=[];for(const [i,e] of (t.coordination_events||[]).entries())for(const c of e.changes||[])events.push([i+1,reasons[e.reason]||e.reason,c.user_id,bw(c.before),bw(c.after),c.before.mos,c.after.mos,c.after.h-c.before.h,e.net_benefit]);

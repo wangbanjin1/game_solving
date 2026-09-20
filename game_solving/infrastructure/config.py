@@ -20,6 +20,8 @@ REPLACE_MAPS = {
     "compliance_probs",
     "direction_targets",
     "direction_baselines",
+    "applications",
+    "business_basic_kbps",
 }
 
 
@@ -134,12 +136,26 @@ def validate(config):
         raise ValueError("JOINT_AND_CONDITIONAL_DISTRIBUTIONS_CONFLICT")
     if sorted(c["policy"]["priority_order"]) != ["business", "package"]:
         raise ValueError("INVALID_PRIORITY_ORDER")
-    if c["policy"]["objective"] not in ("legacy_guarantee", "total_utility"):
+    if c["policy"]["objective"] not in ("legacy_guarantee", "total_utility", "vip_guarantee"):
         raise ValueError("INVALID_OBJECTIVE")
     if c["policy"]["weight_mode"] not in ("legacy", "ordered"):
         raise ValueError("INVALID_WEIGHT_MODE")
+    response = c["kqi_response"]
+    for field in ("enabled", "resolution_adaptation"):
+        if type(response[field]) is not bool:
+            raise ValueError("BOOLEAN_REQUIRED: kqi_response." + field)
+    for field in ("rtt_elasticity", "loss_elasticity", "stall_elasticity", "minimum_rtt_ratio", "minimum_loss_ratio", "minimum_stall_ratio", "maximum_degradation_ratio"):
+        number(response[field], "kqi_response." + field)
+        if response[field] < 0:
+            raise ValueError("INVALID_KQI_RESPONSE: " + field)
     if sorted(c["policy"]["weight_dimensions"]) != ["business", "package", "position", "tolerance"]:
         raise ValueError("INVALID_WEIGHT_DIMENSIONS")
+    evaluated = c["policy"]["evaluation_packages"]
+    if not evaluated or len(evaluated) != len(set(evaluated)) or set(evaluated) - set(c["policy"]["weights"]):
+        raise ValueError("INVALID_EVALUATION_PACKAGES")
+    cap = c["policy"].get("normal_request_mos_cap")
+    if cap is not None:
+        number(cap, "normal_request_mos_cap", 1, 5)
     for dimension, table in (("package", c["policy"]["weights"]), ("position", c["policy"]["position_factors"]), ("tolerance", c["policy"]["tolerance_factors"])):
         order = c["policy"][dimension + "_order"]
         if len(order) != len(set(order)) or set(order) != set(table):
@@ -149,7 +165,7 @@ def validate(config):
     if type(c["solver"]["exchange_shortlist"]) is not int or c["solver"]["exchange_shortlist"] < 1:
         raise ValueError("INVALID_EXCHANGE_SHORTLIST")
     number(c["solver"]["epsilon_price"], "epsilon_price")
-    for section, field in (("generation", "require_target_reachable"), ("solver", "trace_users")):
+    for section, field in (("generation", "require_target_reachable"), ("solver", "trace_users"), ("solver", "trace_candidates"), ("population", "minimum_app_coverage")):
         if type(c[section][field]) is not bool:
             raise ValueError("BOOLEAN_REQUIRED: " + field)
     if c["solver"]["price_update"] not in ("legacy", "smoothed", "monotone"):
@@ -359,10 +375,24 @@ def validate(config):
             and (b["quota_ul_kbps"] <= 0 or b["quota_dl_kbps"] <= 0)
         ):
             raise ValueError("POSITIVE_GAME_QUOTAS_REQUIRED")
+    for business, table in c["business_basic_kbps"].items():
+        if business not in c["businesses"]:
+            raise ValueError("UNKNOWN_BUSINESS_BASIC_FLOOR: " + business)
+        for d in ("ul", "dl"):
+            number(table.get(d, 0.0), f"business_basic_kbps.{business}.{d}")
+    for app_id, app in c["applications"].items():
+        if app["business"] not in c["businesses"] or app["bandwidth_direction"] not in ("ul", "dl"):
+            raise ValueError("INVALID_APPLICATION_RULE: " + app_id)
+        directional_floors = app.get("bandwidth_min_kbps_by_direction", {})
+        if set(directional_floors) - {"ul", "dl"}:
+            raise ValueError("INVALID_APPLICATION_BANDWIDTH_DIRECTION: " + app_id)
+        for direction, floor in directional_floors.items():
+            number(floor, f"{app_id}.bandwidth_min_kbps_by_direction.{direction}")
     for key in (
         "bitrate_scale",
         "resolution_scale",
         "score_span",
+        "avg_qoe_per_mos",
         "dynamic_decay_divisor",
     ):
         if c["models"][key] <= 0:
@@ -388,6 +418,10 @@ def model_hash(c):
             "businesses": c["businesses"],
             "quantum": c["solver"]["bandwidth_quantum_kbps"],
             "session": c["policy"]["session_aggregation"],
+            "evaluation_packages": c["policy"]["evaluation_packages"],
             "extensions": c.get("extensions", {}),
+            "kqi_response": c["kqi_response"],
+            "business_basic_kbps": c["business_basic_kbps"],
+            "normal_request_mos_cap": c["policy"].get("normal_request_mos_cap"),
         }
     )

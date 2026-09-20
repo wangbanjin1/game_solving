@@ -16,7 +16,9 @@ class CandidateBuilder:
         model = self.policy.model
         mandatory = {a.action_id: a for a in required if a is not None}
         anchor = self.policy.make_action(user, user.current, budget, True)
-        if anchor:
+        if anchor and not self.policy.hard_errors(
+            user, user.current, anchor.direction_mos
+        ):
             mandatory[anchor.action_id] = anchor
         q = self.policy.quota(user)
         rates = {"ul": [q.ul], "dl": [q.dl]}
@@ -32,12 +34,26 @@ class CandidateBuilder:
                 rates[d] = [getattr(user.current, d)]
                 continue
             quantum = c["solver"]["bandwidth_quantum_kbps"]
+            media = c["businesses"][user.business]["media"]
+            model_min = min((m["min_kbps"] for m in media), default=s.min_kbps) if c["kqi_response"]["enabled"] else s.min_kbps
+            model_max = max((m["max_kbps"] for m in media), default=s.max_kbps) if c["kqi_response"]["enabled"] else s.max_kbps
+            if hasattr(model, "rate_bounds"):
+                lookup_min, lookup_max = model.rate_bounds(user.business, s.phase)
+                model_min, model_max = max(model_min, lookup_min), min(model_max, lookup_max)
             lo = (
-                math.ceil(max(s.min_kbps, getattr(user.contract, d)) / quantum)
+                math.ceil(max(model_min, getattr(user.contract, d)) / quantum)
                 * quantum
             )
-            hi = math.floor(s.max_kbps / quantum) * quantum
+            hi = math.floor(model_max / quantum) * quantum
             values = {lo, hi, getattr(user.current, d)}
+            if c["kqi_response"]["enabled"]:
+                values.update(m["min_kbps"] for m in media)
+            rule = c["applications"].get(user.app_id, {})
+            directional_floors = rule.get("bandwidth_min_kbps_by_direction", {})
+            if d in directional_floors:
+                values.add(max(lo, directional_floors[d]))
+            elif rule.get("bandwidth_direction") == d:
+                values.add(max(lo, rule["bandwidth_min_kbps"]))
             targets = set(
                 c["solver"]["mos_grid"]
                 + [

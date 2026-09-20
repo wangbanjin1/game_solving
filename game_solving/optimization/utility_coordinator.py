@@ -17,7 +17,7 @@ def coordinate_utility(owner, scene, raw, pools, budget, prices):
     def apply(changes, reason):
         nonlocal used
         changes = tuple(changes)
-        gain = sum(action.h - chosen[i].h for i, action in changes)
+        gain = sum(owner.policy.decision_score(scene.users[i], action) - owner.policy.decision_score(scene.users[i], chosen[i]) for i, action in changes)
         if cfg["trace_users"]:
             owner.events.append({"reason": reason, "net_benefit": gain, "changes": [
                 {"user_id": scene.users[i].user_id, "before": asdict(chosen[i]), "after": asdict(action)}
@@ -40,7 +40,7 @@ def coordinate_utility(owner, scene, raw, pools, budget, prices):
                 useful = sum(min(excess[d], max(0, getattr(release, d))) for d in excess)
                 if useful <= tol:
                     continue
-                key = ((old.h - action.h) / useful, i, action.action_id)
+                key = ((owner.policy.decision_score(scene.users[i], old) - owner.policy.decision_score(scene.users[i], action)) / useful, i, action.action_id)
                 if best is None or key < best[0]:
                     best = key, i, action
         if best is None:
@@ -56,7 +56,7 @@ def coordinate_utility(owner, scene, raw, pools, budget, prices):
             for action in pool:
                 budget.consume(kind="upgrade_evaluation")
                 delta = action.bandwidth - old.bandwidth
-                gain = action.h - old.h
+                gain = owner.policy.decision_score(scene.users[i], action) - owner.policy.decision_score(scene.users[i], old)
                 if gain > eps:
                     receivers.append((gain, i, action))
                     if (used + delta).fits(scene.available, tol):
@@ -64,7 +64,7 @@ def coordinate_utility(owner, scene, raw, pools, budget, prices):
                         if best is None or key < best[0]:
                             best = key, i, action
                 if delta.ul <= tol and delta.dl <= tol and (delta.ul < -tol or delta.dl < -tol):
-                    donors.append((old.h - action.h, i, action))
+                    donors.append((owner.policy.decision_score(scene.users[i], old) - owner.policy.decision_score(scene.users[i], action), i, action))
         if best is not None:
             apply([(best[1], best[2])], "slack_upgrade")
             continue

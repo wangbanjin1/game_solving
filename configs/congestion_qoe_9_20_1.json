@@ -1,15 +1,27 @@
 {
-  "seed": 20260918,
-  "num_scenes": 5,
+  "seed": 20260920,
+  "business_basic_kbps": {
+    "game": {"ul": 300, "dl": 300},
+    "meeting": {"ul": 1300, "dl": 1300},
+    "voip": {"ul": 1600, "dl": 1600},
+    "watchlive": {"ul": 0, "dl": 1400},
+    "openlive": {"ul": 1400, "dl": 0},
+    "shortvideo": {"ul": 0, "dl": 1800},
+    "video": {"ul": 0, "dl": 3000},
+    "cloudgame": {"ul": 0, "dl": 3100}
+  },
+  "models": {"name": "lookup_table_v1"},
+  "num_scenes": 1,
   "population": {
-    "users_per_cell": 100,
+    "users_per_cell": 300,
+    "minimum_app_coverage": true,
     "package_probs": {"normal": 0.7, "vip": 0.3},
     "qoe_counts": {
       "qoe_shortvideo": 217996,
       "qoe_video": 167269, "qoe_meeting": 41817, "qoe_cloudgame": 41817,
       "qoe_voip": 41817, "qoe_live": 41817, "qoe_game": 41817, "qoe_openlive": 20
     },
-    "minimum_qoe_counts": {"qoe_openlive": 2},
+    "minimum_qoe_counts": {"qoe_openlive": 10},
     "qoe_business_mapping": {
       "qoe_shortvideo": {"shortvideo": 1.0}, "qoe_video": {"video": 1.0},
       "qoe_meeting": {"meeting": 1.0}, "qoe_cloudgame": {"cloudgame": 1.0},
@@ -26,6 +38,7 @@
       }
     },
     "capacity_mode": "current_headroom",
+    "headroom_ratios": [0.0, 0.01, 0.03, 0.05],
     "quota_mode": "specified",
     "strict_quotas": false,
     "state_pool_size": 2,
@@ -42,19 +55,42 @@
     "weight_mode": "ordered",
     "weight_dimensions": ["package", "business", "position", "tolerance"],
     "priority_order": ["package", "business"],
-    "weight_reference": 64
+    "weight_reference": 64,
+    "normal_request_mos_cap": 4.0
   },
   "solver": {
-    "max_iterations": 500, "max_total_steps": 5000000, "time_budget_ms": 30000,
-    "price_update": "smoothed", "trace_users": true,
-    "lambda_initial": [0.02, 0.02], "candidate_mos_offsets": [0.1],
+    "max_iterations": 200, "max_total_steps": 30000000, "time_budget_ms": 120000,
+    "price_update": "smoothed", "trace_users": true, "trace_candidates": false,
+    "lambda_initial": [0.005, 0.005], "candidate_mos_offsets": [0.1],
     "exchange_pairs_per_iteration": 512, "exchange_max_donors": 2, "exchange_shortlist": 16
   },
-  "reference": {"enabled": true, "max_nodes": 30000, "time_budget_ms": 1000},
+  "reference": {"enabled": true, "max_nodes": 100000000, "time_budget_ms": 60000},
+  "kqi_response": {
+    "enabled": true,
+    "resolution_adaptation": true,
+    "rtt_elasticity": 0.35,
+    "loss_elasticity": 0.6,
+    "stall_elasticity": 0.8,
+    "minimum_rtt_ratio": 0.45,
+    "minimum_loss_ratio": 0.2,
+    "minimum_stall_ratio": 0.15,
+    "maximum_degradation_ratio": 3.0
+  },
+  "businesses": {
+    "game": {
+      "media_directions": ["ul", "dl"],
+      "media": [
+        {"resolution": 0, "width": 0, "height": 0, "min_kbps": 100, "max_kbps": 1000}
+      ],
+      "quota_ul_kbps": 100.0,
+      "quota_dl_kbps": 100.0
+    }
+  },
   "extensions": {
     "experiment_assumptions": {
       "qoe_live": "QoE live maps to watchlive; openlive is a separate category",
       "weights": "Experiment order: package > business > position > tolerance",
+      "scenario_batch": "9_20_1 uses 0/2/5/8/10 percent headroom and a lower neutral price start",
       "calibrated": false
     }
   }

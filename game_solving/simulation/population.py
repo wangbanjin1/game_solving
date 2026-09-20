@@ -75,6 +75,31 @@ def generate_people(c, index):
             mapped = allocate(len(group), probs, rng_for(c["seed"], index, "qoe_mapping", category))
             for person, business in zip(group, mapped):
                 person["business"] = business
+    # App is a first-class grouping dimension.  Coverage floors make every
+    # configured app observable when the sampled business has enough users.
+    for business in sorted({person["business"] for person in people}):
+        group = [person for person in people if person["business"] == business]
+        apps = {
+            app_id: app
+            for app_id, app in c["applications"].items()
+            if app["business"] == business
+        }
+        if not apps:
+            for person in group:
+                person["app_id"] = business
+            continue
+        probabilities = {app_id: 1 / len(apps) for app_id in apps}
+        minimums = (
+            {app_id: 1 for app_id in apps}
+            if p["minimum_app_coverage"] and len(group) >= len(apps)
+            else {}
+        )
+        labels = allocate_with_minimums(
+            len(group), probabilities, minimums,
+            rng_for(c["seed"], index, "application", business),
+        )
+        for person, app_id in zip(group, labels):
+            person["app_id"] = app_id
     profiles = allocate(n, p["profile_probs"], rng)
     return [
         dict(person, user_id=f"user_{i:05d}", profile=profiles[i])
