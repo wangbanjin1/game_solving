@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>博弈调度算法深度解析：效用函数 H、长期公平性、价格平滑与初期超调机理</title>
+  <style>
+    :root {
+      --primary: #1d4ed8;
+      --primary-light: #eff6ff;
+      --primary-dark: #1e3a8a;
+      --secondary: #0f766e;
+      --secondary-light: #f0fdfa;
+      --accent: #d97706;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --code-bg: #1e293b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 30px 20px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .sidebar h2 {
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+      color: #93c5fd;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .sidebar nav ul {
+      list-style: none;
+    }
+    .sidebar nav li {
+      margin-bottom: 10px;
+    }
+    .sidebar nav a {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: block;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .sidebar nav a:hover {
+      background: #1e293b;
+      color: #60a5fa;
+      padding-left: 16px;
+    }
+    /* Main Content */
+    .main {
+      flex: 1;
+      padding: 40px 50px;
+      max-width: 1100px;
+    }
+    header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 36px;
+    }
+    header h1 {
+      font-size: 2.1rem;
+      color: var(--primary-dark);
+      margin-bottom: 12px;
+    }
+    header .meta {
+      color: var(--muted);
+      font-size: 0.95rem;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    header .tag {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-weight: 500;
+    }
+    section {
+      margin-bottom: 48px;
+      scroll-margin-top: 30px;
+    }
+    h2 {
+      font-size: 1.45rem;
+      color: #1e293b;
+      margin-bottom: 18px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h3 {
+      font-size: 1.18rem;
+      color: #334155;
+      margin: 22px 0 12px;
+    }
+    p { margin-bottom: 14px; }
+    ul, ol {
+      margin-left: 24px;
+      margin-bottom: 16px;
+    }
+    li { margin-bottom: 8px; }
+    /* Cards and Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    .card.primary-border { border-left: 4px solid var(--primary); }
+    .card.secondary-border { border-left: 4px solid var(--secondary); }
+    .card.accent-border { border-left: 4px solid var(--accent); }
+    .card.danger-border { border-left: 4px solid var(--danger); }
+    .card h4 {
+      font-size: 1.05rem;
+      margin-bottom: 10px;
+      color: #1e293b;
+    }
+    /* Formula display card */
+    .formula-card {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 18px 24px;
+      margin: 18px 0;
+      text-align: center;
+      font-size: 1.15rem;
+      font-family: "Times New Roman", Cambria, Georgia, serif;
+      overflow-x: auto;
+    }
+    .math-sym {
+      font-style: italic;
+      font-family: "Times New Roman", Cambria, Georgia, serif;
+    }
+    /* Code block */
+    pre {
+      background: var(--code-bg);
+      color: #e2e8f0;
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 16px 0;
+      font-family: "Fira Code", Consolas, Monaco, monospace;
+    }
+    code {
+      background: #e2e8f0;
+      color: #0f172a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.88em;
+      font-family: "Fira Code", Consolas, Monaco, monospace;
+    }
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: var(--card-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+      color: #475569;
+    }
+    tr:hover { background: #f8fafc; }
+    /* Callouts */
+    .callout {
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin: 18px 0;
+      border-left: 4px solid;
+    }
+    .callout-info {
+      background: #eff6ff;
+      border-color: #3b82f6;
+      color: #1e40af;
+    }
+    .callout-warn {
+      background: #fffbeb;
+      border-color: #f59e0b;
+      color: #92400e;
+    }
+    .callout-success {
+      background: #f0fdf4;
+      border-color: #22c55e;
+      color: #166534;
+    }
+    /* Interactive Simulator */
+    .sim-box {
+      background: #ffffff;
+      border: 2px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 14px;
+      gap: 16px;
+    }
+    .slider-row label {
+      width: 240px;
+      font-size: 0.92rem;
+      font-weight: 500;
+    }
+    .slider-row input[type="range"] {
+      flex: 1;
+    }
+    .slider-row .val {
+      width: 70px;
+      font-weight: 600;
+      color: var(--primary);
+      text-align: right;
+    }
+    .sim-output {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .sim-stat {
+      background: #f8fafc;
+      padding: 14px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .sim-stat .num {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+    .sim-stat .lbl {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    /* Pure Vector SVG Chart */
+    .svg-chart-container {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .chart-legend {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 14px;
+      font-size: 0.88rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .legend-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+    }
+  </style>
+  <script>
+    // Graceful MathJax loader with error handling
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+</head>
+<body>
+
+<div class="layout">
+  <!-- Navigation Sidebar -->
+  <aside class="sidebar">
+    <h2>目录导航</h2>
+    <nav>
+      <ul>
+        <li><a href="#overview">1. 核心现象与背景</a></li>
+        <li><a href="#overshoot-mechanism">2. 初期超调的两大成因</a></li>
+        <li><a href="#price-smoothing">3. 价格平滑机制详解</a></li>
+        <li><a href="#utility-h">4. 效用函数 H 的完整构成</a></li>
+        <li><a href="#fairness-deep-dive">5. 深度答疑：长期公平惩罚为什么不能直接加常数项？</a></li>
+        <li><a href="#stability-penalty">6. 体验稳定性惩罚的物理意义</a></li>
+        <li><a href="#micro-macro-game">7. 微观博弈与宏观出清全景</a></li>
+        <li><a href="#interactive-simulator">8. 交互效用计算器</a></li>
+        <li><a href="#source-mapping">9. 源码与配置对照速查</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <header>
+      <h1>博弈调度算法深度解析</h1>
+      <p style="font-size: 1.15rem; color: #475569; margin-bottom: 12px;">
+        从净体验效用函数 <i>H</i><sub><i>i</i></sub>、长期公平补偿、稳定性惩罚到对偶价格平滑与初期超调机理
+      </p>
+      <div class="meta">
+        <span class="tag">系统核心机制</span>
+        <span>代码落盘：<code>game_solving/optimization/</code></span>
+        <span>日期：2026-09-21</span>
+      </div>
+    </header>
+
+    <!-- SECTION 1 -->
+    <section id="overview">
+      <h2>1. 核心现象与背景</h2>
+      <p>
+        在 300 用户质差保障与双向带宽博弈求解实验中（如 <code>outputs/qoe_300_user_trajectory_report_20260921.html</code>），我们观察到一个显著特征：
+      </p>
+      <div class="callout callout-info">
+        <strong>真实数据回溯：</strong>
+        在第 1 轮时，用户意向请求带宽（Raw Demand）仅有 <strong>858.2 Mbps</strong>，但随后第 2~5 轮迅速膨胀至 <strong>1350.2 Mbps</strong>（基站下行物理容量仅为 <strong>977.8 Mbps</strong>，超调幅度达 38%）；直到第 11 轮，意向请求带宽瞬间暴跌回落到 <strong>958.3 Mbps</strong> 并完全平稳收敛。
+      </div>
+
+      <!-- Pure SVG Chart Container (100% Standalone, Zero-CDN) -->
+      <div class="svg-chart-container">
+        <div class="chart-legend">
+          <div class="legend-item">
+            <span class="legend-dot" style="background: #dc2626;"></span>
+            <span>Raw 意向请求带宽 (Mbps)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: #d97706; border-top: 2px dashed #d97706;"></span>
+            <span>Alloc 实际分配带宽 (物理红线 977.8M)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: #2563eb;"></span>
+            <span>下行对偶价格 λ<sub>DL</sub></span>
+          </div>
+        </div>
+
+        <!-- Inline SVG Rendering 20 Iterations -->
+        <svg viewBox="0 0 900 320" style="width: 100%; height: auto; font-size: 11px; font-family: sans-serif;">
+          <!-- Background grids -->
+          <line x1="60" y1="40" x2="840" y2="40" stroke="#f1f5f9" stroke-width="1"/>
+          <line x1="60" y1="95" x2="840" y2="95" stroke="#f1f5f9" stroke-width="1"/>
+          <line x1="60" y1="150" x2="840" y2="150" stroke="#f1f5f9" stroke-width="1"/>
+          <line x1="60" y1="205" x2="840" y2="205" stroke="#f1f5f9" stroke-width="1"/>
+          <line x1="60" y1="260" x2="840" y2="260" stroke="#cbd5e1" stroke-width="1.5"/>
+
+          <!-- Y-axis Left: Bandwidth -->
+          <text x="50" y="45" text-anchor="end" fill="#64748b">1400M</text>
+          <text x="50" y="100" text-anchor="end" fill="#64748b">1200M</text>
+          <text x="50" y="155" text-anchor="end" fill="#64748b">1000M</text>
+          <text x="50" y="210" text-anchor="end" fill="#64748b">800M</text>
+
+          <!-- Y-axis Right: Price Lambda -->
+          <text x="850" y="45" text-anchor="start" fill="#2563eb">λ=0.14</text>
+          <text x="850" y="115" text-anchor="start" fill="#2563eb">λ=0.10</text>
+          <text x="850" y="190" text-anchor="start" fill="#2563eb">λ=0.05</text>
+          <text x="850" y="260" text-anchor="start" fill="#2563eb">λ=0.00</text>
+
+          <!-- Capacity Line (977.8M -> y ≈ 156) -->
+          <line x1="60" y1="156" x2="840" y2="156" stroke="#d97706" stroke-dasharray="5,5" stroke-width="2"/>
+          <text x="70" y="150" fill="#d97706" font-weight="600">基站物理容量红线: 977.8 Mbps</text>
+
+          <!-- Raw Demand Curve (Red)
+               Points:
+               R1: 858M (x=101, y=189)
+               R2: 1041M (x=142, y=139)
+               R3: 1221M (x=183, y=89)
+               R4: 1326M (x=224, y=60)
+               R5: 1350M (x=265, y=54) -> PEAK
+               R6: 1342M (x=306, y=56)
+               R7: 1283M (x=347, y=72)
+               R8: 1260M (x=388, y=78)
+               R9: 1252M (x=429, y=81)
+               R10: 1202M (x=470, y=94)
+               R11: 958M (x=511, y=161) -> DROP & STABLE
+               R15: 951M (x=675, y=163)
+               R20: 952M (x=840, y=163)
+          -->
+          <polyline fill="none" stroke="#dc2626" stroke-width="2.5"
+                    points="101,189 142,139 183,89 224,60 265,54 306,56 347,72 388,78 429,81 470,94 511,161 552,163 593,164 634,163 675,163 716,163 757,163 798,163 840,163" />
+
+          <!-- Price Lambda Curve (Blue)
+               R1: 0.005 (y=252)
+               R5: 0.025 (y=221)
+               R10: 0.071 (y=148)
+               R11: 0.079 (y=136)
+               R20: 0.124 (y=65)
+          -->
+          <polyline fill="none" stroke="#2563eb" stroke-width="2"
+                    points="101,252 142,252 183,246 224,235 265,221 306,206 347,190 388,175 429,161 470,148 511,136 552,126 593,116 634,107 675,99 716,92 757,85 798,78 840,73" />
+
+          <!-- Key Annotation Badges -->
+          <!-- Peak Annotation -->
+          <circle cx="265" cy="54" r="5" fill="#dc2626" />
+          <rect x="235" y="16" width="90" height="22" rx="4" fill="#dc2626" />
+          <text x="280" y="31" text-anchor="middle" fill="#fff" font-weight="600">第5轮峰值: 1350M</text>
+
+          <!-- Drop Annotation -->
+          <circle cx="511" cy="161" r="5" fill="#16a34a" />
+          <rect x="470" y="180" width="130" height="22" rx="4" fill="#16a34a" />
+          <text x="535" y="195" text-anchor="middle" fill="#fff" font-weight="600">第11轮收敛: 958M</text>
+
+          <!-- X-axis Labels -->
+          <text x="101" y="280" text-anchor="middle" fill="#64748b">轮次 1</text>
+          <text x="265" y="280" text-anchor="middle" fill="#64748b">轮次 5</text>
+          <text x="470" y="280" text-anchor="middle" fill="#64748b">轮次 10</text>
+          <text x="511" y="280" text-anchor="middle" fill="#16a34a" font-weight="600">轮次 11</text>
+          <text x="675" y="280" text-anchor="middle" fill="#64748b">轮次 15</text>
+          <text x="840" y="280" text-anchor="middle" fill="#64748b">轮次 20</text>
+        </svg>
+      </div>
+      <p style="text-align: center; color: var(--muted); font-size: 0.9rem;">
+        图 1：最新 300 用户真实轨迹可视化（红线为 Raw 意向请求；虚线为物理红线；蓝线为下行单价 λ）
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section id="overshoot-mechanism">
+      <h2>2. 初期超调的两大成因剖析</h2>
+      <p>
+        初期超调不是算法 Bug，而是<strong>“局部候选集逐轮外扩”</strong>与<strong>“对偶价格指数平滑惯性”</strong>在离散博弈下必然产生的动态物理响应：
+      </p>
+
+      <div class="grid-2">
+        <div class="card primary-border">
+          <h4>机制一：动作空间逐轮外扩 (Scope Expansion)</h4>
+          <p>
+            在第 1 轮，求解器为了实现安全平稳启动，强制将搜索邻域限制在用户当前状态周边极窄的带宽/MOS 窗口内（由 <code>initial_mos_band_width</code> 限制）。此时高带宽动作处于锁定状态。
+          </p>
+          <p>
+            第 2 到第 5 轮，外围的高速率动作按轮次递增逐步解禁。更高带宽能带来更高 MOS 以及达标奖励。因此，随着动作解禁，全体用户在本地微观利益驱动下<strong>争相申请高带宽顶级档位</strong>。
+          </p>
+        </div>
+
+        <div class="card secondary-border">
+          <h4>机制二：对偶价格反应的平滑滞后 (Smoothing Lag)</h4>
+          <p>
+            系统最终出清容量所需的真实影子价格约为 λ<sub>DL</sub> ≈ 0.078。而第 1 轮给定的初始试探价仅为 λ<sub>DL</sub><sup>(1)</sup> = 0.005。
+          </p>
+          <p>
+            为了防止价格像过山车一样震荡，系统配置了 <code>price_smoothing = 0.25</code> 以及步长上限 <code>price_max_step = 0.02</code>。在前 5 轮，<strong>高带宽档位已被解锁，但带宽“买路费”依然极低（λ < 0.025）</strong>，造成了短期的超调冲顶。
+          </p>
+        </div>
+      </div>
+
+      <div class="callout callout-success">
+        <strong>关键结论：</strong>
+        图中的“超调”纯属<strong>用户端意向需求（Raw Requested Bandwidth）</strong>；而基站实际下发分配带宽（Allocated Bandwidth，图黄色虚线）从第 2 轮开始一直死死卡在容量红线 <strong>977.8 Mbps</strong>，物理容量从未发生过超配！
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section id="price-smoothing">
+      <h2>3. 价格平滑机制详解（代码与数学）</h2>
+
+      <h3>3.1 文档原始次梯度与工程平滑的演进</h3>
+      <p>
+        在规范文档 <code>docs/个人用户双向带宽_数据模拟与博弈求解方案.md</code> 第 9.7 节中，原始设计的对偶价格更新为标准次梯度更新：
+      </p>
+      <div class="formula-card">
+        λ<sub><i>d</i></sub><sup><i>k</i>+1</sup> = max(0, λ<sub><i>d</i></sub><sup><i>k</i></sup> + γ<sub><i>k</i></sub> · (<i>B</i><sub><i>d</i></sub><sup>raw,<i>k</i></sup> - <i>C</i><sub><i>d</i></sub>) / <i>B</i><sub>ref,<i>d</i></sub>)
+      </div>
+      <p>
+        <strong>次梯度在离散档位下的致命缺陷（Bang-Bang 效应）：</strong>
+        因为用户只能在有限离散码率（如 500k, 1000k, 1500k）中选择，一旦超载，次梯度单步加价过猛，会导致下一轮所有普通用户瞬间全部弃购，总需求跌至谷底；价格随即归零，下下一轮又全体冲顶。
+      </p>
+
+      <h3>3.2 工程落盘实现：一阶惯性平滑滤波（EMA）</h3>
+      <p>
+        代码落盘于 <code>game_solving/optimization/prices.py</code>，其具体执行逻辑为：
+      </p>
+      <pre><code>def update_prices(prices, demand, capacity, iteration, previous_signal, config):
+    cfg = config["solver"]
+    for j, direction in enumerate(("ul", "dl")):
+        excess = getattr(demand, direction) - getattr(capacity, direction)
+        residual = excess / max(getattr(capacity, direction), 1.0)
+        # 死区控制：微小超额（如 <= 1%）不调价，避免微观抖动
+        residual = 0.0 if abs(residual) <= cfg["price_deadband"] else residual
+
+        # 核心：一阶指数加权移动平均 (EMA) 平滑滤波
+        alpha = cfg["price_smoothing"]  # 默认 0.25
+        value = alpha * residual + (1 - alpha) * previous_signal[j]
+
+        # 步长计算与削峰限幅 (Clipping)
+        step = cfg["gamma0"] / math.sqrt(iteration + 1) * value
+        step = min(cfg["price_max_step"], max(-cfg["price_max_step"], step))  # 限制在 [-0.02, 0.02]
+
+        updated.append(max(0.0, prices[j] + step))</code></pre>
+
+      <div class="grid-3">
+        <div class="card">
+          <h4>平滑系数 α (0.25)</h4>
+          <p>新拥塞信号只占 25%，历史价格趋势惯性占 75%，彻底抹平离散选档带来的价格锯齿。</p>
+        </div>
+        <div class="card">
+          <h4>死区阈值 (0.01)</h4>
+          <p>需求在容量 ±1% 内不调整对偶单价，使收敛状态能够稳定停驻。</p>
+        </div>
+        <div class="card">
+          <h4>单步上限 (0.02)</h4>
+          <p>单轮最大价格变动不超过 0.02，避免任何突发极端信号破坏已有解的局部性。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section id="utility-h">
+      <h2>4. 效用函数 H<sub>i</sub>(a) 的完整构成</h2>
+      <p>
+        每个用户在给定候选动作 <i>a</i> 时，所获得的<strong>净体验收益 <i>H</i><sub><i>i</i></sub>(<i>a</i>)</strong> 定义在 <code>game_solving/optimization/policy.py</code>（第 285 行）：
+      </p>
+
+      <div class="formula-card">
+        <i>H</i><sub><i>i</i></sub>(<i>a</i>) = (<i>w</i><sub><i>i</i></sub> + η<sub>fair</sub> · <i>h</i><sub><i>i</i></sub>) · <i>e</i><sub><i>i</i></sub>(<i>a</i>) - β<sub>change</sub> · |<i>e</i><sub><i>i</i></sub>(<i>a</i>) - <i>e</i><sub><i>i</i></sub><sup>anchor</sup>| - <i>c</i><sub><i>i</i></sub><sup>switch</sup>(<i>a</i>)
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 24%;">项名称</th>
+            <th style="width: 26%;">数学定义 / 取值</th>
+            <th>物理业务意义与设计考量</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>归一化体验 <i>e</i><sub><i>i</i></sub>(<i>a</i>)</strong></td>
+            <td>(min(MOS<sub>UL</sub>, MOS<sub>DL</sub>) - 1.0) / 4.0</td>
+            <td>将 [1, 5] 分的 MOS 线性映射到 [0, 1] 的无量纲收益。双向业务以较差的一侧为准。</td>
+          </tr>
+          <tr>
+            <td><strong>静态权重 <i>w</i><sub><i>i</i></sub></strong></td>
+            <td>VIP: 6 / 普通: 4（除以基准 6）</td>
+            <td>VIP 的基础调度优先级高于普通用户，保障其基础资源倾斜。</td>
+          </tr>
+          <tr>
+            <td><strong>长期公平欠账 <i>h</i><sub><i>i</i></sub></strong></td>
+            <td>clip((MOS<sub>target</sub> - MOS<sub>history</sub>) / 4, 0, 1)</td>
+            <td>衡量用户在过去滑动窗口（300秒）内遭受的历史委屈程度。</td>
+          </tr>
+          <tr>
+            <td><strong>公平增益因子 η<sub>fair</sub></strong></td>
+            <td>配置值：<code>0.5</code></td>
+            <td>将历史欠账转化为当前即时边际效用的放大倍数。</td>
+          </tr>
+          <tr>
+            <td><strong>稳定性惩罚 β<sub>change</sub></strong></td>
+            <td>配置值：<code>0.1</code></td>
+            <td>惩罚动作偏离当前网络初始基准状态的幅度，抑制频繁跳档。</td>
+          </tr>
+          <tr>
+            <td><strong>切换信令开销 <i>c</i><sub><i>i</i></sub><sup>switch</sup></strong></td>
+            <td>默认值：<code>0.0</code></td>
+            <td>跨承载或切片变更的信令开销。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 5: NEW DEDICATED IN-DEPTH EXPLANATION -->
+    <section id="fairness-deep-dive">
+      <h2>5. 深度答疑：长期公平惩罚为什么不能直接写成 +η · (MOS<sub>target</sub> - MOS<sub>history</sub>)？</h2>
+      
+      <div class="callout callout-warn">
+        <strong>核心疑问剖析：</strong>
+        直觉上，“过去用户亏了多少，就在当前效用里直接加上 <code>+ η · (MOS_target - MOS_history)</code> 予以补偿”，这是最朴素自然的想法。但在运筹优化和分布式博弈中，<strong>如果直接作为一个独立常数项相加，该项在数学上会彻底失效！</strong>
+      </div>
+
+      <div class="grid-2">
+        <div class="card danger-border">
+          <h4>致命失效原因 1：对用户选择动作毫无区分度</h4>
+          <p>
+            假设我们直接把原式写成独立相加的形式：
+          </p>
+          <p style="text-align: center; font-family: serif; font-size: 1.05rem;">
+            <i>H</i><sub><i>i</i></sub>(<i>a</i>) = <i>w</i><sub><i>i</i></sub> · <i>e</i><sub><i>i</i></sub>(<i>a</i>) + <strong>η · (MOS<sub>target</sub> - MOS<sub>history</sub>)</strong> - 稳定性
+          </p>
+          <p>
+            请注意：对于用户 <i>i</i> 而言，其历史观测 MOS<sub>history</sub> 和目标 MOS<sub>target</sub> 是<strong>进入当前调度轮次前就已经发生过的既定事实（纯固定常数）</strong>，与用户当前轮选动作 <i>a</i><sub>1</sub>（低带宽）还是 <i>a</i><sub>2</sub>（高带宽）<strong>完全没有任何关系</strong>！
+          </p>
+          <p>
+            当用户在比较动作优劣做差分时：
+          </p>
+          <p style="text-align: center; font-family: serif;">
+            <i>H</i><sub><i>i</i></sub>(<i>a</i><sub>2</sub>) - <i>H</i><sub><i>i</i></sub>(<i>a</i><sub>1</sub>) = <i>w</i><sub><i>i</i></sub> · [<i>e</i><sub><i>i</i></sub>(<i>a</i><sub>2</sub>) - <i>e</i><sub><i>i</i></sub>(<i>a</i><sub>1</sub>)] + <strong>0</strong>
+          </p>
+          <p>
+            <strong>常数项直接相减抵消！</strong>用户无论选 1 Mbps 还是 5 Mbps，这个加项的分数一模一样，用户根本没有任何动力因为历史欠账去申请更高的带宽。
+          </p>
+        </div>
+
+        <div class="card danger-border">
+          <h4>致命失效原因 2：基站协调无法产生调度倾斜</h4>
+          <p>
+            基站在小区容量紧张进行资源协调时，依据的是<strong>单位带宽带来的体验增益率（边际收益率）</strong>：
+          </p>
+          <p style="text-align: center; font-family: serif;">
+            ImproveRate = Δ<i>H</i> / Δ<i>B</i> = (<i>w</i><sub><i>i</i></sub> · Δ<i>e</i>) / Δ<i>B</i>
+          </p>
+          <p>
+            常数项由于对 Δ<i>B</i> 的导数为 0，根本不会进入边际改善率的计算分子中。
+          </p>
+          <p>
+            <strong>结果是：</strong>基站协调器在计算时，完全感觉不到这个用户曾经受过委屈，依然会把宝贵的空闲带宽优先分给信道条件更好、提分更容易的其他用户，<strong>长期饥饿问题依然得不到任何解决</strong>。
+          </p>
+        </div>
+      </div>
+
+      <h3>5.2 系统的优雅解法：把欠账变成权重的“放大乘数”</h3>
+      <p>
+        为了让历史欠账真正变成调度推力，系统将欠账归一化为 <i>h</i><sub><i>i</i></sub> = clip((MOS<sub>target</sub> - MOS<sub>history</sub>) / 4, 0, 1)，然后<strong>乘到了当前动作的即时体验 <i>e</i><sub><i>i</i></sub>(<i>a</i>) 上</strong>：
+      </p>
+      <div class="formula-card">
+        <i>H</i><sub><i>i</i></sub>(<i>a</i>) = [<i>w</i><sub><i>i</i></sub> + <strong>η<sub>fair</sub> · <i>h</i><sub><i>i</i></sub></strong>] · <i>e</i><sub><i>i</i></sub>(<i>a</i>) - 稳定性惩罚
+      </div>
+
+      <div class="card accent-border">
+        <h4>业务效果对比：从“发死工资”转变为“边际提权”</h4>
+        <ul>
+          <li><strong>没有历史欠账的用户 (<i>h</i><sub><i>i</i></sub> = 0)</strong>：其体验提升斜率仅为基础权重 <i>w</i><sub><i>i</i></sub>（例如 1.0）；</li>
+          <li><strong>历史严重受损的用户 (<i>h</i><sub><i>i</i></sub> = 0.5)</strong>：其体验提升斜率变成了 1.0 + 0.5 × 0.5 = <strong>1.25（提权 25%）</strong>！</li>
+          <li><strong>调度的物理实现：</strong>由于斜率被放大，<strong>该用户每多拿 1 Mbps 带宽，为系统贡献的 Δ<i>H</i> 远大于其他用户</strong>。基站在对偶价格出清与资源回填时，就会自动把带宽优先调度给历史欠账用户！</li>
+        </ul>
+      </div>
+
+      <h3>5.3 全局目标闭环推导证明（规范文档第 6.4 节）</h3>
+      <p>
+        在宏观全局层面，系统定义全网未补偿的历史损失为：
+        <i>C</i><sub>fair</sub> = ∑<sub><i>i</i></sub> <i>h</i><sub><i>i</i></sub> · [1 - <i>e</i><sub><i>i</i></sub>(<i>a</i><sub><i>i</i></sub>)]（即欠账越严重且当前体验越差，系统受到的惩罚越大）。
+      </p>
+      <p>
+        系统最大化的全网总优化目标为：
+      </p>
+      <div class="formula-card">
+        <i>J</i> = ∑<sub><i>i</i></sub> <i>w</i><sub><i>i</i></sub> <i>e</i><sub><i>i</i></sub>(<i>a</i><sub><i>i</i></sub>) - η<sub>fair</sub> <i>C</i><sub>fair</sub> - 稳定性惩罚
+      </div>
+      <p>
+        将 <i>C</i><sub>fair</sub> 代入并展开：
+      </p>
+      <div class="formula-card">
+        <i>J</i> = ∑<sub><i>i</i></sub> [<i>w</i><sub><i>i</i></sub> + η<sub>fair</sub> <i>h</i><sub><i>i</i></sub>] <i>e</i><sub><i>i</i></sub>(<i>a</i><sub><i>i</i></sub>) - 稳定性惩罚 - <strong>η<sub>fair</sub> ∑<sub><i>i</i></sub> <i>h</i><sub><i>i</i></sub></strong><br>
+        <i>J</i> = ∑<sub><i>i</i></sub> <i>H</i><sub><i>i</i></sub>(<i>a</i><sub><i>i</i></sub>) - <strong>常数项</strong>
+      </div>
+      <p>
+        由于最后一项 η<sub>fair</sub> ∑ <i>h</i><sub><i>i</i></sub> 是进入本次求解前由历史决定的常数，因此<strong>最大化全网目标 <i>J</i> 严格等价于最大化个体效用总和 ∑ <i>H</i><sub><i>i</i></sub></strong>！
+        这证明了乘积形式不仅物理含义完美，在数学上更具有严格的变分一致性。
+      </p>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section id="stability-penalty">
+      <h2>6. 体验稳定性惩罚的物理意义</h2>
+      <p>
+        稳定性惩罚项为：<code>β_change · |e_i(a) - e_i^anchor|</code>（配置值 <code>β_change = 0.1</code>）。
+      </p>
+      <div class="card secondary-border">
+        <h4>为什么要惩罚与初始锚点的偏差？</h4>
+        <ol>
+          <li>
+            <strong>消除 Ping-Pong 频闪效应</strong>：用户对画质的剧烈起伏极其敏感（例如从 1080P 跌到 360P 又跳回 720P）。
+          </li>
+          <li>
+            <strong>抑制微小的无益跳档</strong>：如果一个动作只能带来 MOS +0.05 的微弱提升（Δ<i>e</i> = 0.0125），但打破了现状，稳定性惩罚会扣除 10% 的收益。只有当升档带来的改善显著大于扰动代价时，系统才允许调档。
+          </li>
+          <li>
+            <strong>天然的阻尼保护</strong>：在多轮迭代的价格平衡边界，稳定性惩罚为“维持原状”提供了天然阻尼，彻底杜绝了全网几百个用户在相邻档位间集体来回震荡的现象。
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section id="micro-macro-game">
+      <h2>7. 微观决策与宏观出清全景</h2>
+      <p>
+        求解器每轮让每个用户在本地最大化其综合决策分（扣除对偶价格成本）：
+      </p>
+      <div class="formula-card">
+        max<sub><i>a</i></sub> [ DecisionScore<sub><i>i</i></sub>(<i>a</i>) - (λ<sub>UL</sub> <i>B</i><sub>UL</sub> + λ<sub>DL</sub> <i>B</i><sub>DL</sub>) / 1000 ]
+      </div>
+      <ul>
+        <li><strong>VIP 用户</strong>：DecisionScore = <strong>100.0</strong> · 1<sub>{质差达标}</sub> + <i>H</i><sub><i>i</i></sub>(<i>a</i>)</li>
+        <li><strong>普通用户</strong>：DecisionScore = <strong>0.001</strong> · <i>H</i><sub><i>i</i></sub>(<i>a</i>)</li>
+      </ul>
+
+      <div class="card" style="background: #f8fafc;">
+        <h4>为什么第 11 轮会发生“断崖式回落”并精准收敛？</h4>
+        <ol>
+          <li>
+            <strong>第 1~5 轮（价格过低）</strong>：λ<sub>DL</sub> = 0.005。即使要 5000 kbps 带宽，扣费也仅有 0.025 分。普通用户的 0.001 · <i>H</i> 能够覆盖这个成本，VIP 用户更有 100.0 的达标分撑腰，大家蜂拥要顶档，推高 Raw 需求至 1350M。
+          </li>
+          <li>
+            <strong>第 6~10 轮（价格稳健攀升）</strong>：超额残差通过平滑滤波持续累加，对偶价格从 0.025 涨到 0.078。
+          </li>
+          <li>
+            <strong>第 11 轮（出清临界点）</strong>：当价格越过 0.075 门槛时，5000 kbps 的扣费高达 0.375，远超普通用户的残差效用；<strong>普通用户瞬间被“价格挤出”</strong>，主动退缩回 200~300 kbps 的业务保底档；而 VIP 用户凭借 100.0 的质差奖励硬顶对偶价格，死死守住达标带宽。
+          </li>
+          <li>
+            <strong>结果</strong>：需求在 1 轮内瞬间收缩至 958 Mbps，完美满足基站物理容量，求解器宣布局部收敛！
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section id="interactive-simulator">
+      <h2>8. 交互效用计算器</h2>
+      <p>拖动以下滑块，观察单个用户在不同历史欠账、价格与动作下的净效用 <i>H</i> 及决策分变化：</p>
+
+      <div class="sim-box">
+        <div class="slider-row">
+          <label>动作 MOS 预测值</label>
+          <input type="range" id="sim_mos" min="1.0" max="5.0" step="0.1" value="4.2">
+          <span class="val" id="val_mos">4.2</span>
+        </div>
+        <div class="slider-row">
+          <label>当前锚点 MOS (当前观测)</label>
+          <input type="range" id="sim_anchor" min="1.0" max="5.0" step="0.1" value="2.8">
+          <span class="val" id="val_anchor">2.8</span>
+        </div>
+        <div class="slider-row">
+          <label>历史欠账 Debt (<i>h</i><sub><i>i</i></sub>)</label>
+          <input type="range" id="sim_debt" min="0.0" max="1.0" step="0.05" value="0.3">
+          <span class="val" id="val_debt">0.30</span>
+        </div>
+        <div class="slider-row">
+          <label>动作申请下行带宽 (kbps)</label>
+          <input type="range" id="sim_bw" min="300" max="8000" step="100" value="3000">
+          <span class="val" id="val_bw">3000k</span>
+        </div>
+        <div class="slider-row">
+          <label>下行对偶单价 (λ<sub>DL</sub>)</label>
+          <input type="range" id="sim_lambda" min="0.0" max="0.1" step="0.002" value="0.015">
+          <span class="val" id="val_lambda">0.015</span>
+        </div>
+        <div class="slider-row">
+          <label>用户套餐属性</label>
+          <select id="sim_package" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.95rem;">
+            <option value="vip">VIP 用户 (质差达标 + 100.0)</option>
+            <option value="normal">普通用户 (缩放因子 0.001)</option>
+          </select>
+        </div>
+
+        <div class="sim-output">
+          <div class="sim-stat">
+            <div class="num" id="out_e">0.80</div>
+            <div class="lbl">归一化体验 <i>e</i><sub><i>i</i></sub></div>
+          </div>
+          <div class="sim-stat">
+            <div class="num" id="out_stab">-0.035</div>
+            <div class="lbl">稳定性惩罚</div>
+          </div>
+          <div class="sim-stat">
+            <div class="num" id="out_h">0.925</div>
+            <div class="lbl">净体验效用 <i>H</i><sub><i>i</i></sub>(<i>a</i>)</div>
+          </div>
+          <div class="sim-stat">
+            <div class="num" id="out_score" style="color: var(--primary);">100.88</div>
+            <div class="lbl">最终决策分 (扣除价格)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section id="source-mapping">
+      <h2>9. 源码与配置文件对照速查</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>参数 / 模块名称</th>
+            <th>当前配置值</th>
+            <th>代码落盘位置</th>
+            <th>核心职责说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>vip_guarantee_bonus</code></td>
+            <td><code>100.0</code></td>
+            <td><code>configs/default.json</code> (L237)<br><code>game_solving/optimization/policy.py</code> (L162)</td>
+            <td>VIP 质差保障硬奖励（大 M 法），确保达标动作压倒带宽对偶扣费。</td>
+          </tr>
+          <tr>
+            <td><code>price_smoothing</code></td>
+            <td><code>0.25</code></td>
+            <td><code>configs/default.json</code> (L242)<br><code>game_solving/optimization/prices.py</code> (L16)</td>
+            <td>一阶指数平滑加权系数 α，平抑次梯度的离散震荡。</td>
+          </tr>
+          <tr>
+            <td><code>price_deadband</code></td>
+            <td><code>0.01</code></td>
+            <td><code>configs/default.json</code> (L243)<br><code>game_solving/optimization/prices.py</code> (L15)</td>
+            <td>价格死区，超额在 ±1% 内不调价，保证解稳定停驻。</td>
+          </tr>
+          <tr>
+            <td><code>price_max_step</code></td>
+            <td><code>0.02</code></td>
+            <td><code>configs/default.json</code> (L244)<br><code>game_solving/optimization/prices.py</code> (L19)</td>
+            <td>单轮对偶价格最大步长变动阈值。</td>
+          </tr>
+          <tr>
+            <td><code>eta_fair</code></td>
+            <td><code>0.5</code></td>
+            <td><code>configs/default.json</code> (L232)<br><code>game_solving/optimization/policy.py</code> (L285)</td>
+            <td>长期历史欠账对即时体验权重的增益系数。</td>
+          </tr>
+          <tr>
+            <td><code>beta_change</code></td>
+            <td><code>0.1</code></td>
+            <td><code>configs/default.json</code> (L235)<br><code>game_solving/optimization/policy.py</code> (L284)</td>
+            <td>稳定性惩罚系数，惩罚动作与初始锚点的体验差。</td>
+          </tr>
+          <tr>
+            <td><code>normal_residual_factor</code></td>
+            <td><code>0.001</code></td>
+            <td><code>configs/default.json</code> (L238)<br><code>game_solving/optimization/policy.py</code> (L163)</td>
+            <td>普通用户效用残差系数，使其在资源紧张时能顺从让渡带宽。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+
+<script>
+  function updateSim() {
+    const mos = parseFloat(document.getElementById('sim_mos').value);
+    const anchor = parseFloat(document.getElementById('sim_anchor').value);
+    const debt = parseFloat(document.getElementById('sim_debt').value);
+    const bw = parseFloat(document.getElementById('sim_bw').value);
+    const lambda = parseFloat(document.getElementById('sim_lambda').value);
+    const pkg = document.getElementById('sim_package').value;
+
+    document.getElementById('val_mos').innerText = mos.toFixed(1);
+    document.getElementById('val_anchor').innerText = anchor.toFixed(1);
+    document.getElementById('val_debt').innerText = debt.toFixed(2);
+    document.getElementById('val_bw').innerText = bw + 'k';
+    document.getElementById('val_lambda').innerText = lambda.toFixed(3);
+
+    const e = (mos - 1.0) / 4.0;
+    const e_anchor = (anchor - 1.0) / 4.0;
+    const stab = 0.1 * Math.abs(e - e_anchor);
+    const w = (pkg === 'vip') ? 1.0 : 0.67;
+    const eta_fair = 0.5;
+
+    const H = (w + eta_fair * debt) * e - stab;
+    const cost = (lambda * bw) / 1000.0;
+
+    let score = 0;
+    if (pkg === 'vip') {
+      const isMet = mos >= 3.0 && bw >= 500;
+      score = (isMet ? 100.0 : 0.0) + H - cost;
+    } else {
+      score = H * 0.001 - cost;
+    }
+
+    document.getElementById('out_e').innerText = e.toFixed(3);
+    document.getElementById('out_stab').innerText = '-' + stab.toFixed(3);
+    document.getElementById('out_h').innerText = H.toFixed(3);
+    document.getElementById('out_score').innerText = score.toFixed(4);
+  }
+
+  ['sim_mos', 'sim_anchor', 'sim_debt', 'sim_bw', 'sim_lambda', 'sim_package'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateSim);
+  });
+  updateSim();
+</script>
+
+</body>
+</html>

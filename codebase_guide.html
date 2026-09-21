@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QoE 双向带宽模拟与博弈求解代码仓深度导读与开发修改指南</title>
+  <style>
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-code: #1e293b;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --accent-hover: #1d4ed8;
+      --success: #10b981;
+      --success-bg: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-bg: #fffbeb;
+      --danger: #ef4444;
+      --danger-bg: #fef2f2;
+      --purple: #8b5cf6;
+      --purple-bg: #f5f3ff;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #0b0f19;
+      --bg-surface: #111827;
+      --bg-code: #030712;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border: #1f2937;
+      --accent: #3b82f6;
+      --accent-light: #1e293b;
+      --accent-hover: #60a5fa;
+      --success-bg: #064e3b;
+      --warning-bg: #78350f;
+      --danger-bg: #7f1d1d;
+      --purple-bg: #4c1d95;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.65;
+      display: flex;
+    }
+
+    /* Sidebar */
+    aside.sidebar {
+      width: 320px;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 24px 16px;
+      flex-shrink: 0;
+    }
+    aside.sidebar h2 {
+      font-size: 1.15rem;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .search-box {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      outline: none;
+    }
+    .search-box:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-light);
+    }
+    .nav-group {
+      margin-bottom: 20px;
+    }
+    .nav-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .nav-links {
+      list-style: none;
+    }
+    .nav-links li {
+      margin-bottom: 4px;
+    }
+    .nav-links a {
+      display: block;
+      padding: 6px 12px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      transition: all 0.15s ease;
+    }
+    .nav-links a:hover {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    /* Main Content */
+    main.content {
+      flex: 1;
+      max-width: 1200px;
+      padding: 40px 60px;
+      overflow-x: hidden;
+    }
+
+    header.doc-header {
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-right: 8px;
+    }
+    .badge-blue { background: var(--accent-light); color: var(--accent); }
+    .badge-green { background: var(--success-bg); color: var(--success); }
+    .badge-purple { background: var(--purple-bg); color: var(--purple); }
+    .badge-orange { background: var(--warning-bg); color: var(--warning); }
+
+    h1 { font-size: 2.2rem; margin: 12px 0 8px 0; color: var(--text-primary); letter-spacing: -0.02em; }
+    h2 { font-size: 1.6rem; margin: 40px 0 16px 0; color: var(--text-primary); padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.25rem; margin: 24px 0 12px 0; color: var(--text-primary); }
+    h4 { font-size: 1.05rem; margin: 16px 0 8px 0; color: var(--text-secondary); }
+    p { margin-bottom: 16px; color: var(--text-secondary); }
+
+    /* Architecture diagram box */
+    .arch-diagram {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+      box-shadow: var(--shadow);
+    }
+
+    .flow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .flow-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      position: relative;
+    }
+    .flow-card h4 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 0;
+      color: var(--accent);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .card-title .filepath {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      color: var(--accent);
+      background: var(--accent-light);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* Code blocks */
+    pre {
+      background: var(--bg-code);
+      color: #e2e8f0;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      margin: 12px 0 16px 0;
+      line-height: 1.5;
+    }
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--bg-primary);
+      color: #e11d48;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      border: none;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9rem;
+      background: var(--bg-surface);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: var(--bg-primary);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background-color: var(--accent-light); }
+
+    /* Callouts */
+    .callout {
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border-left: 4px solid;
+    }
+    .callout-info {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+    .callout-warning {
+      background: var(--warning-bg);
+      border-color: var(--warning);
+      color: var(--text-primary);
+    }
+    .callout-success {
+      background: var(--success-bg);
+      border-color: var(--success);
+      color: var(--text-primary);
+    }
+    .callout-danger {
+      background: var(--danger-bg);
+      border-color: var(--danger);
+      color: var(--text-primary);
+    }
+    .callout strong { display: block; margin-bottom: 4px; }
+
+    /* Mod guide tabs */
+    .tab-container {
+      margin: 24px 0;
+    }
+    .tab-nav {
+      display: flex;
+      border-bottom: 2px solid var(--border);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      background: transparent;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Top utility */
+    .top-controls {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .btn-toggle {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Left Sidebar Navigation -->
+  <aside class="sidebar">
+    <h2><span>📘</span> 代码仓指南目录</h2>
+    <input type="text" id="filterInput" class="search-box" placeholder="搜索模块、函数或关键词...">
+    
+    <div class="nav-group">
+      <div class="nav-title">全局与架构</div>
+      <ul class="nav-links">
+        <li><a href="#overview">1. 业务背景与系统定位</a></li>
+        <li><a href="#architecture">2. 整体架构与分层设计</a></li>
+        <li><a href="#folders">3. 文件夹职能速查</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-title">核心文件详解</div>
+      <ul class="nav-links">
+        <li><a href="#files-domain">4. 领域层 (domain)</a></li>
+        <li><a href="#files-models">5. 体验模型层 (models)</a></li>
+        <li><a href="#files-optimization">6. 优化与博弈求解 (optimization)</a></li>
+        <li><a href="#files-simulation">7. 数据生成仿真 (simulation)</a></li>
+        <li><a href="#files-evaluation">8. 评估与基准比对 (evaluation)</a></li>
+        <li><a href="#files-app-infra">9. 应用与基础设施 (app/infra)</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-title">算法机制与公式</div>
+      <ul class="nav-links">
+        <li><a href="#algo-mos">10. MOS 正向与反推机制</a></li>
+        <li><a href="#algo-vip">11. VIP 质差保障与 54-App 规则</a></li>
+        <li><a href="#algo-pricing">12. 对偶影子价格与博弈迭代</a></li>
+        <li><a href="#algo-coordination">13. 协调器：修复与效用交换</a></li>
+        <li><a href="#algo-convergence">14. 收敛判据与三预算控制</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-title">开发者动手指南</div>
+      <ul class="nav-links">
+        <li><a href="#mod-guide">15. 修改代码场景速查实战</a></li>
+        <li><a href="#run-guide">16. 运行、测试与调试</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="content">
+    <div class="top-controls">
+      <button class="btn-toggle" onclick="toggleTheme()">🌓 切换明/暗主题</button>
+    </div>
+
+    <header class="doc-header">
+      <div>
+        <span class="badge badge-blue">Python 3.10+ 标准库</span>
+        <span class="badge badge-green">DDD 分层架构</span>
+        <span class="badge badge-purple">对偶价格迭代博弈</span>
+        <span class="badge badge-orange">6期 VIP 质差保障升级</span>
+      </div>
+      <h1>QoE 双向带宽模拟与博弈求解代码仓深度导读</h1>
+      <p style="font-size: 1.05rem; color: var(--text-secondary); margin-top: 8px;">
+        本文档专为接手和二次开发本项目设计。从业务背景、目录定位、每个源文件的输入输出与核心函数，到 MOS 计算公式、对偶价格博弈、资源协调算法细节，以及动手修改代码的精准定位指南。
+      </p>
+    </header>
+
+    <!-- 1. Overview -->
+    <section id="overview">
+      <h2>1. 业务背景与系统定位</h2>
+      <p>
+        本项目面向无线蜂窝网络（基站小区，Cell）中的<strong>个人用户双向（Uplink / Downlink）带宽资源调度与体验质量（QoE / MOS）优化</strong>。
+      </p>
+      <div class="callout callout-info">
+        <strong>核心物理与业务约束：</strong>
+        <ul style="margin-left: 20px; margin-top: 8px;">
+          <li><strong>双向独立资源池：</strong>基站上行（UL）与下行（DL）各有固定物理容量上限（默认各 120,000 kbps = 120 Mbps），上下行带宽互相独立，不能互相挪用。</li>
+          <li><strong>个人粒度决策：</strong>每个用户对应一个活跃业务（一人一业务），按个人状态（套餐、业务、位置、容忍度、App、当前带宽、历史体验）进行多维度决策。</li>
+          <li><strong>套餐优先级（VIP 优先）：</strong>仅保留 <strong>普通用户（Normal）</strong> 与 <strong>VIP 用户</strong> 两类（第 6 期已移除 SVIP）。优化目标核心是<strong>无条件优先保障 VIP 用户的 App 级质差条件和目标 MOS</strong>；普通用户只消费保障 VIP 后的剩余资源。</li>
+          <li><strong>体验衡量指标（MOS 与 KQI）：</strong>MOS 范围为 1.0～5.0（严重卡顿到极致流畅）；质差保障规则使用 20～100 分制的 <code>avgQoe</code>（即 <code>avgQoe = MOS × 20</code>，阈值 50/60/70 分别对应 MOS 2.5/3.0/3.5）。</li>
+          <li><strong>零外部三方库依赖：</strong>全套算法和生成代码完全运行在 Python 3.10+ 标准库之上（仅使用 <code>math</code>, <code>dataclasses</code>, <code>json</code>, <code>csv</code>, <code>random</code>, <code>hashlib</code> 等），具备极致的可移植性与确定性重现能力。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 2. Architecture -->
+    <section id="architecture">
+      <h2>2. 整体架构与分层设计</h2>
+      <p>
+        工程严格遵循<strong>领域驱动设计（Domain-Driven Design, DDD）</strong>分层理念与依赖注入（Dependency Injection），保证模型数学计算、约束策略判断、数据仿真生成、博弈求解算法、基准评估校验之间的高度解耦：
+      </p>
+
+      <div class="arch-diagram">
+        <h3 style="margin-top: 0;">🏛️ 系统分层架构与数据流全景</h3>
+        <div class="flow-grid">
+          <div class="flow-card">
+            <h4>1. Application 应用层</h4>
+            <p><strong>pipeline.py / cli.py / services.py</strong><br>
+            负责 CLI 命令分发、完整流程生命周期管理（生成 -> 求解 -> 评估 -> 写出）、依赖注入容器组装。</p>
+          </div>
+          <div class="flow-card">
+            <h4>2. Domain 领域层</h4>
+            <p><strong>entities.py / validation.py / ports.py</strong><br>
+            不可变数据实体（Scene, User, Stream, Bandwidth, Action）、纯接口契约、输入 Schema 严格校验。</p>
+          </div>
+          <div class="flow-card">
+            <h4>3. Models 体验模型层</h4>
+            <p><strong>mos.py / lookup.py</strong><br>
+            MOS 核心正算公式与反推所需带宽。支持参数化经验公式（Type A/B）与高精度的 CSV 关联表查表模型。</p>
+          </div>
+          <div class="flow-card">
+            <h4>4. Optimization 优化博弈层</h4>
+            <p><strong>solver.py / policy.py / coordinator.py / candidates.py</strong><br>
+            对偶影子价格迭代、有限动作集构建与 Pareto 剪枝、超限修复、余量回填、字典序目标排名与收敛判断。</p>
+          </div>
+          <div class="flow-card">
+            <h4>5. Simulation 仿真生成层</h4>
+            <p><strong>generator.py / population.py / sampler.py / assembler.py</strong><br>
+            基于种子和随机流的人口分布抽取、固定环境与 MOS 档位条件采样、带剪枝回溯的容量组场器。</p>
+          </div>
+          <div class="flow-card">
+            <h4>6. Evaluation 评估校验层</h4>
+            <p><strong>validation.py / reference.py / metrics.py / comparison.py</strong><br>
+            全量方案独立数学复算校验、小规模暴力枚举全局参考（Brute-force Reference）、WGR 计算与前后对比报表。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Folders -->
+    <section id="folders">
+      <h2>3. 文件夹职能速查</h2>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 22%;">文件夹路径</th>
+            <th style="width: 38%;">核心职责与定位</th>
+            <th style="width: 40%;">主要内容与关联</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>game_solving/</code></td>
+            <td>主 Python 包根目录</td>
+            <td>包含所有的可执行模块代码，运行入口 <code>python -m game_solving</code></td>
+          </tr>
+          <tr>
+            <td><code>game_solving/domain/</code></td>
+            <td>领域核心实体与验证契约</td>
+            <td>纯 Python 数据结构，无求解器和配置文件依赖，定义 <code>User</code>, <code>Scene</code>, <code>Bandwidth</code></td>
+          </tr>
+          <tr>
+            <td><code>game_solving/models/</code></td>
+            <td>QoE/MOS 体验计算与带宽反推模型</td>
+            <td>数学公式模型 <code>MosModel</code>，CSV 关联表查表模型 <code>LookupMosModel</code></td>
+          </tr>
+          <tr>
+            <td><code>game_solving/optimization/</code></td>
+            <td>博弈求解与双向协调核心算法</td>
+            <td>对偶价格迭代、动作剪枝、容量修复、效用交换、字典序保障评级</td>
+          </tr>
+          <tr>
+            <td><code>game_solving/simulation/</code></td>
+            <td>蒙特卡洛数据生成与场景组装</td>
+            <td>人口比例采样、KQI 环境抽取、双资源池回溯组场、历史体验序列生成</td>
+          </tr>
+          <tr>
+            <td><code>game_solving/evaluation/</code></td>
+            <td>评估指标、独立比对与参考求解</td>
+            <td>终检独立校验器、暴力枚举最优参考、加权收益指标 WGR、前后对比渲染</td>
+          </tr>
+          <tr>
+            <td><code>game_solving/infrastructure/</code></td>
+            <td>底层配置加载与文件存储</td>
+            <td>JSON 配置递归合并与覆盖校验、哈希指纹、原子替换临时文件存储</td>
+          </tr>
+          <tr>
+            <td><code>game_solving/application/</code></td>
+            <td>顶层用例编排与命令行接口</td>
+            <td>CLI 解析器、执行流水线 Pipeline、依赖装配 Services</td>
+          </tr>
+          <tr>
+            <td><code>game_solving/visualization/</code></td>
+            <td>HTML 报表与可视化工具</td>
+            <td>生成带交互式逐轮策略回放、KQI 变化量、分组统计的 HTML 报告</td>
+          </tr>
+          <tr>
+            <td><code>configs/</code></td>
+            <td>配置文件集合</td>
+            <td><code>default.json</code> (完整缺省配置), <code>congestion_qoe_9_20_1.json</code> (300人专项配置)</td>
+          </tr>
+          <tr>
+            <td><code>docs/</code></td>
+            <td>工程文档与技术规格书</td>
+            <td>算法理论推导、架构说明、历史实验记录、MOS 与带宽公式说明</td>
+          </tr>
+          <tr>
+            <td><code>add_condition/</code></td>
+            <td>增量需求文档（第 6 期）</td>
+            <td>记录了 54 个 App 的质差保障指标、分类要求与分组维度规则</td>
+          </tr>
+          <tr>
+            <td><code>tests/</code></td>
+            <td>单元测试与集成测试</td>
+            <td>覆盖模型公式、单调性、价格收敛、容量约束、App 分组质差判断</td>
+          </tr>
+          <tr>
+            <td><code>tools/</code></td>
+            <td>离线数据分析与建表工具</td>
+            <td>生成 MOS 与 KQI 离散关联表的 Node.js / Python 预处理脚本</td>
+          </tr>
+          <tr>
+            <td><code>outputs/</code></td>
+            <td>运行输出产物目录</td>
+            <td>存放各次实验生成的 JSONL 数据、HTML 报表、对比 Markdown 与清单</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 4. Detailed Files -->
+    <section id="files-domain">
+      <h2>4. 领域层 (game_solving/domain) 文件详解</h2>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/domain/entities.py</span>
+          <span class="badge badge-blue">核心实体</span>
+        </div>
+        <p><strong>文件定位：</strong>不可变领域模型（Immutable Domain Records）。全仓数据流转的标准契约。</p>
+        <p><strong>关键数据结构：</strong></p>
+        <ul>
+          <li><code>Bandwidth(ul, dl)</code>: 带有 <code>ul</code> 和 <code>dl</code> 浮点数的带宽对象，支持 <code>+</code>, <code>-</code> 和 <code>fits(capacity, tolerance)</code> 容量容差判断。</li>
+          <li><code>Stream</code>: 单个传输方向的不可变环境：码率 <code>bitrate_kbps</code>、分辨率 <code>resolution</code>、画面宽高 <code>width/height</code>、<code>rtt_ms</code>、丢包率 <code>loss_ratio</code>、卡顿率 <code>stall_ratio</code>、缓冲 <code>buffer_ms</code>。</li>
+          <li><code>User</code>: 单个用户画像：<code>user_id</code>, <code>business</code> (业务类别), <code>package</code> ("vip" 或 "normal"), <code>position</code> (近/中/远), <code>tolerance</code> (高/中/低), <code>app_id</code> (54个具体App之一), <code>current</code> (当前上下行带宽), <code>observed_mos</code> (当前实测MOS), <code>baseline</code> (保障底线MOS), <code>target</code> (目标MOS), <code>contract</code> (最低签约带宽)。</li>
+          <li><code>Scene</code>: 一个基站小区的完整场景切片：<code>scene_id</code>, <code>capacity</code> (总容量Bandwidth), <code>users</code> (用户元组), <code>available</code> 属性（自动扣除未建模占用 <code>unmanaged</code> 和预留 <code>reserve</code>）。</li>
+          <li><code>Action</code>: 用户的一个候选动作：分配的上下行带宽、各方向预测 MOS、会话体验值 <code>experience</code>、净效用 <code>h</code>、预测的 KQI 字典 <code>predicted_kqi</code>、VIP 质差是否满足 <code>quality_guarantee_met</code>、质差违规项 <code>quality_violations</code>。</li>
+          <li><code>SolveResult</code>: 求解器输出结果对象：包含最终方案 <code>decisions</code>、停止原因 <code>stop_reason</code>、迭代跟踪 <code>trace</code>、耗时与工作量。</li>
+        </ul>
+        <div class="callout callout-warning">
+          <strong>⚠️ 避坑提醒：</strong>
+          所有领域实体均为 <code>frozen=True</code> dataclass。如需修改实体属性，必须使用 <code>dataclasses.replace(instance, **kwargs)</code>，切勿直接赋值！
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/domain/validation.py</span>
+          <span class="badge badge-green">数据校验</span>
+        </div>
+        <p><strong>文件定位：</strong>进入系统前的数据边界防线。在输入数据加载、生成后落盘前严格校验格式与物理量合法性。</p>
+        <p><strong>核心函数：</strong></p>
+        <ul>
+          <li><code>validate_scene(scene, config)</code>: 校验小区可用容量是否大于 0、用户列表非空、用户 ID 唯一、业务类型是否存在于配置文件中、签约带宽与保障门槛合法性。</li>
+          <li><code>validate_stream(stream)</code>: 检查码率是否在合法区间、丢包率/卡顿率是否在 [0, 1] 闭区间、RTT 是否非负。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/domain/ports.py</span>
+          <span class="badge badge-purple">接口端口</span>
+        </div>
+        <p><strong>文件定位：</strong>定义微小抽象协议（Duck-typing / Protocols），规范体验模型（<code>ExperienceModel</code>）、候选动作生成器（<code>CandidateProvider</code>）、资源协调器（<code>Coordinator</code>）的调用契约。</p>
+      </div>
+    </section>
+
+    <!-- 5. Models -->
+    <section id="files-models">
+      <h2>5. 体验模型层 (game_solving/models) 文件详解</h2>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/models/mos.py</span>
+          <span class="badge badge-blue">参数化 MOS 模型</span>
+        </div>
+        <p><strong>文件定位：</strong>经典的理论公式模型（<code>MosModel</code>）。包含业务分类（Type A/B）、视频通话专用模型、单向 MOS 正算与根据目标 MOS 逆向反推所需带宽。</p>
+        <p><strong>核心方法：</strong></p>
+        <ul>
+          <li><code>forward(business, stream, budget=None) -> float</code>: 输入单向 Stream 参数，经过单项打分（$s_b, s_r, s_l, s_s$）、维度打分（$Q, I, V$）和动态加权（$\alpha, \beta$），计算输出 [1.0, 5.0] 区间的 MOS。</li>
+          <li><code>inverse(business, target, stream, budget=None) -> InverseResult</code>: 给定目标 MOS $M^\star$，固定非码率环境，解析反推达到该目标所需的最小码率 $b_{\text{req}}$。若超出该分辨率的最大码率则报告不可达。</li>
+          <li><code>dimensions(business, stream) -> dict</code>: 计算并返回 $Q$（画质评分）、$I$（交互评分）、$V$（流畅度评分）及动态加权系数。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/models/lookup.py</span>
+          <span class="badge badge-purple">CSV 离散查表模型</span>
+        </div>
+        <p><strong>文件定位：</strong>第 6 期引入的基于离线测算数据的查表模型（<code>LookupMosModel</code>，标识为 <code>lookup_table_v1</code>）。彻底打通了实际业务中带宽与 MOS、时延、丢包、卡顿的离散对应关系。</p>
+        <p><strong>核心实现机理：</strong></p>
+        <ul>
+          <li><code>_load_forward()</code>: 从配置指定的 <code>lookup_directory/forward/</code> 目录加载各业务的 CSV 映射表（包含带宽 Mbps、分辨率、典型时延 ms、典型丢包率%、典型卡顿率%、MOS 典型值）。</li>
+          <li><code>_load_choices()</code>: 从 <code>lookup_directory/reverse/</code> 目录加载反推目标 MOS 对应的推荐带宽。</li>
+          <li><code>lookup_row(business, stream)</code>: 在正向表中按业务、阶段和码率执行最近邻匹配。对手游（game），基于时延、丢包、卡顿加权欧氏距离匹配最优样本行。</li>
+          <li><code>project_stream(business, stream, rate)</code>: 当分配带宽改变为 <code>rate</code> 时，自动从查表行中投影出对应的预测时延、丢包率、卡顿率和分辨率，作为 <code>predicted_kqi</code> 的基础！</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 6. Optimization -->
+    <section id="files-optimization">
+      <h2>6. 优化与博弈求解 (game_solving/optimization) 文件详解</h2>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/optimization/solver.py</span>
+          <span class="badge badge-blue">博弈求解器主循环</span>
+        </div>
+        <p><strong>文件定位：</strong>算法核心中枢。实现对偶影子价格迭代（Dual Decomposition / Price Iteration）、分组 MOS 起跑线对齐、调用协调器并管理多轮收敛与熔断。</p>
+        <p><strong>主循环核心时序：</strong></p>
+        <ol style="margin-left: 20px; line-height: 1.8;">
+          <li><strong>初始化与硬条件预检查：</strong>校验场景，保存当前状态锚点。通过 <code>certificate()</code> 检查全员最低签约带宽与基本保障可行性，确定求解模式（<code>NORMAL</code>、<code>DEGRADED</code> 或 <code>UTILITY</code>）。</li>
+          <li><strong>构建候选池：</strong>调用 <code>CandidateBuilder.build()</code> 为每个人生成有限 Pareto 候选池。</li>
+          <li><strong>进入外层价格循环（迭代 $k = 0 \dots K_{\max}-1$）：</strong>
+            <ul>
+              <li><strong>确定候选作用域：</strong><code>CandidateBuilder.scope()</code> 控制候选集逐轮由当前状态向外扩展。</li>
+              <li><strong>个人提案生成（第 1 轮）：</strong>每人根据当前资源价格 $\boldsymbol{\lambda} = (\lambda_{\text{UL}}, \lambda_{\text{DL}})$，最大化局部净收益：$\text{Score}_i(a) - \frac{\lambda_{\text{UL}} B_{\text{UL}} + \lambda_{\text{DL}} B_{\text{DL}}}{b_{\text{ref}}}$。</li>
+              <li><strong>分组 MOS 起跑线对齐（第 2 轮起，<code>k+1 >= group_start_iteration</code>）：</strong>同组用户（同套餐、容忍度、位置、业务、App、初始 MOS 档）选择同一公共目标 MOS 线，再映射回个人可执行动作！</li>
+              <li><strong>资源协调（Coordinator）：</strong>将全体用户的原始提案总需求与基站容量比对，超限时触发<strong>两阶段协调器</strong>（超限修复 $\to$ 余量回填 $\to$ 多施主效用交换）。</li>
+              <li><strong>对偶影子价格更新：</strong>根据协调前的超额需求与容量偏差更新上下行价格 $\boldsymbol{\lambda}^{(k+1)}$。</li>
+              <li><strong>记录与历史最优保存：</strong>字典序比较当前方案与历史最好方案，若更优则更新 <code>best</code>。</li>
+              <li><strong>收敛与终止判断：</strong>检查策略变化率、资源变化率、效用变化率；检查循环状态（<code>STOPPED_CYCLE</code>）；检查工作步数与超时。</li>
+            </ul>
+          </li>
+          <li><strong>最终状态终检与结果构造：</strong>消耗预留预算执行独立终检，封装返回 <code>SolveResult</code>。</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/optimization/policy.py</span>
+          <span class="badge badge-purple">优化策略与质差保障</span>
+        </div>
+        <p><strong>文件定位：</strong>系统的价值判断中枢。定义用户权重计算、动作硬约束判断、VIP 质差保障规则、效用函数 $H_i$ 与方案字典序排名。</p>
+        <p><strong>核心实现细节：</strong></p>
+        <ul>
+          <li><code>group_key(u)</code>: 返回用户的六元组分组键：<code>(package, tolerance, position, business, app_id, initial_mos_band)</code>。</li>
+          <li><code>quality_guarantee(u, b, direction_mos, predicted_kqi)</code>: <strong>第 6 期核心质差保障判断器！</strong> 仅针对 VIP 用户。依据 <code>applications</code> 配置中的规则，检查：
+            <ol>
+              <li><code>avg_qoe</code> $\ge$ <code>avg_qoe_min</code>（注意是 20～100 分制）</li>
+              <li><code>service_delay_ms</code> &lt; <code>service_delay_max_ms</code></li>
+              <li><code>stalling_duration_seconds_proxy</code> &le; <code>stalling_duration_max_seconds</code></li>
+              <li>上下行带宽是否达到 <code>bandwidth_min_kbps</code> 或分方向底线</li>
+            </ol>
+            若不满足，返回 <code>(False, violations_tuple)</code>，记录具体违规原因（如 <code>AVG_QOE</code>, <code>SERVICE_DELAY</code>, <code>BANDWIDTH_DL</code> 等）。
+          </li>
+          <li><code>weight(u)</code>: 多维混合基数权重（Mixed-radix order）。当 <code>weight_mode == "ordered"</code> 时，严格满足：<strong>套餐权重 &gt; 业务大类 &gt; 位置 &gt; 容忍度</strong>。前一个维度的优先级完全压制后续维度的组合贡献！</li>
+          <li><code>rank(users, actions, mode)</code>: 比较两套分配方案优劣的字典序元组。在 <code>vip_guarantee</code> 目标下，优先级顺序为：
+            <div style="background: var(--bg-primary); padding: 8px 12px; border-radius: 6px; margin-top: 6px; font-family: var(--font-mono);">
+              (VIP 质差未满足人数, VIP 基本保障缺口总和, -VIP 总效用, -全员总效用)
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/optimization/candidates.py</span>
+          <span class="badge badge-green">候选动作构建与剪枝</span>
+        </div>
+        <p><strong>文件定位：</strong>为每个用户从连续的带宽空间中离散化出高质量候选动作集合，并通过 Pareto 支配剪除无效动作。</p>
+        <p><strong>生成流程：</strong></p>
+        <ul>
+          <li>基于配置的 <code>mos_grid</code>（如 1.0, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0）、用户的目标 MOS、保障底线 MOS 以及偏移量（$\pm 0.1$），调用模型 <code>inverse()</code> 反推得到对应的离散带宽点。</li>
+          <li>合并当前带宽锚点、合同下限、媒体规格上下界、App 质差底线带宽。</li>
+          <li>上下行笛卡尔积组合，生成原始候选。</li>
+          <li><strong>双资源 Pareto 剪枝：</strong>如果候选 $b$ 相比候选 $a$，在上下行资源均不大于 $a$、体验 $e$ 不小于 $a$、各方向 MOS 均不低于 $a$、稳定性惩罚不大于 $a$ 且至少有一项严格更优，则 $a$ 被严格支配并剔除！</li>
+          <li>保留数量截断：按优先保留硬条件/保底动作、其次按效用降序，最多保留 <code>kept_candidates_per_user</code> 个（默认 128 个）。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/optimization/coordinator.py</span> 与 <span class="filepath">utility_coordinator.py</span>
+          <span class="badge badge-orange">资源协调器</span>
+        </div>
+        <p><strong>文件定位：</strong>求解器中的关键执行器。当用户的个人自私提案导致基站带宽超载时，以最小的效用损失修复超载；并在存在带宽余量时执行升级与交换。</p>
+        <p><strong>双协调器对比：</strong></p>
+        <ul>
+          <li><code>coordinator.py</code>: 基础协调器，按 QoS 阶段（Non-GBR、GBR）与保护层级逐级回收带宽并进行升级。</li>
+          <li><code>utility_coordinator.py</code>: 现代高效的净效用协调器（<code>coordinate_utility</code>）。包含：
+            <ul>
+              <li><strong>容量修复（Capacity Repair）：</strong>贪心搜索能有效减少当前超载方向带宽、且“单位释放带宽带来的效用损失最小”的动作进行降级替换，直到满足容量。</li>
+              <li><strong>余量升级（Slack Upgrade）：</strong>在容量允许下，寻找效用增益大于 $\epsilon$ 的单人升级动作。</li>
+              <li><strong>多施主效用交换（Bounded Net-Utility Exchange）：</strong>当单人升级空间耗尽时，枚举 1 个或 2 个施主（Donor，让出少量带宽）与 1 个受主（Receiver，获得带宽并带来大幅度效用跃升或消除 VIP 质差），执行联合替换！</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/optimization/feasibility.py</span>、<span class="filepath">prices.py</span>、<span class="filepath">budget.py</span>
+        </div>
+        <p><strong>辅助优化模块：</strong></p>
+        <ul>
+          <li><code>feasibility.py</code>: 独立构造每个人满足硬条件、基本保障和目标条件的最小资源动作向量，用于预检查和证明是否存在全域不可行证据（Infeasible Certificates）。</li>
+          <li><code>prices.py</code>: <code>update_prices()</code>，实现双方向影子价格的平滑阻尼更新（支持 legacy, smoothed, monotone 三种模式）。</li>
+          <li><code>budget.py</code>: 统一的计算预算管理器 <code>Budget</code>，记录工作步数，支持预留 $4N+1$ 终检步数，防止死循环和超时。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7. Simulation -->
+    <section id="files-simulation">
+      <h2>7. 数据生成仿真 (game_solving/simulation) 文件详解</h2>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/simulation/generator.py</span>
+          <span class="badge badge-blue">生成编排器</span>
+        </div>
+        <p><strong>核心职责：</strong>负责大批量场景的数据合成（<code>DatasetGenerator</code>）。从人口生成、配额分配、状态池采样到场景组装，并衍生不同余量比例的场景家族。</p>
+        <p><strong>余量场景派生机制（Headroom Ratios）：</strong>当 <code>capacity_mode == "current_headroom"</code> 时，生成器先抽取每个用户的初始状态，计算当前全员总带宽 $B_{\text{used}}$，然后根据配置的 <code>headroom_ratios: [0.0, 0.01, 0.03, 0.05]</code>（0%、1%、3%、5%），将基站容量设为 $B_{\text{used}} \times (1 + \text{ratio})$，派生出用户完全一致但拥塞程度递进的场景家族！</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/simulation/population.py</span>
+          <span class="badge badge-green">人口采样器</span>
+        </div>
+        <p><strong>核心算法：</strong></p>
+        <ul>
+          <li><code>counts(n, probs)</code>: <strong>最大余数法（Largest Remainder Method / Hamilton Method）</strong>。将浮点概率转换为严格等于总人数 $n$ 的整数，杜绝四舍五入导致的“缺人”或“超人”。</li>
+          <li><code>allocate_with_minimums(n, probs, minimums, rng)</code>: <strong>保底覆盖分配器！</strong>例如专项配置为“开直播”强制保底 10 人，为 54 个 App 各自保底至少 1 人，确保罕见业务与边缘 App 均有样本。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/simulation/sampler.py</span> 与 <span class="filepath">assembler.py</span>
+        </div>
+        <p><strong>核心实现：</strong></p>
+        <ul>
+          <li><code>sampler.py (ConditionalSampler)</code>: 固定网络环境抽取（时延、丢包、卡顿三档质量分布）、指定 MOS 档位（超额/达标/不达标/严重不达标）下的码率反推与复核。</li>
+          <li><code>assembler.py (assemble)</code>: <strong>带下界剪枝的有限回溯组场器</strong>。使用剩余用户最小带宽的后缀和 $\sum B_i^{\min}$ 作为强下界剪枝，高效搜索出同时满足基站上下行物理容量的合法初始用户状态组合。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 8. Evaluation -->
+    <section id="files-evaluation">
+      <h2>8. 评估与基准比对 (game_solving/evaluation) 文件详解</h2>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/evaluation/validation.py</span>
+          <span class="badge badge-danger">独立终检复核器</span>
+        </div>
+        <p><strong>核心价值：</strong>算法安全底线。<strong>完全不信任求解器内部声称的结果</strong>，从最底层的 <code>Scene</code> 和每个分配动作重新执行数学公式复算！</p>
+        <p><strong>复核内容：</strong>用户数量是否吻合、动作上下行带宽总和是否严格低于可用容量（容差 0.001 kbps）、每个用户的码率是否与 MOS 公式重新正算结果绝对一致、签约带宽是否被突破。一旦发现违规立即抛出异常阻断流程。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/evaluation/reference.py</span>
+          <span class="badge badge-purple">离散暴力枚举参考求解器</span>
+        </div>
+        <p><strong>核心功能：</strong>针对小规模场景（如 4 人验证），不使用启发式价格迭代，直接对所有人的离散候选动作全空间展开全局暴力搜索（Brute-force），找到全局真正的离散最优解，用于计算启发式算法的<strong>加权收益改善比（Weighted Gain Ratio, WGR）</strong>。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/evaluation/comparison.py</span> 与 <span class="filepath">metrics.py</span>
+        </div>
+        <p><strong>核心功能：</strong>提取求解前后对比数据（初始 vs 返回），计算 VIP 达标人数净增、VIP 质差满足率变化、MOS 改善/恶化人数分布，并渲染为清晰的 Markdown 对比报告（<code>comparison.md</code>）。</p>
+      </div>
+    </section>
+
+    <!-- 9. App & Infra -->
+    <section id="files-app-infra">
+      <h2>9. 应用与基础设施 (application & infrastructure)</h2>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/application/pipeline.py</span>
+          <span class="badge badge-blue">流水线总控</span>
+        </div>
+        <p>编排 <code>generate</code>（生成数据并写出校验报告）、<code>solve</code>（执行求解、写入轨迹和比对表）、<code>run</code>（串联两者）三个顶层用例。生成 <code>manifest.json</code> 完整审计清单，包含所有代码、配置、模型的 SHA-256 指纹。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/infrastructure/config.py</span>
+          <span class="badge badge-green">配置解析与哈希指纹</span>
+        </div>
+        <p>加载 <code>configs/default.json</code>，按需与用户指定的 JSON 配置文件以及命令行覆盖参数递归合并。计算 <code>model_hash</code> 与 <code>config_hash</code>。如果数据文件中的 <code>model_hash</code> 与当前配置不符，求解器会主动拒绝执行，防止脏数据交叉污染！</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="filepath">game_solving/visualization/report.py</span>
+          <span class="badge badge-orange">HTML 离线报告生成器</span>
+        </div>
+        <p>读取 <code>solve_results.jsonl</code> 与 <code>iteration_trace.jsonl</code>，生成完全离线的交互式 HTML 仪表盘（<code>outputs/*.html</code>）。用户可以在浏览器中自由切换场景、点击“上一轮/下一轮”动态回放价格和各用户带宽分配迁移曲线、查看每位 VIP 用户的详细 KQI 变化。</p>
+      </div>
+    </section>
+
+    <!-- 10. Algorithm Details: MOS -->
+    <section id="algo-mos">
+      <h2>10. MOS 正向与反推数学公式设计</h2>
+
+      <p>系统内置两套体验计算逻辑：参数化经验公式（Type A / Type B）与离散查表模型（Lookup Table）。</p>
+
+      <h3>10.1 通用单项评分（Single-Metric Scores）</h3>
+      <p>设媒体码率为 $b$ (kbps)，分辨率标量为 $r$，往返时延 RTT 为 $\ell$ (ms)，丢包率为 $p \in [0,1]$，卡顿率为 $s \in [0,1]$：</p>
+      <pre><code>sb = 5.0 / (1.0 + exp(-b / 928.984))       # 码率质量评分
+sr = 5.0 / (1.0 + exp(-r / 410.0))         # 分辨率质量评分
+sl = 1.0 + 4.0 * exp(-180.94 * p)          # 丢包流畅度评分
+ss = 5.0 - 4.0 * s                         # 卡顿流畅度评分</code></pre>
+
+      <h3>10.2 综合维度评分与 A/B 类非线性聚合</h3>
+      <p>将单项分按业务权重 $w_1, w_2, g_1, g_2$ 综合为三大维度：</p>
+      <ul>
+        <li><strong>画质评分 $Q$:</strong> $\text{clip}(5 - 4w_1(5-s_b) - 4w_2(5-s_r))$</li>
+        <li><strong>交互评分 $I$:</strong> $1 + 4\exp(-0.0035\ell)$ （初始阶段为首缓公式）</li>
+        <li><strong>观看流畅度 $V$:</strong> $\text{clip}(5 - 4g_1(5-s_l) - 4g_2(5-s_s))$</li>
+      </ul>
+      <p>根据交互与流畅度自适应计算动态非线性敏感度权重 $\alpha_{\text{mos}}, \beta_{\text{mos}}$：</p>
+      <pre><code>alpha = 0.1 * (1.0 + 2.0 * exp(-I / 2.0))
+beta  = 0.1 * (1.0 + 2.0 * exp(-V / 2.0))
+
+# A 类业务（点播、短视频、开直播、看直播、会议）：乘积归一化
+MOS_A = 1.0 + (Q - 1.0) * (alpha * (I - 1.0) + beta * (V - 1.0)) / (4.0 * (alpha + beta))
+
+# B 类业务（云游戏、视频通话、手游）：扣分惩罚机制
+MOS_B = clip(1.0 + (Q - 1.0) * (1.0 - alpha * (5.0 - I) - beta * (5.0 - V)))</code></pre>
+
+      <h3>10.3 目标 MOS 反推带宽（Inverse）</h3>
+      <p>当给定用户期望达到的目标 $M^\star$ 时，固定该用户的环境 $I, V$ 及对应参数，反解出画质所需门限 $Q^\star$：</p>
+      <p>$$Q^\star = 1 + \frac{4(M^\star - 1)(\alpha + \beta)}{\alpha(I - 1) + \beta(V - 1)}$$</p>
+      <p>进而反推所需码率分 $s_b^\star$，并通过 Logit 函数的解析逆变换求得精准连续码率，最后向上按 <code>bandwidth_quantum_kbps</code> 进行量化并正算复核。</p>
+    </section>
+
+    <!-- 11. Algorithm Details: VIP Quality Guarantee -->
+    <section id="algo-vip">
+      <h2>11. VIP 质差保障与 54-App 规则（第 6 期增量核心）</h2>
+
+      <div class="callout callout-success">
+        <strong>VIP 质差保障四大铁律（由 policy.py 的 quality_guarantee 执行）：</strong>
+        <p style="margin-top: 6px;">只有满足以下<strong>全部 4 项条件</strong>的 VIP 用户动作，才被判定为“质差保障满足”：</p>
+        <ol style="margin-left: 20px;">
+          <li><code>avgQoe >= avg_qoe_min</code>：使用 20～100 分制（系统内 MOS $\times 20$）。普通游戏/视频要求 60 分（MOS 3.0），快手/淘宝等要求 70 分（MOS 3.5），视频通话/会议要求 50 分（MOS 2.5）。</li>
+          <li><code>serviceDelay < service_delay_max_ms</code>：如王者荣耀要求 &lt; 60ms，原神要求 &lt; 100ms，三角洲行动要求 &lt; 80ms。</li>
+          <li><code>stallingDuration <= stalling_duration_max_seconds</code>：视频与直播类要求卡顿总时长代理 &le; 2.0 秒。</li>
+          <li><code>bandwidth >= bandwidth_min_kbps</code>：指定方向或分方向带宽门槛（如咪咕快游下行 &ge; 1800 kbps，开直播抖音上行 &ge; 1500 kbps，B站开直播上行 &ge; 4000 kbps）。</li>
+        </ol>
+      </div>
+
+      <h3>六维用户分组（Group Key）</h3>
+      <p>在求解器第 2 轮起，全体用户按照以下 6 个维度归并为一个 Group，并在 Group 内部协商同一公共 MOS 起跑线：</p>
+      <pre><code>group_key = (
+    user.package,      # 1. 套餐: vip / normal
+    user.tolerance,    # 2. 容忍度: high / medium / low
+    user.position,     # 3. 距离基站距离: near / middle / far
+    user.business,     # 4. 业务大类: shortvideo, game, meeting 等
+    user.app_id,       # 5. 具体 App: 如 wangzherongyao_game, douyin_svod
+    initial_mos_band   # 6. 初始 MOS 所在分段区间: int((observed_mos - 1.0) / width)
+)</code></pre>
+    </section>
+
+    <!-- 12. Algorithm Details: Pricing & Game -->
+    <section id="algo-pricing">
+      <h2>12. 对偶影子价格与博弈迭代</h2>
+
+      <p>算法采用<strong>对偶分解（Dual Decomposition）</strong>思想，将基站小区层面的集中式耦合带宽约束，转化为各用户分布式自主决策的影子资源成本：</p>
+
+      <h3>12.1 用户个体净效用函数 $H_i$ 与选择打分</h3>
+      <p>用户 $i$ 采用归一化体验 $e_i = (M_i - 1)/4 \in [0, 1]$。其自身净效用 $H_i$ 定义为：</p>
+      <p>$$H_i = (w_i + \eta \cdot \text{debt}_i) e_i - \beta |\Delta e_i|$$</p>
+      <ul>
+        <li>$w_i$：基于套餐、业务、位置、容忍度的混合基数归一化权重。</li>
+        <li>$\eta \cdot \text{debt}_i$：历史欠账公平补偿因子（历史体验落后目标越多，当前权重补偿越高）。</li>
+        <li>$\beta |\Delta e_i|$：稳定性惩罚（防止频繁抖动变动）。</li>
+      </ul>
+      <p>在当前轮次给定的影子价格 $\boldsymbol{\lambda} = (\lambda_{\text{UL}}, \lambda_{\text{DL}})$ 下，用户的决策评分为：</p>
+      <p>$$\text{DecisionScore}_i(a) = \text{Score}_i(a) - \frac{\lambda_{\text{UL}} B_{i,\text{UL}}(a) + \lambda_{\text{DL}} B_{i,\text{DL}}(a)}{b_{\text{ref}}}$$</p>
+      <p>其中 VIP 用户若满足质差保障，会获得额外的 <code>vip_guarantee_bonus</code> 奖励加分，促使其主动倾向于选择合规动作。</p>
+
+      <h3>12.2 影子价格更新法则（Subgradient Price Update）</h3>
+      <p>汇总所有用户未协调前的原始请求总带宽 $B_{\text{raw}, d}^{(k)} = \sum_i B_{i,d}^{\text{raw}}$。按步长 $\gamma_k = \frac{\gamma_0}{\sqrt{k+1}}$ 迭代：</p>
+      <p>$$\lambda_d^{(k+1)} = \max\left(0, \; \lambda_d^{(k)} + \frac{\gamma_0}{\sqrt{k+1}} \cdot \frac{B_{\text{raw}, d}^{(k)} - C_{\text{avail}, d}}{b_{\text{ref}}}\right)$$</p>
+      <p>超载方向的价格上升，促使下一轮用户自发减少该方向的带宽需求；空闲方向价格下降趋于 0。</p>
+    </section>
+
+    <!-- 13. Algorithm Details: Coordination -->
+    <section id="algo-coordination">
+      <h2>13. 协调器：修复、余量回填与效用交换</h2>
+
+      <p>用户独立的自私最优提案求和可能突破基站容量，必须由协调器（<code>utility_coordinator.py</code>）进行无缝修复：</p>
+
+      <div class="arch-diagram">
+        <div class="flow-grid">
+          <div class="flow-card">
+            <h4>第 1 步：超限贪心修复</h4>
+            <p>只要总带宽超过可用容量，计算各用户换选动作带来的有效带宽释放量 $R_i$，优先选择<strong>“单位释放带宽所损失效用最小”</strong>的动作替换，直到上下行全部满足物理容量限制！</p>
+          </div>
+          <div class="flow-card">
+            <h4>第 2 步：空闲余量升级</h4>
+            <p>基站容量出现富余时，遍历所有候选动作，在不超限的前提下，优先将带宽升级给效用增益最大的用户（VIP 质差改善具有绝对优先权）。</p>
+          </div>
+          <div class="flow-card">
+            <h4>第 3 步：多施主效用交换</h4>
+            <p>当单人升级无缝隙时，启发式寻找 1~2 个带宽充裕的用户作为“施主”（Donor，让出 100~200 kbps），转赠给 1 个“受主”（Receiver，获得带宽后达成 VIP 质差合规或产生巨大效用）。只要净效用收益 $> \epsilon$，即执行联合原子替换！</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14. Algorithm Details: Convergence -->
+    <section id="algo-convergence">
+      <h2>14. 收敛判据、循环检测与三类预算熔断机制</h2>
+
+      <h3>14.1 收敛判定（CONVERGED_LOCAL）</h3>
+      <p>连续 <code>stable_rounds</code>（默认 3 轮）同时满足以下条件：</p>
+      <ul>
+        <li>策略变化比例 $\varepsilon_{\text{strategy}} = \frac{1}{N} \sum_i \mathbf{1}[a_i^{(k+1)} \ne a_i^{(k)}] \le 0.01$</li>
+        <li>资源分配变化 $\varepsilon_{\text{resource}} \le 0.0001$</li>
+        <li>总净效用变化 $\varepsilon_{\text{utility}} \le 0.0001$</li>
+        <li>价格变化 $\le \varepsilon_{\text{price}}$ 且局部动作与交换检验通过。</li>
+      </ul>
+
+      <h3>14.2 策略循环检测（STOPPED_CYCLE）</h3>
+      <p>维护每轮策略向量、价格与价格信号的三元组签名集合 <code>seen</code>。如果检测到曾经出现过的状态再次出现（如 A -> B -> A），认定算法陷入非线性循环震荡，立即安全终止，并提取历史最优可行解返回！</p>
+
+      <h3>14.3 三类硬计算预算（Budget Control）</h3>
+      <table>
+        <thead>
+          <tr><th>预算维度</th><th>参数字段</th><th>默认值</th><th>作用与熔断行为</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>外层轮数</td>
+            <td><code>solver.max_iterations</code></td>
+            <td>50 (常规) / 200 (专项)</td>
+            <td>防止价格迭代振荡过多，达到上限时触发 <code>MAX_ITERATIONS</code></td>
+          </tr>
+          <tr>
+            <td>工作步数</td>
+            <td><code>solver.max_total_steps</code></td>
+            <td>200,000 / 30,000,000</td>
+            <td>全流程（模型计算、候选组合、协调评估）原子计数器，防止搜索爆炸</td>
+          </tr>
+          <tr>
+            <td>挂钟时间</td>
+            <td><code>solver.time_budget_ms</code></td>
+            <td>2000 ms / 120,000 ms</td>
+            <td>协作式超时控制，超过后预留 $4N+1$ 步数强行进入终检</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 15. Hands-on Modification Guide -->
+    <section id="mod-guide">
+      <h2>15. 开发者动手修改实战指南</h2>
+      <p>这是你日后修改业务逻辑、调整阈值、新增 App 或改进算法时最需要查阅的实战地图：</p>
+
+      <div class="tab-container">
+        <div class="tab-nav">
+          <button class="tab-btn active" onclick="switchTab(0)">场景 1: 修改/增加 App 质差规则</button>
+          <button class="tab-btn" onclick="switchTab(1)">场景 2: 调整 VIP/普通用户权重与目标</button>
+          <button class="tab-btn" onclick="switchTab(2)">场景 3: 调整候选动作网格与粒度</button>
+          <button class="tab-btn" onclick="switchTab(3)">场景 4: 修改协调器与交换规则</button>
+          <button class="tab-btn" onclick="switchTab(4)">场景 5: 调整数据生成人数与余量</button>
+        </div>
+
+        <!-- Tab 1 -->
+        <div class="tab-pane active" id="tab-0">
+          <div class="card">
+            <div class="card-title">修改或增加一个 App 的质差保障指标</div>
+            <p><strong>涉及文件：</strong><code>configs/default.json</code> 或 <code>configs/congestion_qoe_9_20_1.json</code> 中的 <code>applications</code> 字典。</p>
+            <p><strong>修改方式：</strong>例如要为游戏大类新增一个游戏 <code>my_new_game</code>，或调整王者荣耀的下行带宽底线：</p>
+            <pre><code>"applications": {
+  "my_new_game": {
+    "business": "game",
+    "avg_qoe_min": 60.0,                   // 最低 avgQoe (20-100)，对应 MOS 3.0
+    "service_delay_max_ms": 70.0,          // 时延门槛 ms (>=70 为质差)
+    "stalling_duration_max_seconds": null, // 游戏不检查卡顿，设为 null
+    "bandwidth_direction": "dl",
+    "bandwidth_min_kbps": 300.0,           // 下行最低速率 kbps
+    "bandwidth_min_kbps_by_direction": {   // 若双向均有要求，可明确指定
+      "ul": 300.0,
+      "dl": 300.0
+    }
+  }
+}</code></pre>
+            <div class="callout callout-info">
+              <strong>代码底层生效处：</strong><code>game_solving/optimization/policy.py</code> 的 <code>quality_guarantee()</code> 方法会自动读取 <code>self.c["applications"]</code> 对应条目并执行判定。无需修改任何 Python 代码即可生效！
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2 -->
+        <div class="tab-pane" id="tab-1">
+          <div class="card">
+            <div class="card-title">调整 VIP / 普通用户的权重与优化目标</div>
+            <p><strong>涉及文件：</strong><code>game_solving/optimization/policy.py</code></p>
+            <p><strong>关键函数 1：<code>weight(self, u)</code></strong></p>
+            <p>如果需要改变用户权重的多维排序逻辑（如提高特定业务的优先级，或让容忍度维度的权重反转）：</p>
+            <pre><code># 修改 policy.py 中的 weight 方法
+# 配置文件中 policy.weight_dimensions 控制维度顺序: ["package", "business", "position", "tolerance"]
+# 若需自定义硬编码加权：
+if u.package == "vip":
+    base_w = 10.0
+else:
+    base_w = 1.0
+return base_w * self.c["businesses"][u.business]["weight_factor"]</code></pre>
+            <p><strong>关键函数 2：<code>rank(self, users, actions, mode)</code></strong></p>
+            <p>如果希望改变比较两个方案谁更优的字典序：</p>
+            <pre><code># 在 policy.py 中调整 rank() 返回的元组结构
+if self.c["policy"]["objective"] == "vip_guarantee":
+    vip = [(u, a) for u, a in zip(users, actions) if u.package == "vip"]
+    return (
+        sum(not a.quality_guarantee_met for _, a in vip), # 第 1 优先: 质差违规人数最少
+        sum(a.gap for _, a in vip),                       # 第 2 优先: 保障缺口最小
+        -sum(a.h for _, a in vip),                        # 第 3 优先: VIP 总效用最高
+        -h,                                               # 第 4 优先: 全员总效用最高
+    )</code></pre>
+          </div>
+        </div>
+
+        <!-- Tab 3 -->
+        <div class="tab-pane" id="tab-2">
+          <div class="card">
+            <div class="card-title">修改候选动作网格、偏移量与生成粒度</div>
+            <p><strong>涉及文件：</strong><code>configs/default.json</code> (配置) 与 <code>game_solving/optimization/candidates.py</code> (代码)</p>
+            <p><strong>参数调整（JSON 配置）：</strong></p>
+            <ul>
+              <li><code>solver.mos_grid</code>: 控制从哪些 MOS 点位反推带宽，默认 <code>[1.0, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]</code>。若希望更密，可加入 <code>[2.8, 3.2, 3.8]</code>。</li>
+              <li><code>solver.candidate_mos_offsets</code>: 围绕当前点和目标的邻近探索偏移，如 <code>[0.05, 0.1]</code>。</li>
+              <li><code>solver.bandwidth_quantum_kbps</code>: 带宽量化粒度，默认 1.0 kbps。</li>
+              <li><code>solver.kept_candidates_per_user</code>: 每人最多保留动作数，默认 128。若希望提速可缩小至 32 或 64。</li>
+            </ul>
+            <p><strong>代码修改：</strong>打开 <code>CandidateBuilder.build()</code>，在 <code>rates[d]</code> 循环中可以自由添加特定的试验带宽点。</p>
+          </div>
+        </div>
+
+        <!-- Tab 4 -->
+        <div class="tab-pane" id="tab-3">
+          <div class="card">
+            <div class="card-title">修改资源协调器与多施主效用交换逻辑</div>
+            <p><strong>涉及文件：</strong><code>game_solving/optimization/utility_coordinator.py</code></p>
+            <p><strong>修改点指南：</strong></p>
+            <ul>
+              <li><strong>调整施主与受主候选池上限：</strong><code>cfg["exchange_shortlist"]</code>（默认 16），控制参与排列组合的用户数。</li>
+              <li><strong>增加最多施主数量：</strong><code>cfg["exchange_max_donors"]</code>（当前设为 2，即允许最多 2 个人让出带宽合力救助 1 个人）。若调至 3，需注意组合爆炸对工作量预算的影响。</li>
+              <li><strong>修改交换判定门槛：</strong>第 91 行 <code>if net <= best_gain: continue</code>，如果希望对消除 VIP 质差给予更大交换容忍度，可以在此处为质差改善动作加上奖金加权！</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Tab 5 -->
+        <div class="tab-pane" id="tab-4">
+          <div class="card">
+            <div class="card-title">调整数据生成人数、余量比例与分布</div>
+            <p><strong>涉及文件：</strong><code>configs/congestion_qoe_9_20_1.json</code></p>
+            <pre><code>"population": {
+  "users_per_cell": 300,            // 修改小区总人数，如改为 100 或 500
+  "package_probs": {
+    "normal": 0.7,                   // 普通用户占比 70%
+    "vip": 0.3                      // VIP 用户占比 30%
+  }
+},
+"generation": {
+  "capacity_mode": "current_headroom",
+  "headroom_ratios": [0.0, 0.01, 0.03, 0.05] // 调整拥塞余量梯度，0% 表示极度拥塞
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16. Running Guide -->
+    <section id="run-guide">
+      <h2>16. 运行、测试与结果调试</h2>
+
+      <h3>16.1 常用 PowerShell 命令行指令</h3>
+      <pre><code># 1. 运行完整单元测试集
+python -m unittest discover -s tests -v
+
+# 2. 生成 300 人、54-App 专项仿真数据集
+python -m game_solving generate --config configs/congestion_qoe_9_20_1.json --output outputs/qoe_300_data
+
+# 3. 对生成的数据集执行博弈求解
+python -m game_solving solve --config configs/congestion_qoe_9_20_1.json --input outputs/qoe_300_data/solver_inputs.jsonl --output outputs/qoe_300_solve
+
+# 4. 生成可视化交互式 HTML 报告
+python -m game_solving.visualization --input outputs/qoe_300_solve --output outputs/qoe_300_report.html
+
+# 5. 一键端到端运行 (run = generate + solve)
+python -m game_solving run --config configs/congestion_qoe_9_20_1.json --output outputs/qoe_300_all</code></pre>
+
+      <h3>16.2 输出目录的核心文件阅读方法</h3>
+      <ul>
+        <li><code>solve_results.jsonl</code>: 每一行代表一个场景的最终返回结果、停止原因（<code>CONVERGED_LOCAL</code> / <code>STOPPED_CYCLE</code>）、消耗总步数与耗时。</li>
+        <li><code>iteration_trace.jsonl</code>: 记录每一轮各用户所提的原始需求带宽、分配带宽、预测的 KQI、相对初始值的变化量、VIP 质差满足状态。</li>
+        <li><code>comparison.md</code>: 终端摘要及 Markdown 对比表格，展示前后 VIP 达标人数净增与平均 MOS 变化。</li>
+        <li><code>manifest.json</code>: 完整环境与代码哈希记录。</li>
+      </ul>
+    </section>
+
+    <footer style="margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.88rem;">
+      <p>文档由 AI 助手根据当前代码库全量源码、配置及技术文档精确提炼生成。祝二次开发与代码调试顺利！</p>
+    </footer>
+  </main>
+
+  <script>
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const target = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', target);
+    }
+
+    function switchTab(index) {
+      document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+      });
+      document.querySelectorAll('.tab-pane').forEach((pane, i) => {
+        pane.classList.toggle('active', i === index);
+      });
+    }
+
+    // Interactive search filter
+    document.getElementById('filterInput').addEventListener('input', function(e) {
+      const q = e.target.value.toLowerCase();
+      document.querySelectorAll('.nav-links li').forEach(li => {
+        const text = li.textContent.toLowerCase();
+        li.style.display = text.includes(q) ? 'block' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>

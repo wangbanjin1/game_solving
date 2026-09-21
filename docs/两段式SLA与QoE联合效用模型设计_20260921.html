@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>两段式 SLA 与 QoE 联合效用模型设计方案</title>
+  
+  <!-- MathJax for crystal-clear mathematical rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #eff6ff;
+      --secondary: #0d9488;
+      --secondary-light: #f0fdfa;
+      --accent: #f59e0b;
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+      --success: #16a34a;
+      --success-light: #f0fdf4;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --code-bg: #1e293b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    /* Sticky Navigation Sidebar */
+    .sidebar {
+      width: 290px;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 32px 20px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+      border-right: 1px solid #334155;
+    }
+    .sidebar h2 {
+      font-size: 1.05rem;
+      color: #93c5fd;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar nav ul {
+      list-style: none;
+    }
+    .sidebar nav li {
+      margin-bottom: 12px;
+    }
+    .sidebar nav a {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 0.88rem;
+      display: block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    .sidebar nav a:hover {
+      background: #1e293b;
+      color: #38bdf8;
+      transform: translateX(4px);
+    }
+    .sidebar .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 0.72rem;
+      background: #1e3a8a;
+      color: #bfdbfe;
+      border-radius: 9999px;
+      margin-top: 20px;
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      padding: 48px 56px;
+      max-width: 1100px;
+    }
+    .header-card {
+      background: linear-gradient(135deg, #1e3a8a 0%, #0f766e 100%);
+      color: white;
+      padding: 36px 40px;
+      border-radius: 16px;
+      margin-bottom: 40px;
+      box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.25);
+    }
+    .header-card h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    .header-card p {
+      font-size: 1rem;
+      color: #e2e8f0;
+      max-width: 800px;
+      line-height: 1.6;
+    }
+    .meta-tags {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .meta-tag {
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(8px);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+    }
+
+    /* Content Cards */
+    section {
+      margin-bottom: 48px;
+    }
+    h2 {
+      font-size: 1.5rem;
+      color: #1e293b;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 10px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h3 {
+      font-size: 1.2rem;
+      color: #334155;
+      margin: 24px 0 12px 0;
+    }
+    p, li {
+      color: #334155;
+      font-size: 0.98rem;
+      margin-bottom: 12px;
+    }
+    ul, ol {
+      padding-left: 24px;
+      margin-bottom: 16px;
+    }
+
+    /* Math Formula Block */
+    .formula-container {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-left: 5px solid var(--primary);
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin: 20px 0;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    .formula-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .formula-body {
+      font-size: 1.15rem;
+      text-align: center;
+      padding: 12px 0;
+      overflow-x: auto;
+    }
+    .formula-notes {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 12px;
+      border-top: 1px dashed var(--border);
+      padding-top: 10px;
+    }
+
+    /* Callout Boxes */
+    .callout {
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin: 20px 0;
+      border-left: 4px solid;
+    }
+    .callout-info {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: #1e40af;
+    }
+    .callout-warn {
+      background: #fffbeb;
+      border-color: var(--accent);
+      color: #92400e;
+    }
+    .callout-danger {
+      background: var(--danger-light);
+      border-color: var(--danger);
+      color: #991b1b;
+    }
+    .callout-success {
+      background: var(--success-light);
+      border-color: var(--success);
+      color: #166534;
+    }
+
+    /* Cards Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+    .card h4 {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      color: #0f172a;
+    }
+
+    /* Interactive Comparison / Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      background: var(--card-bg);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    }
+    th, td {
+      padding: 14px 18px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.94rem;
+    }
+    th {
+      background: #f1f5f9;
+      font-weight: 600;
+      color: #334155;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr:hover {
+      background: #f8fafc;
+    }
+
+    /* Code Block */
+    pre {
+      background: var(--code-bg);
+      color: #f8fafc;
+      padding: 18px 22px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 16px 0;
+      font-family: "Cascadia Code", "Fira Code", Consolas, Monaco, monospace;
+      line-height: 1.5;
+    }
+    code {
+      background: #e2e8f0;
+      color: #0f172a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.88em;
+      font-family: "Cascadia Code", "Fira Code", Consolas, Monaco, monospace;
+    }
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+
+    /* Interactive Visual Diagram (SVG Based) */
+    .diagram-container {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 28px;
+      margin: 28px 0;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    .diagram-caption {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- Left Navigation -->
+  <aside class="sidebar">
+    <h2><span>⚙️</span> 架构设计目录</h2>
+    <nav>
+      <ul>
+        <li><a href="#section1">1. 背景与核心问题剖析</a></li>
+        <li><a href="#section2">2. 两段式解耦核心设计哲学</a></li>
+        <li><a href="#section3">3. 统一数学模型 (SLA-QoE)</a></li>
+        <li><a href="#section3-1" style="padding-left: 24px;">3.1 第一段：SLA 合同阶跃增益</a></li>
+        <li><a href="#section3-2" style="padding-left: 24px;">3.2 第二段：连续弹性体验增益</a></li>
+        <li><a href="#section3-3" style="padding-left: 24px;">3.3 第三段：影子价格资源成本</a></li>
+        <li><a href="#section4">4. 动态博弈防线物理推演</a></li>
+        <li><a href="#section5">5. 重构前后全面方案对比</a></li>
+        <li><a href="#section6">6. 落地实现与平滑迁移计划</a></li>
+      </ul>
+    </nav>
+    <div class="badge">版本：v2.0 终稿 · 2026-09-21</div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main">
+    <!-- Header Summary Card -->
+    <div class="header-card">
+      <h1>两段式 SLA 与 QoE 联合效用模型设计方案</h1>
+      <p>
+        全面解耦“SLA 合同生死线（保底非线性阶跃）”与“弹性画质增益（边际感知平滑递减）”，废除人工硬编码特判与千分之一残差缩放，实现纯净、自洽、具备完备博弈稳定性的分布式资源配置效用体系。
+      </p>
+      <div class="meta-tags">
+        <div class="meta-tag">📅 2026-09-21</div>
+        <div class="meta-tag">🏷️ 调度算法重构</div>
+        <div class="meta-tag">🎯 效用函数 H & 影子价格</div>
+        <div class="meta-tag">✅ 待最终确认</div>
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <section id="section1">
+      <h2>1. 背景与核心问题剖析</h2>
+      <p>
+        在当前的无线资源分布式博弈调度框架中，关于“VIP 质差保底优先”与“全网用户弹性体验优化”的处理，历经数轮演进，暴露出以下根本性物理与数学矛盾：
+      </p>
+
+      <div class="grid-2">
+        <div class="card" style="border-top: 4px solid var(--danger);">
+          <h4>❌ 现状问题 1：乘法权重引发的“效率陷阱”</h4>
+          <p>
+            早期设计采用进位权重（<code>套餐 × 1000 + 业务 × 100 + 位置 × 10 + 容忍度 × 1</code>），但在归一化除以 64 后，VIP 与普通用户的权重比被抹平为仅约 $1.5:1 \sim 2:1$。
+          </p>
+          <p style="font-size: 0.9rem; color: var(--muted);">
+            <strong>后果：</strong>在严重拥塞场景下，处于小区边缘信道差的 VIP 用户提升单位 MOS 带宽代价极大，优化器会自发选择“让 2 个信道好的普通用户看超清”，导致<strong>牺牲边缘 VIP 达成全网效用最大化</strong>的业务失真。
+          </p>
+        </div>
+
+        <div class="card" style="border-top: 4px solid var(--accent);">
+          <h4>⚠️ 现状问题 2：人工补丁带来的量纲畸变</h4>
+          <p>
+            为纠偏效率陷阱，代码在微观决策层引入特判补丁：
+            硬加 <code>vip_guarantee_bonus = 100.0</code>（曾达 $10^6$），并将普通用户乘以 <code>normal_residual_factor = 0.001</code>。
+          </p>
+          <p style="font-size: 0.9rem; color: var(--muted);">
+            <strong>后果：</strong>$100.0$ 与 $0.001$ 跨越了 5 个数量级，普通用户被彻底降格为千分之一权重的“残差拾荒者”，缺乏正规业务尊严与可解释性。
+          </p>
+        </div>
+      </div>
+
+      <div class="callout callout-danger">
+        <strong>致命漏洞（达标 VIP 的贪婪掠夺）：</strong>
+        如果单纯依靠极大的乘法权重来压制普通用户，那么<strong>已经达到高清体验的 VIP 用户（MOS 4.5）</strong>，仍会凭借极大的权重斜率继续疯狂抢占带宽冲到 4.9，导致正在严重卡顿甚至断流的普通用户连最低保底带宽都被彻底剥夺！
+      </div>
+    </section>
+
+    <!-- Section 2 -->
+    <section id="section2">
+      <h2>2. 核心设计哲学：区分“保底生死线”与“弹性体验增益”</h2>
+      <p>
+        无线通信网络中的用户体验，客观存在两种**物理性质截然不同**的诉求，必须在数学函数上**彻底解耦**：
+      </p>
+
+      <!-- SVG Conceptual Architecture Diagram -->
+      <div class="diagram-container">
+        <svg width="780" height="260" viewBox="0 0 780 260" style="max-width: 100%; height: auto;">
+          <!-- Left Box: SLA Floor -->
+          <rect x="30" y="20" width="340" height="220" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+          <text x="200" y="55" text-anchor="middle" font-size="16" font-weight="bold" fill="#1e40af">诉求 A：SLA 合同生死线 (Contract Floor)</text>
+          <path d="M 60 190 L 170 190 L 170 100 L 330 100" fill="none" stroke="#2563eb" stroke-width="3" stroke-dasharray="0"/>
+          <circle cx="170" cy="190" r="4" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+          <circle cx="170" cy="100" r="5" fill="#2563eb"/>
+          <text x="200" y="85" text-anchor="middle" font-size="13" fill="#1e3a8a" font-weight="bold">+10.0 分（及格即全额兑现）</text>
+          <text x="170" y="215" text-anchor="middle" font-size="12" fill="#64748b">及格门限 (SLA Threshold)</text>
+          <text x="250" y="125" text-anchor="middle" font-size="12" fill="#2563eb">达标后斜率归零 (ΔG = 0)</text>
+
+          <!-- Middle decouple symbol -->
+          <circle cx="390" cy="130" r="18" fill="#0f172a"/>
+          <text x="390" y="135" text-anchor="middle" font-size="14" fill="#ffffff" font-weight="bold">⨁</text>
+
+          <!-- Right Box: Elastic QoE -->
+          <rect x="410" y="20" width="340" height="220" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+          <text x="580" y="55" text-anchor="middle" font-size="16" font-weight="bold" fill="#166534">诉求 B：连续弹性体验 (Elastic QoE)</text>
+          <path d="M 440 200 Q 510 120 710 100" fill="none" stroke="#16a34a" stroke-width="3"/>
+          <text x="580" y="85" text-anchor="middle" font-size="13" fill="#14532d" font-weight="bold">边际收益递减曲线 (Logarithmic QoE)</text>
+          <text x="490" y="150" text-anchor="middle" font-size="12" fill="#16a34a">低档位斜率极大</text>
+          <text x="670" y="120" text-anchor="middle" font-size="12" fill="#64748b">超清档位斜率极平</text>
+          <text x="580" y="220" text-anchor="middle" font-size="12" fill="#15803d">全网根据画质贡献公平分享剩余带宽</text>
+        </svg>
+        <div class="diagram-caption">
+          <strong>图 1：两段式核心物理模型架构图</strong> —— SLA 负责捍卫底线（及格后增量封顶），QoE 负责激励提质（严格边际递减）。
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3 -->
+    <section id="section3">
+      <h2>3. 两段式效用函数统一数学模型 (Piecewise SLA-QoE Model)</h2>
+      <p>
+        定义用户 $i$ 评估候选动作 $a$ 时的**个体综合微观决策效用函数**为：
+      </p>
+
+      <!-- Master Equation -->
+      <div class="formula-container">
+        <div class="formula-title">个体总决策效用公式 (Master Utility Formulation)</div>
+        <div class="formula-body">
+          $$ U_i(a) = G_i(a) + E_i(a) - C_i(a) $$
+        </div>
+        <div class="formula-notes">
+          <ul>
+            <li><strong>$G_i(a)$</strong>：第一段 · SLA 合同阶跃增益（兑现服务承诺，及格则获得基准价值，未及格则为 0）；</li>
+            <li><strong>$E_i(a)$</strong>：第二段 · 连续弹性体验增益（反映人类对 MOS 画质/时延感知的边际递减规律）；</li>
+            <li><strong>$C_i(a)$</strong>：第三段 · 影子价格资源消耗成本（基站通过虚拟过路费压制超额资源请求）。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sub 3.1 -->
+      <h3 id="section3-1">3.1 第一段：SLA 合同阶跃增益 $G_i(a)$</h3>
+      <p>
+        $G_i(a)$ 严格采用**非线性纯阶跃函数（Step Function）**，表示该动作是否达标兑现了运营商对该用户的底线合同保障承诺：
+      </p>
+
+      <div class="formula-container">
+        <div class="formula-title">SLA 阶跃函数定义</div>
+        <div class="formula-body">
+          $$
+          G_i(a) =
+          \begin{cases}
+          V_{\mathrm{sla, vip}}, & i \in \mathcal{U}_{\mathrm{vip}}, \; a \in \mathcal{A}_i^{\mathrm{sla}} \\
+          V_{\mathrm{sla, normal}}, & i \in \mathcal{U}_{\mathrm{normal}}, \; a \in \mathcal{A}_i^{\mathrm{basic}} \\
+          0, & \text{otherwise}
+          \end{cases}
+          $$
+        </div>
+      </div>
+
+      <div class="card" style="margin: 20px 0;">
+        <h4>📋 各分支物理达标门限判定准则：</h4>
+        <ul>
+          <li>
+            <strong>VIP 履约达标（$a \in \mathcal{A}_i^{\mathrm{sla}}$）</strong>：用户为 VIP，且动作 $a$ 必须**同时满足全部 4 项质差达标硬性门限**：
+            <ol style="margin-top: 8px;">
+              <li>综合体验满足及格线：<code>avgQoe &ge; avg_qoe_min</code>（默认 60 分，换算为 $\mathrm{MOS} \ge 3.0$）；</li>
+              <li>手游业务时延严格达标：<code>delay &lt; service_delay_max_ms</code>（依业务等级为 60 / 80 / 100 ms）；</li>
+              <li>非手游卡顿档位达标：<code>stall_level &le; 2</code>（不允许出现 3~5 档严重卡顿）；</li>
+              <li>达到基础保底带宽（如手游上下行均 $\ge 300\text{ kbps}$ 等）。</li>
+            </ol>
+          </li>
+          <li>
+            <strong>普通用户保底达标（$a \in \mathcal{A}_i^{\mathrm{basic}}$）</strong>：用户为普通套餐，动作 $a$ 达到配置的最低业务保底带宽 <code>business_basic_kbps</code>（如长视频 1000 kbps、王者荣耀 300 kbps）。
+          </li>
+          <li>
+            <strong>违约质差状态（$\text{otherwise}$）</strong>：动作未跨过上述门限（处于质差泥潭或网络断流）。
+          </li>
+        </ul>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>参数基准设定：</strong>
+        <br>• VIP 合同履约价值：$V_{\mathrm{sla, vip}} = 10.0$
+        <br>• 普通用户合同履约价值：$V_{\mathrm{sla, normal}} = 2.0$
+        <br><strong>关键物理特性：</strong>一旦动作跨过及格门限，合同价值立刻全额兑现；跨线之后即使分配再多带宽，$\Delta G$ 也恒等于 0，**彻底丧失在合同段继续膨胀的能力**！
+      </div>
+
+      <!-- Sub 3.2 -->
+      <h3 id="section3-2">3.2 第二段：连续弹性体验增益 $E_i(a)$</h3>
+      <p>
+        在满足合同保底后，体验的进一步提升遵循人类真实主观感知模型（QoE），并引入长期公平与抗频闪阻尼：
+      </p>
+
+      <div class="formula-container">
+        <div class="formula-title">连续弹性体验公式</div>
+        <div class="formula-body">
+          $$ E_i(a) = (w_i + \eta_{\mathrm{fair}} \cdot h_i) \cdot e_i(a) - \beta_{\mathrm{change}} \cdot \left| e_i(a) - e_i^{\mathrm{anchor}} \right| - c_i^{\mathrm{switch}}(a) $$
+        </div>
+        <div class="formula-notes">
+          <ul>
+            <li>
+              <strong>归一化体验 $e_i(a) \in [0, 1]$</strong>：
+              $$ e_i(a) = \frac{\min\big(\mathrm{MOS}_{\mathrm{UL}}(a),\, \mathrm{MOS}_{\mathrm{DL}}(a)\big) - 1.0}{4.0} $$
+            </li>
+            <li>
+              <strong>用户综合感知权重 $w_i$（字典序直接线性归一化模型）</strong>：
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; margin: 10px 0;">
+                <p style="margin-bottom: 8px; font-weight: 600; color: #1e293b;">步骤 1：进位制字典序排位计算 (Lexicographical Integer Rank)</p>
+                $$ \mathrm{Rank}_i = \mathrm{Package}_i \times 1000 + \mathrm{Business}_i \times 100 + \mathrm{Position}_i \times 10 + \mathrm{Tolerance}_i \times 1 $$
+                <ul style="margin: 8px 0; font-size: 0.9rem; padding-left: 20px;">
+                  <li><strong>套餐等级 $\mathrm{Package}_i$（千位，绝对一票否决权）</strong>：VIP $= 1$，普通用户 $= 0$；</li>
+                  <li><strong>业务优先级 $\mathrm{Business}_i$（百位）</strong>：实时竞技游戏 $= 4$，视频通话 $= 3$，视频点播 $= 2$，下载/浏览 $= 1$；</li>
+                  <li><strong>位置优劣 $\mathrm{Position}_i$（十位）</strong>：近点 $= 2$，远点/边缘 $= 1$；</li>
+                  <li><strong>容忍度 $\mathrm{Tolerance}_i$（个位）</strong>：低容忍敏感情形 $= 2$，高容忍 $= 1$。</li>
+                </ul>
+
+                <p style="margin: 12px 0 6px 0; font-weight: 600; color: #1e293b;">步骤 2：有界平滑线性归一化映射 (Bounded Linear Normalization)</p>
+                $$ w_i = w_{\min} + (w_{\max} - w_{\min}) \cdot \frac{\mathrm{Rank}_i - \mathrm{Rank}_{\min}}{\mathrm{Rank}_{\max} - \mathrm{Rank}_{\min}} $$
+                <p style="font-size: 0.9rem; color: #334155; margin-bottom: 0;">
+                  设定基准感知权重区间为 $[w_{\min}, w_{\max}] = [0.5, 2.0]$：
+                  <br>• <strong>普通用户取值区间</strong>：严格落在 $[0.50, 1.20)$
+                  <br>• <strong>VIP 用户取值区间</strong>：严格落在 $[1.25, 2.00]$
+                </p>
+              </div>
+
+              <div class="callout callout-success" style="margin: 10px 0; padding: 12px 16px;">
+                <strong>🎯 字典序线性归一化的三大数学与物理保证：</strong>
+                <ol style="margin-bottom: 0; padding-left: 20px; font-size: 0.9rem;">
+                  <li><strong>彻底杜绝维度倒挂（零污染）</strong>：因为千位差了 1000，即使普通用户业务、位置、容忍度全拿最高分（$422$），也绝不可能超过 VIP 的起步门槛（$1111$）。任何 VIP 的权重恒大于任何普通用户！</li>
+                  <li><strong>全员未达标时的生死倾斜</strong>：在极端拥塞场景（$G = 0$）下，VIP 的效用斜率自然处于普通用户的 $1.5 \sim 2$ 倍，驱动优化器在全员欠保障时把有限带宽坚决先给 VIP，优先助其脱困；</li>
+                  <li><strong>平滑量纲防爆炸</strong>：彻底摆脱直接相乘导致的方差放大，数值严格锁定在 $[0.5, 2.0]$，与连续感知 $e_i \in [0, 1]$ 自然匹配。</li>
+                </ol>
+              </div>
+            </li>
+            <li>
+              <strong>长期公平历史补偿 $h_i$</strong>（为历史欠账用户注入弹性提权）：
+              $$ h_i = \min\left( \max\left( \frac{\mathrm{MOS}_{\mathrm{target}} - \mathrm{MOS}_{\mathrm{history}}}{4.0}, \, 0 \right), \, 1.0 \right), \quad \eta_{\mathrm{fair}} = 0.5 $$
+            </li>
+            <li>
+              <strong>抗频闪稳定性与切换成本</strong>：$\beta_{\mathrm{change}} = 0.1$，抑制连续轮次间的画质频繁抖动。
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sub 3.3 -->
+      <h3 id="section3-3">3.3 第三段：影子价格资源成本 $C_i(a)$</h3>
+      <p>
+        基站通过双向广播上下行影子价格 $\lambda_{\mathrm{UL}}, \lambda_{\mathrm{DL}}$，向所有用户传导小区的瞬时物理承载压力：
+      </p>
+
+      <div class="formula-container">
+        <div class="formula-title">影子价格资源过路费公式</div>
+        <div class="formula-body">
+          $$ C_i(a) = \frac{\lambda_{\mathrm{UL}} \cdot B_{i,\mathrm{UL}}(a) + \lambda_{\mathrm{DL}} \cdot B_{i,\mathrm{DL}}(a)}{B_{\mathrm{ref}}} $$
+        </div>
+        <div class="formula-notes">
+          基准带宽归一化常数设定为 $B_{\mathrm{ref}} = 1000\text{ kbps}$。当基站带宽出现赤字时，影子价格自发按对偶梯度上升，提高过路费以挤出低效带宽占用。
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4 -->
+    <section id="section4">
+      <h2>4. 动态博弈防线物理推演</h2>
+      <p>
+        两段式效用函数的核心魅力在于：无需任何全局启发式硬修剪，仅靠分布式个体的微观理性计算，就能自动在拥塞与空闲场景下达成理想博弈纳什均衡。
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin: 20px 0;">
+        <div class="card" style="border-top: 4px solid var(--danger);">
+          <h4>场景一：极限拥塞（全员未达标，G = 0）</h4>
+          <p style="font-size: 0.9rem; color: var(--muted);"><strong>触发状态：</strong>小区超极度拥塞，任何动作都无法让用户跨过质差门限，$G = 0$。</p>
+          <p style="font-size: 0.92rem;">
+            • 此时由于 $G$ 均为 0，微观效用梯度完全取决于 $w_i \cdot e_i(a)$；
+            <br>• $w_i$ 内嵌套餐基准权重：$w_{\mathrm{vip}} \approx 2.0 \sim 2.5$，而 $w_{\mathrm{normal}} = 1.0$；
+            <br>• VIP 效用斜率是普通用户的 <strong>2 倍以上</strong>！
+          </p>
+          <div class="callout callout-info" style="margin: 8px 0; padding: 10px 12px; font-size: 0.88rem;">
+            <strong>物理结果：</strong>即便大家都及不了格，优化器也会在效用驱动下，<strong>全力将稀缺资源倾斜给 VIP，让 VIP 多拿带宽、最快接近及格线！</strong>
+          </div>
+        </div>
+
+        <div class="card" style="border-top: 4px solid var(--primary);">
+          <h4>场景二：中重度拥塞（VIP 冲刺生死线）</h4>
+          <p style="font-size: 0.9rem; color: var(--muted);"><strong>触发状态：</strong>资源紧张，基站影子价格飙升至 $\lambda_{\mathrm{DL}} = 0.08$。</p>
+          <p style="font-size: 0.92rem;">
+            • 申请 5000 kbps 带宽的资源过路费为 $C = 0.40$ 分；
+            <br>• 未达标 VIP 动作 1（不达标）：$G = 0$；
+            <br>• 未达标 VIP 动作 2（达标）：$G = 10.0$；
+            <br>• 阶跃增量 <strong>$\Delta G = +10.0$ 分</strong>，碾压 $0.40$ 分过路费！
+          </p>
+          <div class="callout callout-success" style="margin: 8px 0; padding: 10px 12px; font-size: 0.88rem;">
+            <strong>物理结果：</strong>未达标 VIP 拼尽全力夺取达标带宽，<strong>VIP 质差达标防线固若金汤！</strong>
+          </div>
+        </div>
+
+        <div class="card" style="border-top: 4px solid var(--secondary);">
+          <h4>场景三：带宽富余（终结 VIP 霸权抢占）</h4>
+          <p style="font-size: 0.9rem; color: var(--muted);"><strong>触发状态：</strong>某 VIP 已经达标（MOS 4.0，拿满 $G = 10.0$ 分）。</p>
+          <p style="font-size: 0.92rem;">
+            • 达标 VIP 想多要 10 Mbps 冲 4.8：$\Delta G = 0$，边际收益 $\Delta E \approx +0.20$ 分，但影子过路费 $\Delta C \approx 0.80$ 分，<strong>净收益为负（$-0.60$ 分）</strong>；
+            <br>• 此时卡顿普通用户争取保底带宽，可激活 <strong>$\Delta G = +2.0$ 分</strong>！
+          </p>
+          <div class="callout callout-warn" style="margin: 8px 0; padding: 10px 12px; font-size: 0.88rem;">
+            <strong>物理结果：</strong>达标 VIP 理性放弃过度侵占，普通用户基本生存权得到坚决捍卫！
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5 -->
+    <section id="section5">
+      <h2>5. 重构前后全面方案对比</h2>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 20%;">对比维度</th>
+            <th style="width: 38%;">现状方案（100 分 + 0.001 人工补丁）</th>
+            <th style="width: 42%;">新方案（两段式 SLA-QoE 联合效用模型）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>数学自洽性</strong></td>
+            <td>代码特判注入，缺乏统一的数学公理支撑</td>
+            <td>连续体验叠加非线性阶跃，标准的微观经济学合同模型</td>
+          </tr>
+          <tr>
+            <td><strong>数值量纲跨度</strong></td>
+            <td>$100.0$ 与 $0.001$ 跨越 5 个数量级，极易失真</td>
+            <td>所有项严格归一化在 <strong>$0.01 \sim 10.0$</strong> 自然量纲内</td>
+          </tr>
+          <tr>
+            <td><strong>普通用户地位</strong></td>
+            <td>被动沦为千分之一权重的残差，无法捍卫基本保底</td>
+            <td>享有平等的 $V_{\mathrm{sla, normal}} = 2.0$ 基础保底权利</td>
+          </tr>
+          <tr>
+            <td><strong>防 VIP 恶意抢占</strong></td>
+            <td>无法杜绝；高阶 VIP 达标后仍能凭借大权重挤压普通用户</td>
+            <td><strong>在效用函数底层自发平抑</strong>：达标后 $\Delta G = 0$，边际收益自然低于过路费</td>
+          </tr>
+          <tr>
+            <td><strong>业务可解释性</strong></td>
+            <td>难以向运营人员解释为何普通用户效用乘以 0.001</td>
+            <td>极其直观：“及格兑现合同；全员达标后依感知质量公平竞争”</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 6 -->
+    <section id="section6">
+      <h2>6. 落地实现与平滑迁移计划</h2>
+      <p>
+        为保障系统平稳演进并完全兼容历史回归测试，采取**分步无缝替换**路径：
+      </p>
+
+      <div class="card" style="margin-bottom: 20px;">
+        <h4>步骤 1：配置文件 <code>configs/default.json</code> 扩展</h4>
+        <pre><code>"utility": {
+  "sla_guarantee_enabled": true,
+  "sla_vip_value": 10.0,
+  "sla_normal_value": 2.0,
+  "w_min": 0.5,
+  "w_max": 2.0,
+  "bandwidth_reference_kbps": 1000.0,
+  "eta_fair": 0.5,
+  "beta_change": 0.1
+}</code></pre>
+      </div>
+
+      <div class="card" style="margin-bottom: 20px;">
+        <h4>步骤 2：权重计算与策略评分函数 <code>game_solving/optimization/policy.py</code> 重构</h4>
+        <pre><code>def weight(self, u):
+    """字典序直接线性归一化：套餐*1000 + 业务*100 + 位置*10 + 容忍度*1"""
+    p = self.c["policy"]
+    rank = (
+        p["package_rank"][u.package] * 1000
+        + self.c["businesses"][u.business]["priority_rank"] * 100
+        + p["position_rank"][u.position] * 10
+        + p["tolerance_rank"][u.tolerance] * 1
+    )
+    # 平滑线性映射至 [w_min, w_max]，默认 [0.5, 2.0]
+    w_min = self.c["utility"].get("w_min", 0.5)
+    w_max = self.c["utility"].get("w_max", 2.0)
+    norm = (rank - p["rank_min"]) / (p["rank_max"] - p["rank_min"])
+    return w_min + (w_max - w_min) * norm
+
+def decision_score(self, u, action):
+    # 第一段：SLA 合同阶跃增益 G_i(a)
+    g = 0.0
+    if u.package == "vip" and action.quality_guarantee_met:
+        g = self.c["utility"]["sla_vip_value"]       # 10.0
+    elif u.package == "normal" and action.basic_met:
+        g = self.c["utility"]["sla_normal_value"]    # 2.0
+    
+    # 第二段：连续弹性体验增益 E_i(a) (删除 0.001 残差折让，以归一化权重 w_i 驱动)
+    return g + action.h</code></pre>
+      </div>
+
+      <div class="card">
+        <h4>步骤 3：多规模全量回归验证</h4>
+        <ul>
+          <li>在 <code>tests/test_congestion.py</code> 中验证严重拥塞场景下 VIP 保障率达到 100%；</li>
+          <li>在 <code>tests/test_app_grouping.py</code> 中验证普通用户最低保底带宽不被侵占；</li>
+          <li>验证 300 人与 20,000 人场景在 20 轮博弈迭代内的严格收敛性与对偶残差平稳性。</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</div>
+
+</body>
+</html>

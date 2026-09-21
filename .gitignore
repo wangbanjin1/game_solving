@@ -8,3 +8,5 @@ outputs/
 build/
 dist/
 node_modules/
+scratch/
+

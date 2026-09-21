@@ -6,9 +6,9 @@ Python 3.10+，运行时仅依赖标准库。生成、求解分开运行；求�
 
 只使用短视频、长视频、会议、云游戏、语音、观看直播、游戏、开直播。原始样本表中的 **sa、sta 均排除**，其余 594,370 条 QoE 样本重新归一化。
 
-常规回归配置仍保留 100 人分布。新增 `congestion_qoe_9_20_1.json` 专项配置为 300 人，仅含普通/VIP，覆盖 54 个 App，并为开直播预留 10 人以保证其 10 个 App 均有样本；资源余量只取 0%、1%、3%、5%。
+常规回归配置仍保留 100 人分布。新增 `congestion_qoe_9_20_1.json` 专项配置为 300 人，仅含普通/VIP，覆盖归并后的 17 个应用类型，并为开直播预留 10 人；资源余量只取 0%、1%、3%、5%。手游按 60/80/100 ms 三档归并，其他业务按相同或相近质差规则归并。
 
-专项求解第一轮保留每位用户不同的初始状态；第二轮起按“套餐、容忍度、位置、业务大类、App、初始 MOS 分档”选择共同 MOS 起跑线，再映射为各用户可执行动作。VIP 同时检查 App 级 `avgQoe`、时延/卡顿代理和上下行最低速率，普通用户只使用剩余资源。逐轮证据保存预测 KQI 及其相对初始值的变化；专项配置还启用码率驱动的分辨率、时延、丢包和卡顿响应模型，参数是未标定的仿真假设。
+专项求解第一轮保留每位用户不同的初始状态；第二轮起按“套餐、容忍度、位置、业务大类、App、初始 MOS 分档”选择共同 MOS 起跑线，再映射为各用户可执行动作。VIP 同时检查 App 级 `avgQoe`、时延、1～6 卡顿档位和上下行最低速率，普通用户只使用剩余资源。逐轮证据保存预测 KQI 及其相对初始值的变化；专项配置还启用码率驱动的分辨率、时延、丢包和卡顿响应模型，参数是未标定的仿真假设。
 
 ## 生成一批数据
 
@@ -25,6 +25,14 @@ python -m game_solving generate --config configs/congestion_qoe_9_20_1.json --ou
 python -m game_solving solve --config configs/congestion_qoe_9_20_1.json --input outputs/qoe_app_300_data/solver_inputs.jsonl --output outputs/qoe_app_300_solve
 python -m game_solving.visualization --input outputs/qoe_app_300_solve --output outputs/qoe_app_300_report.html
 ```
+
+VIP 初始未达标比例专项场景（63 个场景、累计 18,900 人）只需先执行生成：
+
+```powershell
+python -m game_solving generate --config configs/vip_initial_scenarios_9_21.json --output outputs/vip_initial_scenarios_9_21_v2
+```
+
+初始统计写入 `initial_distribution.jsonl` 和 `initial_distribution.csv`；本阶段不生成专项 HTML。
 
 默认批次包含 5 个独立的 100 人基础样本；每个基础样本生成相同用户状态的 0%、5%、10%、15%、20% 带宽余量版本，共 25 个场景。上下行容量分别按当前占用计算并写入样本。
 
@@ -45,6 +53,8 @@ python -m game_solving.visualization --input outputs/my_qoe_solve --output outpu
 HTML 离线展示分配前后指标、价格、当轮/历史最好/参考效用，以及初始套餐统计。
 
 报告还提供完整策略对照（初始、算法返回、停止时、暴搜参考）、逐轮用户请求和实际分配、候选动作的 H−影子成本评分、资源协调步骤与收敛状态。选择场景后，可用“上一轮/下一轮”回放，并下载本场景证据 JSON。`trace_users=true` 时求解会保存这些详细记录；旧输出需重新求解才能补齐候选评分。
+
+“用户体验筛选与逐轮轨迹”支持按 VIP/普通用户、MOS 上升/下降/不变、指定 KQI 的上升/下降/不变联合筛选。选择或点击用户后，可查看该用户从初始状态、每轮求解到算法返回方案的 MOS 与 KQI 折线；KQI 可切换 avgQoe、码率、分辨率、时延、丢包率、卡顿率、卡顿档位、首缓和抖动，并可指定上行、下行或会话方向。
 
 - `initial_distribution.jsonl`：套餐和业务、MOS/KQI、VIP 达标分布；普通用户不评价达标。
 - `iteration_trace.jsonl`：逐轮请求、分配、效用分项和交换原因。
