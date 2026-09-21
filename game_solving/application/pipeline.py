@@ -13,7 +13,10 @@ from game_solving.evaluation.validation import check_actions
 from game_solving.evaluation.reference import evaluate_reference
 from game_solving.evaluation.metrics import evaluate
 from game_solving.evaluation.history import validate_history
-from game_solving.evaluation.distribution import describe_scene
+from game_solving.evaluation.distribution import (
+    describe_scene,
+    write_initial_distribution_csv,
+)
 from .services import Services
 from game_solving.evaluation.comparison import compare, render
 
@@ -119,9 +122,23 @@ class Pipeline:
                 return 2, report
         else:
             scenes = [scene_from_dict(row) for row in read_jsonl(input_path)]
+            audits = []
             if not scenes:
                 raise ValueError("EMPTY_INPUT")
-        store.write("initial_distribution.jsonl", [describe_scene(scene, self.services.policy) for scene in scenes], True)
+        audit_by_scene = {audit["scene_id"]: audit for audit in audits}
+        distributions = []
+        for scene in scenes:
+            distribution = describe_scene(scene, self.services.policy)
+            parameters = audit_by_scene.get(scene.scene_id, {}).get(
+                "scenario_parameters"
+            )
+            if parameters is not None:
+                distribution["scenario_parameters"] = parameters
+            distributions.append(distribution)
+        store.write("initial_distribution.jsonl", distributions, True)
+        write_initial_distribution_csv(
+            distributions, store.path / "initial_distribution.csv"
+        )
         if command == "solve":
             store.write("solver_inputs.jsonl", scenes, True)
         results = []
@@ -183,7 +200,7 @@ class Pipeline:
             stored_results = []
             for result in results:
                 stored = asdict(result)
-                stored["trace"] = [{key: value for key, value in row.items() if key not in ("users", "coordination_events")} for row in result.trace]
+                stored["trace"] = [{key: value for key, value in row.items() if key not in ("users", "user_metrics", "coordination_events")} for row in result.trace]
                 stored["detail_trace_file"] = "iteration_trace.jsonl"
                 stored_results.append(stored)
             store.write("solve_results.jsonl", stored_results, True)
@@ -191,6 +208,20 @@ class Pipeline:
             store.write("reference_results.jsonl", references, True)
             store.write("metrics.jsonl", metrics, True)
             store.write("iteration_trace.jsonl", [{"scene_id": result.scene_id, **row} for result in results for row in result.trace], True)
+            store.write(
+                "user_trajectories.jsonl",
+                [
+                    {
+                        "scene_id": result.scene_id,
+                        "iteration": row["iteration"],
+                        "users": row.get("user_metrics", []),
+                    }
+                    for result in results
+                    for row in result.trace
+                    if row.get("user_metrics")
+                ],
+                True,
+            )
             store.write(
                 "static_labels.jsonl",
                 [

@@ -4,6 +4,20 @@
 <h3>各场景容量对照 · 点击切换</h3><div id="capacity-scenes" class="table-wrap"></div>
 <p class="hint">单位 kbps。求解可用上限 = 小区总上限 − 非受控占用 − 预留；余量比例 =（求解可用上限 − 初始用户占用）÷ 初始用户占用。上下行分别约束，场景内上限不随迭代变化。</p>
 </section>
+<section id="user-analysis" class="panel" style="margin-bottom:16px">
+<h2>用户体验筛选与逐轮轨迹</h2>
+<div class="analysis-toolbar">
+<label for="user-package-filter">用户类型<select id="user-package-filter"><option value="ALL">全部</option><option value="vip">VIP</option><option value="normal">普通用户</option></select></label>
+<label for="user-mos-trend">MOS变化<select id="user-mos-trend"><option value="ALL">全部</option><option value="UP">上升</option><option value="DOWN">下降</option><option value="SAME">不变</option><option value="NA">无MOS</option></select></label>
+<label for="user-kqi-metric">KQI指标<select id="user-kqi-metric"><option value="avg_qoe">avgQoe</option><option value="bitrate_kbps">码率</option><option value="resolution">分辨率</option><option value="service_delay_ms">时延</option><option value="loss_ratio">丢包率</option><option value="stall_ratio">卡顿率</option><option value="stalling_level">卡顿档位</option><option value="buffer_ms">首缓</option><option value="jitter_ms">抖动</option></select></label>
+<label for="user-kqi-direction">KQI方向<select id="user-kqi-direction"><option value="ALL">全部方向均值</option><option value="ul">上行 UL</option><option value="dl">下行 DL</option><option value="session">会话</option></select></label>
+<label for="user-kqi-trend">KQI变化<select id="user-kqi-trend"><option value="ALL">全部</option><option value="UP">上升</option><option value="DOWN">下降</option><option value="SAME">不变</option><option value="NA">无数据</option></select></label>
+</div>
+<div class="user-picker"><label for="trajectory-user">查看用户</label><select id="trajectory-user"></select><span id="user-filter-summary" class="hint" aria-live="polite"></span></div>
+<div id="user-filter-table" class="table-wrap user-table"></div>
+<p class="hint">变化比较使用“算法返回方案 − 初始状态”。KQI 的上升/下降仅表示数值方向；时延、丢包率、卡顿率下降通常代表体验改善。点击用户行可查看轨迹。</p>
+<div class="user-chart-grid"><section><h3 id="user-mos-title">MOS逐轮变化</h3><div id="user-mos-chart"></div></section><section><h3 id="user-kqi-title">KQI逐轮变化</h3><div id="user-kqi-chart"></div></section></div>
+</section>
 <section id="strategy-detail" class="panel" style="margin-top:16px">
 <h2>标准答案：一组完整的联合策略</h2>
 <p id="proof-note" class="notice"></p><div id="strategy-answer" class="table-wrap"></div>
@@ -27,6 +41,7 @@
 {
 const section=$('strategy-detail');document.querySelector('main .grid').before(section);
 document.querySelector('main > section.panel').before($('capacity-detail'));
+$('capacity-detail').after($('user-analysis'));
 const num=x=>x==null?'—':typeof x==='number'?String(Number(x.toFixed(6))):String(x);
 const yes=x=>x==null?'—':x?'是':'否';
 const bw=a=>a?.bandwidth?num(a.bandwidth.ul)+' / '+num(a.bandwidth.dl):'—';
@@ -34,6 +49,56 @@ const byUser=xs=>new Map((xs||[]).map(x=>[x.user_id,x]));
 const currentScene=()=>scenes.find(s=>s.id===$('scene').value);
 const currentRound=()=>currentScene()?.detail_trace?.find(t=>String(t.iteration)===$('round-select').value);
 const fill=(id,headers,rows)=>$(id).replaceChildren(table(headers,rows.map(r=>r.map(num))));
+const kqiMetrics={
+ avg_qoe:{label:'avgQoe',unit:'分'},bitrate_kbps:{label:'码率',unit:'kbps'},resolution:{label:'分辨率',unit:'垂直像素'},
+ service_delay_ms:{label:'时延',unit:'ms'},loss_ratio:{label:'丢包率',unit:'比例'},stall_ratio:{label:'卡顿率',unit:'比例'},
+ stalling_level:{label:'卡顿档位',unit:'档'},buffer_ms:{label:'首缓',unit:'ms'},jitter_ms:{label:'抖动',unit:'ms'}
+};
+const mean=xs=>{const values=xs.filter(Number.isFinite);return values.length?values.reduce((a,b)=>a+b,0)/values.length:null;};
+const trend=(before,after)=>!Number.isFinite(before)||!Number.isFinite(after)?'NA':after-before>1e-9?'UP':before-after>1e-9?'DOWN':'SAME';
+const trendText=x=>({UP:'上升',DOWN:'下降',SAME:'不变',NA:'无数据'})[x]||'—';
+const metricRounds=s=>s.user_trajectories?.length?s.user_trajectories:(s.detail_trace||[]);
+const metricAction=u=>u?.allocated||u;
+function userDirections(s,userId){
+ const u=(s.users||[]).find(x=>x.user_id===userId),final=byUser(s.decisions).get(userId),set=new Set(Object.keys(u?.streams||{}));
+ for(const d of Object.keys(final?.predicted_kqi||{}))set.add(d);
+ for(const t of metricRounds(s))for(const d of Object.keys(metricAction((t.users||[]).find(x=>x.user_id===userId))?.KQI||{}))set.add(d);
+ const selected=$('user-kqi-direction').value;return selected==='ALL'?[...set]:set.has(selected)?[selected]:[];
+}
+function initialKqi(s,u,d,key){
+ const first=(metricRounds(s)[0]?.users||[]).find(x=>x.user_id===u.user_id),saved=first?.initial_KQI?.[d]?.[key];if(Number.isFinite(saved))return saved;
+ const current=first?.allocated?.KQI?.[d]?.[key],delta=first?.kqi_change_from_initial?.[d]?.[key];
+ if(Number.isFinite(current))return current-(Number.isFinite(delta)?delta:0);
+ const stream=u.streams?.[d];if(!stream)return null;
+ const fields={bitrate_kbps:'bitrate_kbps',resolution:'resolution',service_delay_ms:'rtt_ms',loss_ratio:'loss_ratio',stall_ratio:'stall_ratio',buffer_ms:'buffer_ms',jitter_ms:'jitter_ms'};
+ if(key==='avg_qoe')return Number.isFinite(u.observed_mos)?u.observed_mos*(s.avg_qoe_per_mos||20):null;
+ return Number.isFinite(stream[fields[key]])?stream[fields[key]]:null;
+}
+function userChangeRecord(s,u){
+ const final=byUser(s.decisions).get(u.user_id),metric=$('user-kqi-metric').value,directions=userDirections(s,u.user_id);
+ const beforeKqi=mean(directions.map(d=>initialKqi(s,u,d,metric))),afterKqi=mean(directions.map(d=>final?.predicted_kqi?.[d]?.[metric]));
+ return {u,final,beforeMos:u.observed_mos,afterMos:final?.mos,beforeKqi,afterKqi,mosTrend:trend(u.observed_mos,final?.mos),kqiTrend:trend(beforeKqi,afterKqi)};
+}
+function renderUserAnalysis(){
+ const s=currentScene();if(!s)return;const packageFilter=$('user-package-filter').value,mosFilter=$('user-mos-trend').value,kqiFilter=$('user-kqi-trend').value;
+ const records=(s.users||[]).map(u=>userChangeRecord(s,u)),visible=records.filter(r=>(packageFilter==='ALL'||r.u.package===packageFilter)&&(mosFilter==='ALL'||r.mosTrend===mosFilter)&&(kqiFilter==='ALL'||r.kqiTrend===kqiFilter));
+ const selected=$('trajectory-user').value;$('trajectory-user').replaceChildren();for(const r of visible){const o=el('option',r.u.user_id+' · '+(r.u.package==='vip'?'VIP':'普通')+' · '+r.u.app_id);o.value=r.u.user_id;$('trajectory-user').append(o);}
+ if(visible.some(r=>r.u.user_id===selected))$('trajectory-user').value=selected;
+ $('user-filter-summary').textContent='筛选结果 '+visible.length+' / '+records.length+' 人；上升/下降按返回方案与初始值比较。';
+ const metric=kqiMetrics[$('user-kqi-metric').value],rows=visible.map(r=>[r.u.user_id,r.u.package==='vip'?'VIP':'普通',r.u.business,r.u.app_id,r.beforeMos,r.afterMos,Number.isFinite(r.beforeMos)&&Number.isFinite(r.afterMos)?r.afterMos-r.beforeMos:null,trendText(r.mosTrend),r.beforeKqi,r.afterKqi,Number.isFinite(r.beforeKqi)&&Number.isFinite(r.afterKqi)?r.afterKqi-r.beforeKqi:null,trendText(r.kqiTrend)]);
+ const t=table(['用户','类型','业务','App','初始MOS','返回MOS','ΔMOS','MOS方向','初始'+metric.label,'返回'+metric.label,'Δ'+metric.label,'KQI方向'],rows);
+ [...t.tBodies[0].rows].forEach((row,i)=>{row.dataset.id=visible[i].u.user_id;if(visible[i].u.user_id===$('trajectory-user').value)row.className='selected-row';row.onclick=()=>{$('trajectory-user').value=visible[i].u.user_id;renderUserAnalysis();};});
+ $('user-filter-table').replaceChildren(t);if(!visible.length)$('user-filter-table').replaceChildren(el('div','没有符合当前筛选条件的用户。','empty'));
+ renderUserTrajectory();
+}
+function renderUserTrajectory(){
+ const s=currentScene(),userId=$('trajectory-user').value,u=(s?.users||[]).find(x=>x.user_id===userId);if(!s||!u){$('user-mos-chart').replaceChildren(el('div','请选择有数据的用户。','empty'));$('user-kqi-chart').replaceChildren(el('div','请选择有数据的用户。','empty'));return;}
+ const final=byUser(s.decisions).get(userId),rounds=metricRounds(s),axis=[{iteration:'初始'},...rounds.map(t=>({iteration:t.iteration})),{iteration:'返回'}];
+ const roundUsers=rounds.map(t=>(t.users||[]).find(x=>x.user_id===userId));
+ $('user-mos-title').textContent=userId+' · MOS逐轮变化';chart('user-mos-chart',axis,[{name:'MOS',values:[u.observed_mos,...roundUsers.map(x=>metricAction(x)?.mos),final?.mos]}],false);
+ const metricKey=$('user-kqi-metric').value,metric=kqiMetrics[metricKey],directions=userDirections(s,userId),series=directions.map(d=>({name:(d==='ul'?'上行 UL':d==='dl'?'下行 DL':'会话')+' · '+metric.label,values:[initialKqi(s,u,d,metricKey),...roundUsers.map(x=>metricAction(x)?.KQI?.[d]?.[metricKey]),final?.predicted_kqi?.[d]?.[metricKey]]}));
+ $('user-kqi-title').textContent=userId+' · '+metric.label+'逐轮变化（'+metric.unit+'）';chart('user-kqi-chart',axis,series,false);
+}
 function renderStrategies(){
  const s=currentScene();if(!s)return;const ref=s.reference||{};
  const label=x=>{const b=x.resource_budget||{};return '余量 UL '+num(b.ul?.headroom_percent)+'% / DL '+num(b.dl?.headroom_percent)+'%';};
@@ -53,9 +118,9 @@ function renderStrategies(){
   }
  }
  fill('strategy-answer',['用户','套餐','业务','App','方案','动作 ID','上行 / 下行','MOS','目标 MOS','达标','VIP质差保障','个人 H'],rows);
- const refKqi=[];for(const a of ref.policy_decisions||[]){const u=(s.users||[]).find(x=>x.user_id===a.user_id)||{};for(const [d,k] of Object.entries(a.predicted_kqi||{})){refKqi.push([a.user_id,u.package==='vip'?'VIP':'普通',u.business,u.app_id,d,k.avg_qoe,k.bitrate_kbps,k.service_delay_ms,k.loss_ratio,k.stall_ratio,k.stalling_duration_seconds_proxy]);}}
- fill('strategy-kqi',['用户','套餐','业务','App','方向','avgQoe','码率 kbps','时延 ms','丢包率','卡顿率','卡顿时长代理 s'],refKqi);
- $('round-select').replaceChildren();for(const t of s.detail_trace||[]){const o=el('option','第 '+t.iteration+' 轮');o.value=t.iteration;$('round-select').append(o);}renderRound();
+ const refKqi=[];for(const a of ref.policy_decisions||[]){const u=(s.users||[]).find(x=>x.user_id===a.user_id)||{};for(const [d,k] of Object.entries(a.predicted_kqi||{})){refKqi.push([a.user_id,u.package==='vip'?'VIP':'普通',u.business,u.app_id,d,k.avg_qoe,k.bitrate_kbps,k.service_delay_ms,k.loss_ratio,k.stall_ratio,k.stalling_level]);}}
+ fill('strategy-kqi',['用户','套餐','业务','App','方向','avgQoe','码率 kbps','时延 ms','丢包率','卡顿率','卡顿档位'],refKqi);
+ $('round-select').replaceChildren();for(const t of s.detail_trace||[]){const o=el('option','第 '+t.iteration+' 轮');o.value=t.iteration;$('round-select').append(o);}renderRound();renderUserAnalysis();
 }
 function renderRound(){
  const s=currentScene(),t=currentRound();if(!t){$('round-state').textContent='此结果没有保存逐轮用户明细，请开启 trace_users 后重新求解。';['round-users','candidate-actions','round-events','round-components'].forEach(id=>$(id).replaceChildren());$('candidate-user').replaceChildren();return;}
@@ -69,8 +134,8 @@ function renderRound(){
  '；策略变化比例 '+num(t.strategy_change)+'；资源变化比例 '+num(t.resource_change)+'；效用变化比例 '+num(t.utility_change)+
  '；稳定计数 '+num(t.stable_count)+' / '+num(t.stable_required)+'；完整动作范围 '+yes(t.full_scope)+'；局部检查通过 '+yes(t.local_optimal)+'。';
  fill('round-users',['用户','套餐','业务','App','上轮上/下行','本轮请求上/下行','协调后上/下行','上轮 MOS','请求 MOS','协调后 MOS','MOS 变化','VIP达标','VIP质差保障','个人 H','参考上/下行'],(t.users||[]).map(u=>[u.user_id,u.package,u.business,u.app_id,bw(previous(u)),bw(u.requested),bw(u.allocated),previous(u).mos,u.requested.mos,u.allocated.mos,u.allocated.mos!=null&&previous(u).mos!=null?u.allocated.mos-previous(u).mos:null,u.package==='vip'?yes(u.allocated.target_met):'不评价',u.package==='vip'?yes(u.allocated.quality_guarantee_met):'不评价',u.allocated.H,bw(ref.get(u.user_id))]));
- const kqi=[],records=[];for(const u of t.users||[])for(const [d,current] of Object.entries(u.allocated.KQI||{})){const delta=u.kqi_change_from_initial?.[d]||{},initial={};for(const field of ['avg_qoe','bitrate_kbps','resolution','service_delay_ms','loss_ratio','stall_ratio','stalling_duration_seconds_proxy'])initial[field]=current[field]==null?null:current[field]-(delta[field]||0);records.push({u,d,current,delta,initial});kqi.push([u.user_id,u.package==='vip'?'VIP':'普通',u.app_id,d,initial.avg_qoe,current.avg_qoe,delta.avg_qoe,initial.bitrate_kbps,current.bitrate_kbps,delta.bitrate_kbps,initial.resolution,current.resolution,delta.resolution,initial.service_delay_ms,current.service_delay_ms,delta.service_delay_ms,initial.loss_ratio,current.loss_ratio,delta.loss_ratio,initial.stall_ratio,current.stall_ratio,delta.stall_ratio,(u.allocated.quality_violations||[]).join(',')]);}
- const avg=(xs,f)=>xs.length?xs.reduce((n,x)=>n+(f(x)||0),0)/xs.length:null,metrics=[['avgQoe','avg_qoe'],['码率 kbps','bitrate_kbps'],['分辨率（垂直像素）','resolution'],['时延 ms','service_delay_ms'],['丢包率','loss_ratio'],['卡顿率','stall_ratio'],['卡顿时长代理 s','stalling_duration_seconds_proxy']];
+ const kqi=[],records=[];for(const u of t.users||[])for(const [d,current] of Object.entries(u.allocated.KQI||{})){const delta=u.kqi_change_from_initial?.[d]||{},initial={};for(const field of ['avg_qoe','bitrate_kbps','resolution','service_delay_ms','loss_ratio','stall_ratio','stalling_level'])initial[field]=current[field]==null?null:current[field]-(delta[field]||0);records.push({u,d,current,delta,initial});kqi.push([u.user_id,u.package==='vip'?'VIP':'普通',u.app_id,d,initial.avg_qoe,current.avg_qoe,delta.avg_qoe,initial.bitrate_kbps,current.bitrate_kbps,delta.bitrate_kbps,initial.resolution,current.resolution,delta.resolution,initial.service_delay_ms,current.service_delay_ms,delta.service_delay_ms,initial.loss_ratio,current.loss_ratio,delta.loss_ratio,initial.stall_ratio,current.stall_ratio,delta.stall_ratio,(u.allocated.quality_violations||[]).join(',')]);}
+ const avg=(xs,f)=>xs.length?xs.reduce((n,x)=>n+(f(x)||0),0)/xs.length:null,metrics=[['avgQoe','avg_qoe'],['码率 kbps','bitrate_kbps'],['分辨率（垂直像素）','resolution'],['时延 ms','service_delay_ms'],['丢包率','loss_ratio'],['卡顿率','stall_ratio'],['卡顿档位','stalling_level']];
  fill('round-kqi-summary',['指标','初始均值','本轮均值','平均变化'],metrics.map(([name,key])=>[name,avg(records,x=>x.initial[key]),avg(records,x=>x.current[key]),avg(records,x=>x.delta[key])]));
  const resolutionDown=packageName=>records.filter(x=>x.u.package===packageName&&(x.delta.resolution||0)<0);
  $('round-kqi-summary').append(el('p','发生 KQI 变化的方向记录 '+records.filter(x=>Object.values(x.delta).some(v=>Math.abs(v||0)>1e-9)).length+' / '+records.length+'；分辨率下降：普通 '+resolutionDown('normal').length+' 条、VIP '+resolutionDown('vip').length+' 条；存在 VIP 质差原因的方向记录 '+records.filter(x=>x.u.package==='vip'&&(x.u.allocated.quality_violations||[]).length).length+'。','hint'));
@@ -89,6 +154,8 @@ function renderCandidates(){const u=currentRound()?.users?.find(u=>u.user_id===$
 }
 const originalShow=show;show=function(){originalShow();renderStrategies();};
 $('round-select').onchange=renderRound;$('candidate-user').onchange=renderCandidates;
+for(const id of ['user-package-filter','user-mos-trend','user-kqi-metric','user-kqi-direction','user-kqi-trend'])$(id).onchange=renderUserAnalysis;
+$('trajectory-user').onchange=renderUserAnalysis;
 for(const [id,delta] of [['round-prev',-1],['round-next',1]])$(id).onclick=()=>{const e=$('round-select');e.selectedIndex=Math.max(0,Math.min(e.options.length-1,e.selectedIndex+delta));renderRound();};
 $('scene').onchange=show;
 $('download-evidence').onclick=()=>{const s=currentScene();if(!s)return;const url=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)],{type:'application/json'})),a=el('a');a.href=url;a.download=s.id+'_evidence.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};

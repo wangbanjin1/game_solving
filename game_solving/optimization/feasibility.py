@@ -63,7 +63,11 @@ def minimum_action(user, requirement, policy, budget=None):
     # Non-key QoS may have contracts exceeding its minimum; fixed media feedback quotas may not.
     if not policy.c["businesses"][user.business]["mos_type"]:
         rates = {d: max(rates[d], getattr(user.contract, d)) for d in rates}
-    action = policy.make_action(user, Bandwidth(**rates), budget)
+    # A hard-domain witness is an anchor, not a normal-user request.  The
+    # request MOS cap must not make an otherwise legal minimum action vanish.
+    action = policy.make_action(
+        user, Bandwidth(**rates), budget, anchor=requirement == "hard"
+    )
     if action is None:
         return None, "HARD_DOMAIN_CONFLICT"
     if requirement == "basic" and not action.basic_met:

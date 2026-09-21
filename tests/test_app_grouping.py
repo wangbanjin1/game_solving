@@ -9,12 +9,97 @@ from game_solving.simulation.population import generate_people
 
 
 class AppGroupingTests(unittest.TestCase):
+    def test_vip_initial_scenario_grid_has_exact_requested_ratios(self):
+        config = load_config(overrides={
+            "num_scenes": 1,
+            "models": {"name": "lookup_table_v1"},
+            "population": {
+                "users_per_cell": 100,
+                "package_probs": {"normal": 0.5, "vip": 0.5},
+                "business_probs": {"game": 1.0},
+                "scenario_grid": {
+                    "enabled": True,
+                    "total_user_factors": [1.0],
+                    "vip_ratios": [0.5],
+                    "vip_unmet_ratios": [0.1, 0.2],
+                    "max_total_users": 200,
+                },
+            },
+            "generation": {
+                "capacity_mode": "current_headroom",
+                "headroom_ratios": [0.0],
+                "quota_mode": "specified",
+                "strict_quotas": True,
+                "state_pool_size": 1,
+                "history": {"enabled": False},
+            },
+            "reference": {"enabled": False},
+        })
+        scenes, audits, report = Services(config).generator().generate()
+        self.assertEqual((len(scenes), report["failed"]), (2, 0))
+        self.assertEqual(
+            [audit["scenario_parameters"]["requested_vip_unmet_ratio"] for audit in audits],
+            [0.1, 0.2],
+        )
+        actual = []
+        for scene in scenes:
+            vip = [user for user in scene.users if user.package == "vip"]
+            actual.append(sum(user.observed_mos < user.target for user in vip) / len(vip))
+        self.assertEqual(actual, [0.1, 0.2])
+
+    def test_non_mos_fraction_controls_user_generation(self):
+        # Default: non_mos_fraction is 0.0 -> all users belong to 8 multimedia categories
+        cfg_default = load_config(overrides={"num_scenes": 1, "population": {"users_per_cell": 50}})
+        scene_default = Services(cfg_default).generator().generate()[0][0]
+        self.assertTrue(all(u.business not in ("browsing", "download") for u in scene_default.users))
+
+        # Explicit non_mos_fraction = 0.2 -> exactly 20% users are browsing or download
+        cfg_custom = load_config(overrides={
+            "num_scenes": 1,
+            "population": {"users_per_cell": 50, "non_mos_fraction": 0.2}
+        })
+        scene_custom = Services(cfg_custom).generator().generate()[0][0]
+        non_mos_users = [u for u in scene_custom.users if u.business in ("browsing", "download")]
+        self.assertEqual(len(non_mos_users), 10)
+
+    def test_catalog_uses_seventeen_grouped_application_types(self):
+        config = load_config()
+        self.assertEqual(len(config["applications"]), 17)
+        self.assertEqual(
+            {
+                app_id
+                for app_id, rule in config["applications"].items()
+                if rule["business"] == "game"
+            },
+            {"game_low_latency", "game_mid_latency", "game_standard_latency"},
+        )
+
+    def test_stall_ratio_maps_to_six_levels_and_level_two_is_allowed(self):
+        config = load_config()
+        policy = Services(config).policy
+        self.assertEqual(
+            [policy._stall_level(value) for value in (0.05, 0.10, 0.20, 0.30, 0.65, 1.0)],
+            [1, 2, 3, 4, 5, 6],
+        )
+        user = SimpleNamespace(package="vip", app_id="cloudgame_standard")
+        base = {"avg_qoe": 100, "service_delay_ms": 0, "stalling_level": 2}
+        self.assertEqual(
+            policy.quality_guarantee(user, Bandwidth(0, 1800), {}, {"dl": base}),
+            (True, ()),
+        )
+        poor = dict(base, stalling_level=3)
+        met, errors = policy.quality_guarantee(
+            user, Bandwidth(0, 1800), {}, {"dl": poor}
+        )
+        self.assertFalse(met)
+        self.assertIn("STALLING_LEVEL", errors)
+
     def test_vip_game_guarantee_requires_point_three_mbps_in_both_directions(self):
         config = load_config()
         policy = Services(config).policy
-        user = SimpleNamespace(package="vip", app_id="hepingjingying_game")
-        kqi = {"ul": {"avg_qoe": 100, "service_delay_ms": 0, "stalling_duration_seconds_proxy": 0},
-               "dl": {"avg_qoe": 100, "service_delay_ms": 0, "stalling_duration_seconds_proxy": 0}}
+        user = SimpleNamespace(package="vip", app_id="game_standard_latency")
+        kqi = {"ul": {"avg_qoe": 100, "service_delay_ms": 0, "stalling_level": 1},
+               "dl": {"avg_qoe": 100, "service_delay_ms": 0, "stalling_level": 1}}
         met, errors = policy.quality_guarantee(user, Bandwidth(299, 300), {}, kqi)
         self.assertFalse(met)
         self.assertIn("BANDWIDTH_UL", errors)
@@ -96,8 +181,10 @@ class AppGroupingTests(unittest.TestCase):
         services = Services(config)
         scene = services.generator().generate()[0][0]
         user = next(u for u in scene.users if u.current.dl < 20000)
-        initial = services.policy.make_action(user, user.current)
-        upgraded = services.policy.make_action(user, Bandwidth(user.current.ul, 20000))
+        initial = services.policy.make_action(user, user.current, anchor=True)
+        upgraded = services.policy.make_action(
+            user, Bandwidth(user.current.ul, 20000), anchor=True
+        )
         before, after = initial.predicted_kqi["dl"], upgraded.predicted_kqi["dl"]
         self.assertGreaterEqual(after["resolution"], before["resolution"])
         self.assertLess(after["service_delay_ms"], before["service_delay_ms"])

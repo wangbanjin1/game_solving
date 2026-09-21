@@ -40,6 +40,13 @@ def generate_report(input_dir, output_path):
             if line.strip():
                 row = json.loads(line)
                 detailed_traces.setdefault(row["scene_id"], []).append(row)
+    user_trajectories = {}
+    trajectory_path = source / "user_trajectories.jsonl"
+    if trajectory_path.exists():
+        for line in trajectory_path.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                row = json.loads(line)
+                user_trajectories.setdefault(row["scene_id"], []).append(row)
     config_path = source / "resolved_config.json"
     config = json.loads(config_path.read_text(encoding="utf-8")) if config_path.exists() else {}
     cell = config.get("cell", {})
@@ -85,6 +92,7 @@ def generate_report(input_dir, output_path):
                           decisions=result.get("decisions", []),
                           terminal_decisions=result.get("terminal_decisions", []),
                           detail_trace=detailed_traces.get(sid, []),
+                          user_trajectories=user_trajectories.get(sid, []),
                           H_returned=sum(a["h"] for a in result.get("decisions", [])),
                           H_terminal=sum(a["h"] for a in result.get("terminal_decisions", [])) if result.get("terminal_decisions") else None,
                           returned_policy=policy_summary(result.get("decisions", [])),

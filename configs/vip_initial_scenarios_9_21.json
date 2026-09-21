@@ -1,0 +1,48 @@
+{
+  "seed": 20260921,
+  "num_scenes": 1,
+  "population": {
+    "users_per_cell": 300,
+    "max_users": 20000,
+    "minimum_app_coverage": true,
+    "package_probs": {"normal": 0.8, "vip": 0.2},
+    "scenario_grid": {
+      "enabled": true,
+      "total_user_factors": [0.8, 1.0, 1.2],
+      "vip_ratios": [0.15, 0.20, 0.25],
+      "vip_unmet_ratios": [0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60],
+      "max_total_users": 20000
+    }
+  },
+  "generation": {
+    "capacity_mode": "current_headroom",
+    "headroom_ratios": [0.0],
+    "quota_mode": "specified",
+    "strict_quotas": true,
+    "state_pool_size": 1,
+    "role_max_attempts": 1000,
+    "max_model_evaluations": 1000000,
+    "history": {"enabled": false}
+  },
+  "policy": {
+    "objective": "vip_guarantee",
+    "weight_mode": "lexicographical"
+  },
+  "utility": {
+    "sla_guarantee_enabled": true,
+    "sla_vip_value": 10.0,
+    "sla_normal_value": 2.0,
+    "w_min": 0.5,
+    "w_max": 2.0
+  },
+  "solver": {
+    "max_iterations": 30,
+    "max_total_steps": 30000000,
+    "time_budget_ms": 60000,
+    "price_update": "smoothed",
+    "trace_users": false,
+    "trace_user_metrics": true
+  },
+  "models": {"name": "lookup_table_v1"},
+  "reference": {"enabled": false}
+}

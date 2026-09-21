@@ -111,8 +111,46 @@ class ConditionalSampler:
                 floor = (reference["aggregate_" + d + "_kbps"] / reference["devices"] * fraction) if high_load and d != "session" else 0
                 s = self.environment(business, rng, floor)
                 if d == "session":
-                    streams[d] = s
-                    direction_mos[d] = self.model.forward(business, s, budget)
+                    if requested is None:
+                        streams[d] = s
+                        direction_mos[d] = self.model.forward(
+                            business, s, budget
+                        )
+                        continue
+                    low, high = interval(target, requested, c)
+                    if business == "game":
+                        high = min(high, c["models"]["game_quality"])
+                    if low > high:
+                        return None, "MOS_BAND_UNREACHABLE_OR_LOW_ACCEPTANCE"
+                    wanted = rng.uniform(low, high)
+                    if hasattr(self.model, "rate_bounds"):
+                        domain_low, domain_high = self.model.rate_bounds(
+                            business, s.phase
+                        )
+                        s = replace(
+                            s,
+                            min_kbps=domain_low,
+                            max_kbps=domain_high,
+                        )
+                    inverse = self.model.inverse(
+                        business, wanted, s, budget
+                    )
+                    if not inverse.feasible:
+                        return None, inverse.reason
+                    selected_stream = replace(
+                        s, bitrate_kbps=inverse.bandwidth_kbps
+                    )
+                    if hasattr(self.model, "project_stream"):
+                        selected_stream = self.model.project_stream(
+                            business,
+                            selected_stream,
+                            inverse.bandwidth_kbps,
+                        )
+                    streams[d] = selected_stream
+                    direction_mos[d] = self.model.forward(
+                        business, selected_stream, budget
+                    )
+                    proposal_targets[d] = wanted
                     continue
                 contract = p["contract_" + d + "_kbps"]
                 s = replace(
@@ -138,9 +176,23 @@ class ConditionalSampler:
                 inverse = self.model.inverse(business, wanted, replace(s, min_kbps=max(s.min_kbps, floor)), budget)
                 if not inverse.feasible:
                     return None, inverse.reason
-                rates[d] = inverse.bandwidth_kbps
-                streams[d] = replace(s, bitrate_kbps=inverse.bandwidth_kbps)
-                direction_mos[d] = inverse.mos
+                selected_stream = replace(
+                    s, bitrate_kbps=inverse.bandwidth_kbps
+                )
+                # Lookup models invert to a concrete table row.  Keep the
+                # generated KQI values on that same row before the forward
+                # band check; mixing the selected bandwidth with the earlier
+                # random KQIs creates an artificial quantization mismatch.
+                if hasattr(self.model, "project_stream"):
+                    selected_stream = self.model.project_stream(
+                        business, selected_stream, inverse.bandwidth_kbps
+                    )
+                actual_mos = self.model.forward(
+                    business, selected_stream, budget
+                )
+                rates[d] = selected_stream.bitrate_kbps
+                streams[d] = selected_stream
+                direction_mos[d] = actual_mos
                 proposal_targets[d] = wanted
             actual = min(direction_mos.values())
             evaluated = person["package"] in p["evaluation_packages"]

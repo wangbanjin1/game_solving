@@ -22,6 +22,12 @@ class VisualizationTests(unittest.TestCase):
             self.assertIsNone(scene["capacity"]["ul"])
             self.assertIsNone(scene["comparison"])
             self.assertNotIn('<script src=', text)
+            self.assertIn('id="user-package-filter"', text)
+            self.assertIn('id="user-mos-trend"', text)
+            self.assertIn('id="user-kqi-metric"', text)
+            self.assertIn('id="trajectory-user"', text)
+            self.assertIn('id="user-mos-chart"', text)
+            self.assertIn('id="user-kqi-chart"', text)
             with self.assertRaisesRegex(ValueError, "OUTPUT_EXISTS"):
                 generate_report(folder, output)
 

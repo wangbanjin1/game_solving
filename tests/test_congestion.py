@@ -39,7 +39,13 @@ class CongestionTests(unittest.TestCase):
                     media = next(m for m in c["businesses"][u.business]["media"] if m["resolution"] == u.streams["dl"].resolution)
                     self.assertEqual(u.streams["dl"].min_kbps, media["min_kbps"])
                     self.assertLessEqual(u.current.dl, u.streams["dl"].max_kbps)
-                    self.assertIsNotNone(svc.policy.make_action(u, Bandwidth(100, u.streams["dl"].min_kbps)))
+                    self.assertIsNotNone(
+                        svc.policy.make_action(
+                            u,
+                            Bandwidth(100, u.streams["dl"].min_kbps),
+                            anchor=True,
+                        )
+                    )
 
     def test_reference_does_not_rescale_regular_users(self):
         original = self.services.generator().generate()[0]
@@ -192,10 +198,15 @@ class CongestionTests(unittest.TestCase):
             self.assertEqual(Pipeline(c).execute("solve", root / "solve", root / "data" / "solver_inputs.jsonl")[0], 0)
             read = lambda name: [json.loads(row) for row in (root / "solve" / name).read_text(encoding="utf-8").splitlines()]
             details = read("iteration_trace.jsonl")
+            trajectories = read("user_trajectories.jsonl")
             results = read("solve_results.jsonl")
             self.assertIn("users", details[0])
+            self.assertIn("user_metrics", details[0])
             self.assertNotIn("users", results[0]["trace"][0])
+            self.assertNotIn("user_metrics", results[0]["trace"][0])
             self.assertEqual(len(details), results[0]["iterations"])
+            self.assertEqual(len(trajectories), results[0]["iterations"])
+            self.assertIn("initial_KQI", trajectories[0]["users"][0])
             self.assertTrue(read("reference_results.jsonl")[0]["policy_witness_validated"])
             for row in details:
                 self.assertAlmostEqual(row["H"], sum(u["allocated"]["H"] for u in row["users"]))
@@ -212,6 +223,76 @@ class CongestionTests(unittest.TestCase):
             payload = json.loads(re.search(r'<script id="report-data" type="application/json">(.*?)</script>', html, re.S).group(1))
             saved = payload["scenes"][0]
             self.assertEqual(saved["detail_trace"], details)
+            self.assertEqual(saved["user_trajectories"], trajectories)
             self.assertEqual(saved["reference"]["policy_decisions"], read("reference_results.jsonl")[0]["policy_decisions"])
             self.assertEqual(saved["decisions"], results[0]["decisions"])
             self.assertEqual(read("initial_distribution.jsonl")[0]["groups"]["all"]["users"], 4)
+
+    def test_lightweight_user_trajectory_does_not_require_full_user_trace(self):
+        c = load_config("configs/congestion_exact.json", {
+            "generation": {"headroom_ratios": [0.0]},
+            "solver": {"trace_user_metrics": True, "trace_users": False},
+        })
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.assertEqual(Pipeline(c).execute("generate", root / "data")[0], 0)
+            self.assertEqual(Pipeline(c).execute(
+                "solve", root / "solve", root / "data" / "solver_inputs.jsonl"
+            )[0], 0)
+            read = lambda name: [json.loads(row) for row in (
+                root / "solve" / name
+            ).read_text(encoding="utf-8").splitlines()]
+            details = read("iteration_trace.jsonl")
+            trajectories = read("user_trajectories.jsonl")
+            self.assertNotIn("users", details[0])
+            self.assertIn("user_metrics", details[0])
+            self.assertTrue(trajectories[0]["users"])
+            self.assertIn("initial_KQI", trajectories[0]["users"][0])
+
+    def test_two_stage_sla_and_lexicographical_weights(self):
+        from game_solving.domain.entities import User, Bandwidth, Action
+        from game_solving.optimization.policy import Policy
+
+        c = load_config("configs/default.json", {
+            "policy": {"weight_mode": "ordered", "objective": "vip_guarantee"},
+            "utility": {
+                "sla_guarantee_enabled": True,
+                "sla_vip_value": 10.0,
+                "sla_normal_value": 2.0,
+                "w_min": 0.5,
+                "w_max": 2.0,
+            },
+        })
+
+        class DummyModel:
+            pass
+
+        pol = Policy(c, DummyModel())
+
+        # 1. Verify lexicographical linear normalization order and bounds
+        for biz in c["businesses"]:
+            for pos in ["near", "middle", "far"]:
+                for tol in ["low", "medium", "high"]:
+                    u_vip = User(user_id="vip_1", business=biz, package="vip", position=pos, tolerance=tol, profile="demo_non_gbr", current=Bandwidth(100, 100), streams={}, observed_mos=4.0, target=4.0, baseline=4.0)
+                    u_norm = User(user_id="norm_1", business=biz, package="normal", position=pos, tolerance=tol, profile="demo_non_gbr", current=Bandwidth(100, 100), streams={}, observed_mos=2.5, target=2.5, baseline=2.5)
+                    w_v = pol.weight(u_vip)
+                    w_n = pol.weight(u_norm)
+                    self.assertGreater(w_v, w_n)
+                    self.assertGreaterEqual(w_v, 1.25)
+                    self.assertLessEqual(w_v, 2.0)
+                    self.assertGreaterEqual(w_n, 0.5)
+                    self.assertLessEqual(w_n, 1.25)
+
+        # 2. Verify VIP decision score (10.0 step bonus when met, 0 when unmet)
+        u_vip = User(user_id="vip_1", business="game", package="vip", position="near", tolerance="low", profile="demo_non_gbr", current=Bandwidth(100, 100), streams={}, observed_mos=4.0, target=4.0, baseline=4.0)
+        act_vip_met = Action("u1", "a1", Bandwidth(1000, 1000), {}, 4.2, 0.8, 1.5, 0.0, True, True, 0.0, quality_guarantee_met=True)
+        act_vip_unmet = Action("u1", "a2", Bandwidth(200, 200), {}, 2.0, 0.25, 0.3, 0.0, False, False, 0.5, quality_guarantee_met=False)
+        self.assertEqual(pol.decision_score(u_vip, act_vip_met), 10.0 + 1.5)
+        self.assertEqual(pol.decision_score(u_vip, act_vip_unmet), 0.0 + 0.3)
+
+        # 3. Verify Normal user decision score (2.0 step bonus when basic floor met, no 0.001 patch)
+        u_norm = User(user_id="norm_1", business="game", package="normal", position="near", tolerance="low", profile="demo_non_gbr", current=Bandwidth(100, 100), streams={}, observed_mos=2.5, target=2.5, baseline=2.5)
+        act_norm_met = Action("u2", "a3", Bandwidth(500, 500), {}, 3.0, 0.5, 0.8, 0.0, True, True, 0.0, quality_guarantee_met=False)
+        act_norm_unmet = Action("u2", "a4", Bandwidth(100, 100), {}, 1.5, 0.1, 0.1, 0.0, False, False, 0.5, quality_guarantee_met=False)
+        self.assertEqual(pol.decision_score(u_norm, act_norm_met), 2.0 + 0.8)
+        self.assertEqual(pol.decision_score(u_norm, act_norm_unmet), 0.0 + 0.1)

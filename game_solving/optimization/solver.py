@@ -242,11 +242,26 @@ class Solver:
                         "exchange_checks": getattr(self.coordinator, "exchange_checks", 0),
                         "exchange_truncated": getattr(self.coordinator, "exchange_truncated", False),
                         "coordination_events": getattr(self.coordinator, "events", []),
+                        **({"user_metrics": [
+                            {
+                                "user_id": u.user_id,
+                                "mos": action.mos,
+                                "KQI": action.predicted_kqi,
+                                **(
+                                    {"initial_KQI": anchors[i].predicted_kqi}
+                                    if k == 0 and anchors[i] is not None
+                                    else {}
+                                ),
+                            }
+                            for i, (u, action) in enumerate(
+                                zip(scene.users, repaired)
+                            )
+                        ]} if p["trace_user_metrics"] else {}),
                         **({"users": [
                             {"user_id": u.user_id, "package": u.package, "business": u.business, "app_id": u.app_id, "group": list(self.policy.group_key(u)),
                              "requested": {"action_id": request.action_id, "bandwidth": asdict(request.bandwidth), "mos": request.mos, "KQI": request.predicted_kqi, "H": request.h},
                              "allocated": {"action_id": action.action_id, "bandwidth": asdict(action.bandwidth), "mos": action.mos, "direction_mos": action.direction_mos, "KQI": action.predicted_kqi, "quality_guarantee_met": action.quality_guarantee_met, "quality_violations": action.quality_violations, "target_evaluated": action.target_evaluated, "H": action.h, "basic_met": action.basic_met, "target_met": action.target_met},
-                             "kqi_change_from_initial": {d: {field: values[field] - anchors[i].predicted_kqi.get(d, {}).get(field, values[field]) for field in ("avg_qoe", "bitrate_kbps", "resolution", "service_delay_ms", "loss_ratio", "stall_ratio", "stalling_duration_seconds_proxy") if values.get(field) is not None} for d, values in action.predicted_kqi.items()},
+                             "kqi_change_from_initial": {d: {field: values[field] - anchors[i].predicted_kqi.get(d, {}).get(field, values[field]) for field in ("avg_qoe", "bitrate_kbps", "resolution", "service_delay_ms", "loss_ratio", "stall_ratio", "stalling_level") if values.get(field) is not None} for d, values in action.predicted_kqi.items()},
                              "utility": self.policy.components(u, action),
                              "shadow_cost": (prices[0] * action.bandwidth.ul + prices[1] * action.bandwidth.dl) / c["utility"]["bandwidth_reference_kbps"],
                              "delta_H_from_initial": action.h - anchors[i].h if anchors[i] else None,

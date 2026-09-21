@@ -19,15 +19,53 @@ logger = logging.getLogger(__name__)
 class DatasetGenerator:
     def __init__(self, config, model, policy):
         self.c = config
+        self.model = model
+        self.policy = policy
         self.sampler = ConditionalSampler(config, model, policy)
         self.history = HistoryGenerator(config, policy)
 
+    def _scenario_plan(self):
+        c = self.c
+        grid = c["population"]["scenario_grid"]
+        if not grid["enabled"]:
+            return [(index, c, None) for index in range(c["num_scenes"])]
+        base_users = c["population"]["users_per_cell"]
+        base_vip_ratio = c["population"]["package_probs"]["vip"]
+        plan = []
+        for user_factor in grid["total_user_factors"]:
+            users = round(base_users * user_factor)
+            for vip_ratio in grid["vip_ratios"]:
+                for unmet_ratio in grid["vip_unmet_ratios"]:
+                    local = copy.deepcopy(c)
+                    local["population"]["users_per_cell"] = users
+                    local["population"]["package_probs"] = {
+                        "normal": 1.0 - vip_ratio,
+                        "vip": vip_ratio,
+                    }
+                    local["generation"]["compliance_probs_by_package"]["vip"] = {
+                        "over": 0.0,
+                        "met": 1.0 - unmet_ratio,
+                        "unmet": unmet_ratio,
+                        "severe": 0.0,
+                    }
+                    parameters = {
+                        "total_users": users,
+                        "total_user_factor": user_factor,
+                        "requested_vip_ratio": vip_ratio,
+                        "vip_ratio_offset": round(
+                            vip_ratio - base_vip_ratio, 10
+                        ),
+                        "requested_vip_unmet_ratio": unmet_ratio,
+                    }
+                    plan.append((len(plan), local, parameters))
+        return plan
+
     def generate(self):
         c = self.c
+        plan = self._scenario_plan()
         logger.info(
-            "开始生成：场景数=%d，每场景人数=%d",
-            c["num_scenes"],
-            c["population"]["users_per_cell"],
+            "开始生成：场景数=%d，基准每场景人数=%d",
+            len(plan), c["population"]["users_per_cell"],
         )
         scenes = []
         audits = []
@@ -37,20 +75,31 @@ class DatasetGenerator:
         capacity = Bandwidth(cell["capacity_ul_kbps"], cell["capacity_dl_kbps"])
         unmanaged = Bandwidth(cell["unmanaged_ul_kbps"], cell["unmanaged_dl_kbps"])
         reserve = Bandwidth(cell["reserve_ul_kbps"], cell["reserve_dl_kbps"])
-        for index in range(c["num_scenes"]):
-            logger.info("生成场景 %d/%d", index + 1, c["num_scenes"])
-            people = generate_people(c, index)
+        for index, scene_config, scenario_parameters in plan:
+            logger.info("生成场景 %d/%d", index + 1, len(plan))
+            people = generate_people(scene_config, index)
             groups = defaultdict(list)
             requests = {}
             for person in people:
                 if c["businesses"][person["business"]]["mos_type"] and person["package"] in c["policy"]["evaluation_packages"]:
-                    groups[(person["package"], person["business"])].append(person)
+                    key = (
+                        person["package"]
+                        if scenario_parameters is not None
+                        else (person["package"], person["business"])
+                    )
+                    groups[key].append(person)
             for key, group in groups.items():
+                package = key if isinstance(key, str) else key[0]
                 quotas = (
                     allocate(
                         len(group),
-                        c["generation"]["compliance_probs_by_package"].get(key[0], c["generation"]["compliance_probs"]),
-                        rng_for(c["seed"], index, "quota", *key),
+                        scene_config["generation"]["compliance_probs_by_package"].get(
+                            package, scene_config["generation"]["compliance_probs"]
+                        ),
+                        rng_for(
+                            c["seed"], index, "quota",
+                            *(key if isinstance(key, tuple) else (key,)),
+                        ),
                     )
                     if c["generation"]["quota_mode"] == "specified"
                     else [None] * len(group)
@@ -123,7 +172,14 @@ class DatasetGenerator:
                             pools, capacity - unmanaged - reserve,
                             c["generation"]["assembly_max_nodes"], scene_budget,
                         )
-                    sid = f"scene_{index:06d}"
+                    sid = (
+                        "scene_"
+                        + f"u{scenario_parameters['total_users']:05d}"
+                        + f"_v{round(100 * scenario_parameters['requested_vip_ratio']):02d}"
+                        + f"_unmet{round(100 * scenario_parameters['requested_vip_unmet_ratio']):02d}"
+                        if scenario_parameters is not None
+                        else f"scene_{index:06d}"
+                    )
                     scene = Scene(
                         sid,
                         model_hash(c),
@@ -146,6 +202,11 @@ class DatasetGenerator:
                             "assembly_nodes": nodes,
                             "generation_steps": scene_budget.used,
                             "generation_attempt": attempt + 1,
+                            **(
+                                {"scenario_parameters": scenario_parameters}
+                                if scenario_parameters is not None
+                                else {}
+                            ),
                             **({"history": history} if history is not None else {}),
                         }
                     )
@@ -164,7 +225,14 @@ class DatasetGenerator:
             else:
                 failures.append(
                     {
-                        "scene_id": f"scene_{index:06d}",
+                        "scene_id": (
+                            "scene_"
+                            + f"u{scenario_parameters['total_users']:05d}"
+                            + f"_v{round(100 * scenario_parameters['requested_vip_ratio']):02d}"
+                            + f"_unmet{round(100 * scenario_parameters['requested_vip_unmet_ratio']):02d}"
+                            if scenario_parameters is not None
+                            else f"scene_{index:06d}"
+                        ),
                         "reason": reason,
                         "evidence": "finite_search_or_config",
                         "steps": scene_budget.used,
@@ -172,10 +240,18 @@ class DatasetGenerator:
                 )
                 logger.warning("场景 %d 生成失败：%s", index + 1, reason)
                 continue
-            if len(scenes) == 0 or scenes[-1].scene_id != f"scene_{index:06d}":
+            expected_sid = (
+                "scene_"
+                + f"u{scenario_parameters['total_users']:05d}"
+                + f"_v{round(100 * scenario_parameters['requested_vip_ratio']):02d}"
+                + f"_unmet{round(100 * scenario_parameters['requested_vip_unmet_ratio']):02d}"
+                if scenario_parameters is not None
+                else f"scene_{index:06d}"
+            )
+            if len(scenes) == 0 or scenes[-1].scene_id != expected_sid:
                 failures.append(
                     {
-                        "scene_id": f"scene_{index:06d}",
+                        "scene_id": expected_sid,
                         "reason": reason,
                         "evidence": "search_budget",
                         "steps": scene_budget.used,
@@ -203,7 +279,7 @@ class DatasetGenerator:
             "throughput_reference_role": "sampling_scale_only_not_cell_capacity_or_per_user_demand",
             "high_load_sampling": copy.deepcopy(c["generation"]["high_load_sampling"]),
             "high_load_samples": sum(u.get("high_load_sample", False) for a in audits for u in a["users"]),
-            "requested": c["num_scenes"] * (len(c["generation"]["headroom_ratios"]) if c["generation"]["capacity_mode"] == "current_headroom" else 1),
+            "requested": len(plan) * (len(c["generation"]["headroom_ratios"]) if c["generation"]["capacity_mode"] == "current_headroom" else 1),
             "successful": len(scenes),
             "failed": len(failures),
             "failures": failures,

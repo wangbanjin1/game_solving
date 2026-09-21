@@ -13,16 +13,23 @@ class Policy:
     def weight(self, u):
         p = self.c["policy"]
         b = self.c["businesses"][u.business]
-        if p["weight_mode"] == "ordered":
-            # Mixed-radix order: a primary dimension outweighs every lower
+        if p["weight_mode"] in ("ordered", "lexicographical"):
+            # Mixed-radix order / positional rank: a primary dimension outweighs every lower
             # dimension's combined contribution to this user's weight.
             priorities = sorted({v["priority"] for v in self.c["businesses"].values()})
             categories = {"business": priorities, **{d: p[d + "_order"] for d in ("package", "position", "tolerance")}}
             values = {"business": b["priority"], "package": u.package, "position": u.position, "tolerance": u.tolerance}
             ordinal = 0
+            max_ordinal = 1
             for dimension in p["weight_dimensions"]:
                 order = categories[dimension]
                 ordinal = ordinal * len(order) + len(order) - 1 - order.index(values[dimension])
+                max_ordinal *= len(order)
+            if "w_min" in self.c["utility"] and "w_max" in self.c["utility"]:
+                w_min = self.c["utility"]["w_min"]
+                w_max = self.c["utility"]["w_max"]
+                norm = ordinal / (max_ordinal - 1) if max_ordinal > 1 else 0.0
+                return w_min + (w_max - w_min) * norm
             return (ordinal + 1) / p["weight_reference"]
         group = "realtime" if b["mos_type"] else u.business
         return (
@@ -64,9 +71,9 @@ class Policy:
                 "avg_qoe": direction_mos.get(direction, 0.0)
                 * self.c["models"]["avg_qoe_per_mos"],
                 "service_delay_ms": predicted.rtt_ms,
-                # The input model has stall ratio but no duration.  Keep the
-                # conversion explicit and auditable instead of relabeling it.
-                "stalling_duration_seconds_proxy": predicted.stall_ratio * self.c["models"]["stall_window_seconds"],
+                # MOS uses a continuous stall ratio.  App quality rules use a
+                # separate six-level stall grade; never interpret it as time.
+                "stalling_level": self._stall_level(predicted.stall_ratio),
                 "stall_ratio": predicted.stall_ratio,
                 "loss_ratio": predicted.loss_ratio,
                 "buffer_ms": predicted.buffer_ms,
@@ -82,6 +89,14 @@ class Policy:
                 "height": predicted.height or None,
             }
         return result
+
+    def _stall_level(self, stall_ratio):
+        for level, upper in enumerate(
+            self.c["models"]["stall_level_ratio_upper_bounds"], start=1
+        ):
+            if stall_ratio <= upper:
+                return level
+        return 6
 
     def _action_stream(self, u, direction, stream, rate):
         if direction == "session":
@@ -130,10 +145,12 @@ class Policy:
             delay = max((x["service_delay_ms"] for x in predicted_kqi.values()), default=0.0)
             if delay >= rule["service_delay_max_ms"]:
                 errors.append("SERVICE_DELAY")
-        if rule.get("stalling_duration_max_seconds") is not None:
-            stall = max((x["stalling_duration_seconds_proxy"] for x in predicted_kqi.values()), default=0.0)
-            if stall > rule["stalling_duration_max_seconds"]:
-                errors.append("STALLING_DURATION")
+        if rule.get("stalling_level_max") is not None:
+            stall_level = max(
+                (x["stalling_level"] for x in predicted_kqi.values()), default=1
+            )
+            if stall_level > rule["stalling_level_max"]:
+                errors.append("STALLING_LEVEL")
         directional_floors = rule.get("bandwidth_min_kbps_by_direction")
         if directional_floors:
             for direction, floor in directional_floors.items():
@@ -145,9 +162,26 @@ class Policy:
                 errors.append("BANDWIDTH_" + direction.upper())
         return not errors, tuple(errors)
 
+    def is_basic_met(self, u, action):
+        if not action.basic_met:
+            return False
+        tol = self.c["solver"]["epsilon_bandwidth_kbps"]
+        for d in ("ul", "dl"):
+            floor = self.c["business_basic_kbps"].get(u.business, {}).get(d, 0.0)
+            if floor and getattr(action.bandwidth, d) < floor - tol:
+                return False
+        return True
+
     def decision_score(self, u, action):
         if self.c["policy"]["objective"] != "vip_guarantee":
             return action.h
+        if self.c["utility"].get("sla_guarantee_enabled", True):
+            g = 0.0
+            if u.package == "vip" and action.quality_guarantee_met:
+                g = self.c["utility"].get("sla_vip_value", 10.0)
+            elif u.package == "normal" and self.is_basic_met(u, action):
+                g = self.c["utility"].get("sla_normal_value", 2.0)
+            return g + action.h
         if u.package == "vip":
             return (self.c["utility"]["vip_guarantee_bonus"] if action.quality_guarantee_met else 0.0) + action.h
         return action.h * self.c["utility"]["normal_residual_factor"]

@@ -134,11 +134,48 @@ def validate(config):
                 raise ValueError("INVALID_CONDITIONAL_PROBABILITIES")
     if c["population"]["distribution_mode"] == "joint" and c["population"]["business_probs_by_package"]:
         raise ValueError("JOINT_AND_CONDITIONAL_DISTRIBUTIONS_CONFLICT")
+    grid = c["population"]["scenario_grid"]
+    if type(grid["enabled"]) is not bool:
+        raise ValueError("BOOLEAN_REQUIRED: scenario_grid.enabled")
+    for field in ("total_user_factors", "vip_ratios", "vip_unmet_ratios"):
+        values = grid[field]
+        if not values or len(values) != len(set(values)):
+            raise ValueError("INVALID_SCENARIO_GRID: " + field)
+        for value in values:
+            number(value, "scenario_grid." + field)
+    if any(value <= 0 for value in grid["total_user_factors"]):
+        raise ValueError("INVALID_SCENARIO_GRID: total_user_factors")
+    if any(not 0 < value < 1 for value in grid["vip_ratios"]):
+        raise ValueError("INVALID_SCENARIO_GRID: vip_ratios")
+    base_vip_ratio = c["population"]["package_probs"].get("vip", 0.0)
+    if any(not 0 <= value <= 1 for value in grid["vip_unmet_ratios"]):
+        raise ValueError("INVALID_SCENARIO_GRID: vip_unmet_ratios")
+    if type(grid["max_total_users"]) is not int or grid["max_total_users"] < 1:
+        raise ValueError("INVALID_SCENARIO_GRID: max_total_users")
+    planned_users = [
+        round(c["population"]["users_per_cell"] * factor)
+        for factor in grid["total_user_factors"]
+    ]
+    if any(users < 1 or users > c["population"]["max_users"] for users in planned_users):
+        raise ValueError("SCENARIO_GRID_USERS_OUT_OF_RANGE")
+    grid_total = (
+        sum(planned_users)
+        * len(grid["vip_ratios"])
+        * len(grid["vip_unmet_ratios"])
+    )
+    if grid["enabled"] and (
+        grid_total > grid["max_total_users"]
+        or not 0 < base_vip_ratio < 1
+        or c["generation"]["quota_mode"] != "specified"
+        or not c["generation"]["strict_quotas"]
+        or "vip" not in c["policy"]["evaluation_packages"]
+    ):
+        raise ValueError("INVALID_ENABLED_SCENARIO_GRID")
     if sorted(c["policy"]["priority_order"]) != ["business", "package"]:
         raise ValueError("INVALID_PRIORITY_ORDER")
     if c["policy"]["objective"] not in ("legacy_guarantee", "total_utility", "vip_guarantee"):
         raise ValueError("INVALID_OBJECTIVE")
-    if c["policy"]["weight_mode"] not in ("legacy", "ordered"):
+    if c["policy"]["weight_mode"] not in ("legacy", "ordered", "lexicographical"):
         raise ValueError("INVALID_WEIGHT_MODE")
     response = c["kqi_response"]
     for field in ("enabled", "resolution_adaptation"):
@@ -165,7 +202,7 @@ def validate(config):
     if type(c["solver"]["exchange_shortlist"]) is not int or c["solver"]["exchange_shortlist"] < 1:
         raise ValueError("INVALID_EXCHANGE_SHORTLIST")
     number(c["solver"]["epsilon_price"], "epsilon_price")
-    for section, field in (("generation", "require_target_reachable"), ("solver", "trace_users"), ("solver", "trace_candidates"), ("population", "minimum_app_coverage")):
+    for section, field in (("generation", "require_target_reachable"), ("solver", "trace_user_metrics"), ("solver", "trace_users"), ("solver", "trace_candidates"), ("population", "minimum_app_coverage")):
         if type(c[section][field]) is not bool:
             raise ValueError("BOOLEAN_REQUIRED: " + field)
     if c["solver"]["price_update"] not in ("legacy", "smoothed", "monotone"):
@@ -283,8 +320,6 @@ def validate(config):
     for p in c["population"]["package_probs"]:
         number(c["policy"]["targets"][p], "target", 1, 5)
         number(c["policy"]["baselines"][p], "baseline", 1, c["policy"]["targets"][p])
-    if c["policy"]["session_aggregation"] != "min":
-        raise ValueError("UNSUPPORTED_AGGREGATION")
     for key in (
         "time_budget_ms",
         "gamma0",
@@ -317,7 +352,6 @@ def validate(config):
         "eta_fair",
         "debt_cap",
         "beta_change",
-        "switch_cost",
         "history_window_seconds",
     ):
         number(c["utility"][key], key)
@@ -383,11 +417,25 @@ def validate(config):
     for app_id, app in c["applications"].items():
         if app["business"] not in c["businesses"] or app["bandwidth_direction"] not in ("ul", "dl"):
             raise ValueError("INVALID_APPLICATION_RULE: " + app_id)
+        stall_level_max = app.get("stalling_level_max")
+        if stall_level_max is not None and (
+            type(stall_level_max) is not int or not 1 <= stall_level_max <= 6
+        ):
+            raise ValueError("INVALID_APPLICATION_STALL_LEVEL: " + app_id)
         directional_floors = app.get("bandwidth_min_kbps_by_direction", {})
         if set(directional_floors) - {"ul", "dl"}:
             raise ValueError("INVALID_APPLICATION_BANDWIDTH_DIRECTION: " + app_id)
         for direction, floor in directional_floors.items():
             number(floor, f"{app_id}.bandwidth_min_kbps_by_direction.{direction}")
+    stall_bounds = c["models"]["stall_level_ratio_upper_bounds"]
+    if (
+        len(stall_bounds) != 6
+        or any(type(value) not in (int, float) for value in stall_bounds)
+        or any(left >= right for left, right in zip(stall_bounds, stall_bounds[1:]))
+        or stall_bounds[0] <= 0
+        or stall_bounds[-1] != 1.0
+    ):
+        raise ValueError("INVALID_STALL_LEVEL_RATIO_BOUNDS")
     for key in (
         "bitrate_scale",
         "resolution_scale",
@@ -417,7 +465,6 @@ def model_hash(c):
             "models": c["models"],
             "businesses": c["businesses"],
             "quantum": c["solver"]["bandwidth_quantum_kbps"],
-            "session": c["policy"]["session_aggregation"],
             "evaluation_packages": c["policy"]["evaluation_packages"],
             "extensions": c.get("extensions", {}),
             "kqi_response": c["kqi_response"],
