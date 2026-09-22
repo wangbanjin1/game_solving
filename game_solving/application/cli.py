@@ -29,6 +29,7 @@ def main(argv=None):
     )
     parser.add_argument("--max-total-steps", type=int, help="所有阶段共享的工作量上限")
     parser.add_argument("--time-budget-ms", type=float)
+    parser.add_argument("--workers", type=int, default=1, help="并行求解进程数，默认为 1（串行）")
     args = parser.parse_args(argv)
     overrides = {
         k: v
@@ -47,7 +48,9 @@ def main(argv=None):
             stream=sys.stderr,
             force=True,
         )
-        code, summary = Pipeline(config).execute(args.command, args.output, args.input)
+        code, summary = Pipeline(config).execute(
+            args.command, args.output, args.input, workers=args.workers
+        )
         print(json.dumps(summary, ensure_ascii=False, indent=2))
         return code
     except (ValueError, TypeError, KeyError, OSError) as exc:

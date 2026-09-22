@@ -23,15 +23,32 @@ from game_solving.evaluation.comparison import compare, render
 logger = logging.getLogger(__name__)
 
 
+def _solve_scene_worker(args):
+    c, scene = args
+    services = Services(c)
+    result = services.solver().solve(scene)
+    reference = evaluate_reference(scene, result, c, services.policy)
+    if reference.get("policy_decisions"):
+        from game_solving.domain.entities import Action, Bandwidth
+        reference_actions = [Action(**{**a, "bandwidth": Bandwidth(**a["bandwidth"])}) for a in reference["policy_decisions"]]
+        violations = check_actions(scene, reference_actions, services.policy, recompute=True)
+        if violations:
+            raise AssertionError(f"REFERENCE_RETURNED_INFEASIBLE: {violations}")
+        reference["policy_witness_validated"] = True
+    label, metric = evaluate(scene, result, reference, c, services.policy)
+    comparison = compare(scene, result, services.policy)
+    return result, reference, label, metric, comparison
+
+
 class Pipeline:
     def __init__(self, config, services=None):
         self.c = config
         self.services = services or Services(config)
 
-    def execute(self, command, output, input_path=None):
+    def execute(self, command, output, input_path=None, workers=1):
         if command == "solve" and input_path is None:
             raise ValueError("SOLVE_REQUIRES_INPUT")
-        logger.info("任务开始：%s，输出目录=%s", command, output)
+        logger.info("任务开始：%s，输出目录=%s，并行进程数=%d", command, output, workers)
         store = JsonStore(output)
         c = self.c
         manifest = {
@@ -147,50 +164,74 @@ class Pipeline:
         references = []
         comparisons = []
         if command in ("run", "solve"):
-            logger.info("开始求解：共 %d 个场景", len(scenes))
-            for index, scene in enumerate(scenes, 1):
-                logger.info(
-                    "求解场景 %d/%d：%s，人数=%d",
-                    index,
-                    len(scenes),
-                    scene.scene_id,
-                    len(scene.users),
-                )
-                result = self.services.solver().solve(scene)
-                logger.info(
-                    "求解完成 %d/%d：%s，停止=%s，轮数=%d，工作量=%d，耗时=%.1f ms",
-                    index,
-                    len(scenes),
-                    "成功" if result.run_status == "SUCCESS" else "失败",
-                    result.stop_reason,
-                    result.iterations,
-                    result.total_steps,
-                    result.elapsed_ms,
-                )
-                if c["reference"]["enabled"]:
-                    logger.debug("开始独立参考计算：%s", scene.scene_id)
-                reference = evaluate_reference(scene, result, c, self.services.policy)
-                if reference.get("policy_decisions"):
-                    from game_solving.domain.entities import Action, Bandwidth
-                    reference_actions = [Action(**{**a, "bandwidth": Bandwidth(**a["bandwidth"])}) for a in reference["policy_decisions"]]
-                    violations = check_actions(scene, reference_actions, self.services.policy, recompute=True)
-                    if violations:
-                        raise AssertionError(f"REFERENCE_RETURNED_INFEASIBLE: {violations}")
-                    reference["policy_witness_validated"] = True
-                if c["reference"]["enabled"]:
-                    logger.debug(
-                        "独立参考完成：%s，状态=%s", scene.scene_id, reference["status"]
+            logger.info("开始求解：共 %d 个场景 (并发度=%d)", len(scenes), workers)
+            if workers > 1 and len(scenes) > 1:
+                from concurrent.futures import ProcessPoolExecutor
+                tasks = [(c, scene) for scene in scenes]
+                with ProcessPoolExecutor(max_workers=workers) as executor:
+                    for index, (result, reference, label, metric, comparison) in enumerate(
+                        executor.map(_solve_scene_worker, tasks), 1
+                    ):
+                        scene = scenes[index - 1]
+                        logger.info(
+                            "求解完成 %d/%d：%s，停止=%s，轮数=%d，工作量=%d，耗时=%.1f ms",
+                            index,
+                            len(scenes),
+                            "成功" if result.run_status == "SUCCESS" else "失败",
+                            result.stop_reason,
+                            result.iterations,
+                            result.total_steps,
+                            result.elapsed_ms,
+                        )
+                        comparisons.append(comparison)
+                        results.append(result)
+                        labels.append(label)
+                        metrics.append(metric)
+                        references.append({"scene_id": scene.scene_id, **reference})
+            else:
+                for index, scene in enumerate(scenes, 1):
+                    logger.info(
+                        "求解场景 %d/%d：%s，人数=%d",
+                        index,
+                        len(scenes),
+                        scene.scene_id,
+                        len(scene.users),
                     )
-                label, metric = evaluate(
-                    scene, result, reference, c, self.services.policy
-                )
-                comparison = compare(scene, result, self.services.policy)
-                comparisons.append(comparison)
-                logger.info("\n%s", render(comparison))
-                results.append(result)
-                labels.append(label)
-                metrics.append(metric)
-                references.append({"scene_id": scene.scene_id, **reference})
+                    result = self.services.solver().solve(scene)
+                    logger.info(
+                        "求解完成 %d/%d：%s，停止=%s，轮数=%d，工作量=%d，耗时=%.1f ms",
+                        index,
+                        len(scenes),
+                        "成功" if result.run_status == "SUCCESS" else "失败",
+                        result.stop_reason,
+                        result.iterations,
+                        result.total_steps,
+                        result.elapsed_ms,
+                    )
+                    if c["reference"]["enabled"]:
+                        logger.debug("开始独立参考计算：%s", scene.scene_id)
+                    reference = evaluate_reference(scene, result, c, self.services.policy)
+                    if reference.get("policy_decisions"):
+                        from game_solving.domain.entities import Action, Bandwidth
+                        reference_actions = [Action(**{**a, "bandwidth": Bandwidth(**a["bandwidth"])}) for a in reference["policy_decisions"]]
+                        violations = check_actions(scene, reference_actions, self.services.policy, recompute=True)
+                        if violations:
+                            raise AssertionError(f"REFERENCE_RETURNED_INFEASIBLE: {violations}")
+                        reference["policy_witness_validated"] = True
+                    if c["reference"]["enabled"]:
+                        logger.debug(
+                            "独立参考完成：%s，状态=%s", scene.scene_id, reference["status"]
+                        )
+                    label, metric = evaluate(
+                        scene, result, reference, c, self.services.policy
+                    )
+                    comparison = compare(scene, result, self.services.policy)
+                    comparisons.append(comparison)
+                    logger.info("\n%s", render(comparison))
+                    results.append(result)
+                    labels.append(label)
+                    metrics.append(metric)
+                    references.append({"scene_id": scene.scene_id, **reference})
             store.write("comparison.jsonl", comparisons, True)
             report_path = store.path / "comparison.md"
             report_tmp = store.path / "comparison.md.tmp"
@@ -278,6 +319,13 @@ class Pipeline:
             complete=True, outcome="COMPLETE" if code == 0 else "SOLVE_FAILED"
         )
         store.write("manifest.json", manifest)
+        if command in ("run", "solve") and results:
+            try:
+                from game_solving.visualization.grid_report import generate_grid_reports
+                generate_grid_reports(store.path)
+                logger.info("已生成解耦数据与按总人数切分的可视化报告至：%s", store.path)
+            except Exception as exc:
+                logger.warning("自动生成网格可视化报告跳过：%s", exc)
         logger.info(
             "任务完成：%s，场景数=%d，退出码=%d，结果目录=%s",
             command,

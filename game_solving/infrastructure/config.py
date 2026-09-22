@@ -150,6 +150,8 @@ def validate(config):
     base_vip_ratio = c["population"]["package_probs"].get("vip", 0.0)
     if any(not 0 <= value <= 1 for value in grid["vip_unmet_ratios"]):
         raise ValueError("INVALID_SCENARIO_GRID: vip_unmet_ratios")
+    if "vip_severe_fraction" in grid:
+        number(grid["vip_severe_fraction"], "scenario_grid.vip_severe_fraction", 0, 1)
     if type(grid["max_total_users"]) is not int or grid["max_total_users"] < 1:
         raise ValueError("INVALID_SCENARIO_GRID: max_total_users")
     planned_users = [
@@ -381,6 +383,8 @@ def validate(config):
     number(c["generation"]["mixed_probability"], "mixed_probability", high=1)
     number(c["generation"]["delta_over"], "delta_over")
     number(c["generation"]["delta_severe"], "delta_severe")
+    if "severe_mos_min" in c["generation"]:
+        number(c["generation"]["severe_mos_min"], "severe_mos_min", 1, 5)
     lo, hi = c["generation"]["non_key_current_multiplier"]
     if not 1 <= lo <= hi:
         raise ValueError("INVALID_CURRENT_QOS_MULTIPLIER")

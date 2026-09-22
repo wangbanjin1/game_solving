@@ -21,6 +21,9 @@ def band(mos, target, c):
 def interval(target, requested, c):
     lo, hi = c["models"]["minimum_mos"], c["models"]["maximum_mos"]
     if requested == "severe":
+        severe_min = c["generation"].get("severe_mos_min")
+        if severe_min is not None:
+            lo = max(lo, severe_min)
         hi = min(
             hi, math.nextafter(target - c["generation"]["delta_severe"], -math.inf)
         )

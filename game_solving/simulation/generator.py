@@ -31,6 +31,7 @@ class DatasetGenerator:
             return [(index, c, None) for index in range(c["num_scenes"])]
         base_users = c["population"]["users_per_cell"]
         base_vip_ratio = c["population"]["package_probs"]["vip"]
+        vip_severe_fraction = grid.get("vip_severe_fraction", 0.0)
         plan = []
         for user_factor in grid["total_user_factors"]:
             users = round(base_users * user_factor)
@@ -42,11 +43,13 @@ class DatasetGenerator:
                         "normal": 1.0 - vip_ratio,
                         "vip": vip_ratio,
                     }
+                    severe_part = unmet_ratio * vip_severe_fraction
+                    unmet_part = unmet_ratio * (1.0 - vip_severe_fraction)
                     local["generation"]["compliance_probs_by_package"]["vip"] = {
                         "over": 0.0,
                         "met": 1.0 - unmet_ratio,
-                        "unmet": unmet_ratio,
-                        "severe": 0.0,
+                        "unmet": unmet_part,
+                        "severe": severe_part,
                     }
                     parameters = {
                         "total_users": users,

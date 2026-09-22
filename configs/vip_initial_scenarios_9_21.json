@@ -11,12 +11,15 @@
       "total_user_factors": [0.8, 1.0, 1.2],
       "vip_ratios": [0.15, 0.20, 0.25],
       "vip_unmet_ratios": [0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60],
-      "max_total_users": 20000
+      "max_total_users": 20000,
+      "vip_severe_fraction": 0.5
     }
   },
   "generation": {
     "capacity_mode": "current_headroom",
     "headroom_ratios": [0.0, 0.01, 0.03, 0.05],
+    "delta_severe": 0.5,
+    "severe_mos_min": 2.5,
     "quota_mode": "specified",
     "strict_quotas": true,
     "state_pool_size": 1,
